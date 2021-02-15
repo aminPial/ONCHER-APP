@@ -8,6 +8,7 @@ __pycache__/
 
 # project realted
 cef_cache
+.idea
 
 # Distribution / packaging
 .Python
