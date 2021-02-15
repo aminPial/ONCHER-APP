@@ -6,10 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+<<<<<<< HEAD
 # project realted
 cef_cache
 .idea
 
+=======
+>>>>>>> parent of 02d5789 (first push)
 # Distribution / packaging
 .Python
 build/
