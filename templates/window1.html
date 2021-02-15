@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block script_link %}
+    <script src="{{ url_for('static', filename='js/window1.js') }}"></script>
+{% endblock %}
+
+{% block css_link %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/window1.css') }}">
+{% endblock %}
+
+
+{% block body %}
+
+    <div class="block" style="margin-top: 16px;margin-left: 8px">
+        {#        <h5 class="title is-5">Student: </h5>#}
+        <div class="dropdown" id="student_list">
+            <div class="dropdown-trigger">
+                <button class="button is-danger is-outlined is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
+                    <span>Pick Student&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span class="icon is-small">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                <div class="dropdown-content">
+
+                    {% for student in students %}
+                        <a href="#" class="dropdown-item">
+                            {{ student.name }}
+                        </a>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+        <button class="button is-danger is-light" id="add_button">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <div class="container" style="margin-top: 8px;margin-left: 12px">
+        <div class="is-inline-block-mobile"><h6 class="title is-6">Age</h6></div>
+        &nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="title is-6">Gender</h6></div>
+        &nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="title is-6">Recent</h6></div>
+        &nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="title is-6">Classes</h6></div>
+        &nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="title is-6">Left</h6></div>
+    </div>
+
+    <div class="container " style="margin-top: 8px;margin-left: 8px">
+    &nbsp;
+        <div class="is-inline-block-mobile"><h6 class="subtitle is-6">11</h6></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="subtitle is-6">F</h6></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="subtitle is-6">G6L19</h6></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="subtitle is-6">11</h6></div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="is-inline-block-mobile"><h6 class="subtitle is-6">6</h6></div>
+    </div>
+
+    <div class="block" style="margin-left: 8px;margin-right: 8px;margin-top: 12px">
+        <h6 class="title is-6">Lesson Plan: Slide 1</h6>
+        <div class="field">
+            <div class="control">
+                <textarea class="textarea" rows="7" placeholder="Lesson Plan" style="resize: none"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <section style="margin-left: 8px">
+
+        <div class="dropdown" id="grade_list" style="margin-left: 2px">
+            <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
+            <div class="dropdown-trigger">
+                <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
+                    <span>5</span>
+                    <span class="icon is-small">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                <div class="dropdown-content">
+
+
+                        <a href="#" class="dropdown-item">
+                            6
+                        </a>
+                <a href="#" class="dropdown-item">
+                            7
+                        </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="dropdown" id="lesson_list" style="margin-left: 6px;margin-right: 2px">
+            <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>
+            <div class="dropdown-trigger">
+                <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
+                    <span>12</span>
+                    <span class="icon is-small">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                <div class="dropdown-content">
+
+                        <a href="#" class="dropdown-item">
+                            13
+                        </a>
+                <a href="#" class="dropdown-item">
+                            14
+                        </a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="field" style="margin:8px">
+        <div class="control">
+            <textarea style="resize: none" class="textarea" rows="7" placeholder="Student Notes:"></textarea>
+        </div>
+    </div>
+
+    <div class="field-body" style="margin-left: 8px">
+        <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
+            <div class="file is-primary">
+                <label class="file-label">
+                    <input class="file-input" type="file" name="myfile" id="myfile">
+                    <span class="file-cta">
+{#            <span class="file-icon">#}
+{#              <i class="fas fa-upload"></i>#}
+{#            </span>#}
+            <span class="file-label">
+              Upload PPT/PDF
+            </span>
+                </span>
+                </label>
+
+            </div>
+
+        </form>
+        <button type="button" class="button is-link field is-inline-block-mobile" id="view_ss_report">View SS Report
+        </button>
+    </div>
+
+
+
+    {# form #}
+    <section class="section is-small" style="display: none">
+
+        <div class="field">
+            <label class="label">Student Name</label>
+            <div class="control">
+                <input class="input" type="text" id="student_name" placeholder="e.g: Alice" name="student_name">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Student Age</label>
+            <div class="control">
+                <input class="input" type="number" id="student_age" placeholder="e.g: 12" name="student_age">
+            </div>
+        </div>
+        <div class="control">
+            <label class="label">Student Sex</label>
+            <label class="radio">
+                <input type="radio" name="sex" value="male" checked>
+                Male
+            </label>
+            <label class="radio">
+                <input type="radio" name="sex" value="female">
+                Female
+            </label>
+        </div>
+        <br>
+        <button class="button is-success is-normal" id="add_student">+ Add Student</button>
+
+    </section>
+{% endblock %}
