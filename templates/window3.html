@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block script_link %}
+    <script src="{{ url_for('static', filename='js/window3.js') }}"></script>
+{% endblock %}
+
+{% block css_link %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/window3.css') }}">
+{% endblock %}
+
+
+{% block body %}
+
+    <div class="columns">
+{#        <div class="column">#}
+{#            <i class="fa fa-star" style="color: gold;font-size: 36px" id="star_animation_trigger"></i>#}
+{#            <i class="fa fa-chevron-circle-left" id="previous_page" style="font-size: 28px;color: #1d72aa"></i>#}
+{#            <p>5</p>#}
+{#            <i class="fa fa-chevron-circle-right" id="next_page" style="font-size: 28px;color: #1d72aa"></i>#}
+{#        </div>#}
+    </div>
+
+{% endblock %}

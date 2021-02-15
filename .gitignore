@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# project realted
+cef_cache
+
 # Distribution / packaging
 .Python
 build/

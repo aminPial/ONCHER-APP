@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            position: relative;
+            margin-top: 420px;
+            margin-left: 120px;
+        }
+
+        .squares {
+            width: 40px;
+            height: 40px;
+            background-color: deepskyblue;
+            position: absolute;
+            left: -19px;
+            top: -19px
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <div class="squares" id="div1"></div>
+    <svg id="Layer_1" data-name="Layer 1"
+         xmlns="http://www.w3.org/2000/svg" width="1598" height="1000"
+         >
+        <defs><style>
+            .cls-1{fill:none;stroke:#000;stroke-miterlimit:10;}
+        </style></defs>
+
+        <title>Untitled-1</title>
+        <path class="cls-1"
+              d="M 3 1 C -179 -507 144 -735 521 -853"></path>
+    </svg>
+</div>
+<script>
+    const path = anime.path('#Layer_1 path');
+    anime({
+        targets: '#div1',
+        translateX: path('x'),
+        translateY: path('y'),
+        loop: true,
+        rotate: path('angle'),
+        easing: 'linear',
+        duration: 2300
+    });
+</script>
+</body>
+</html>
