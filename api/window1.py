@@ -8,11 +8,13 @@ import sys
 from flask_socketio import emit
 import requests
 from models import StudentsData
+from app import BASE_URL
 
 
 @oncher_app.route('/window_1')
 def window_1():
-    return render_template('window1.html', students=StudentsData.query.all())
+    return render_template('window1.html', students=StudentsData.query.all(),
+                           BASE_URL=BASE_URL)
 
 
 def upload_ppt_to_server(local_file_location: str) -> bool:
@@ -41,7 +43,8 @@ def upload_document():
 
     src_to_load = None
     if filename.endswith(".pdf"):
-        src_to_load = r"""http://localhost:5000/static/js/ViewerJS/index.html#../../files/{}""".format(file.filename)
+        src_to_load = r"""{}/static/js/ViewerJS/index.html#../../files/{}""".format(BASE_URL,file.filename)
+        print(src_to_load)
     elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
         # todo: here we need to upload the ppt.pptx to server then encode the server download url
         encoded_url = ""

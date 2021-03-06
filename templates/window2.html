@@ -2,6 +2,7 @@
 
 {% block script_link %}
     <script src="{{ url_for('static', filename='js/window2.js') }}"></script>
+<script src="{{ url_for('static', filename='js/libraries/jscolor.js') }}"></script>
 {% endblock %}
 
 {% block css_link %}
@@ -34,19 +35,21 @@
             </div>
 
             <div class="column is-1">
-                <button class="button is-medium title is-light is-warning"><i class="fal fa-star" style="font-size: 24px;color: gold"></i>
+                <button class="button is-medium title is-light is-warning"><i class="fal fa-star"
+                                                                              style="font-size: 24px;color: gold"></i>
                     <span style="margin-left: 8px;"></span>24
                 </button>
             </div>
 
             <div class="column" style="margin-left: 4px">
-                <button class="button is-medium title is-light is-primary "><i class="fal fa-diamond" style="font-size: 24px;color: cyan"></i>
+                <button class="button is-medium title is-light is-primary "><i class="fal fa-diamond"
+                                                                               style="font-size: 24px;color: cyan"></i>
                     <span style="margin-left: 8px;"></span>5
                 </button>
             </div>
 
             <div class="column" style="padding-right: 8px">
-                <button class="button is-medium title is-danger is-light is-outlined">50:34
+                <button class="button is-medium title is-danger is-light is-outlined" id="time_count">00:00
                 </button>
             </div>
 
@@ -60,18 +63,43 @@
              height="196px" id="star_animation">
     </div>
 
-    <div class="box" id="iframe-container" style="margin: 8px;margin-bottom:0;padding: 0;border: none;border-radius: 0;background: #FFB700">
-        <iframe class="responsive-iframe" id="responsive-iframe" allowfullscreen width="100%" height="500px" frameBorder="0"
-                src="https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217">
-
-        </iframe>
+    <div class="box" id="iframe-container"
+         style="margin: 0;padding: 0;border: none;border-radius: 0">
+        {#
+    <iframe class="responsive-iframe" id="responsive-iframe" allowfullscreen width="100%" height="500px" frameBorder="0"
+            #}
+        {#
+            src="https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217">
+        #}
+        {##}
+        {#
+    </iframe>
+    #}
 
     </div>
 
+    {# canvas to draw over... #}
+
+    <div id="drawing-div">
+
+    </div>
+
+    <script>
+
+
+    </script>
+
+
+    {# end canvas code #}
+
     {# hidden sound block for animations #}
-    {#    <audio controls>#}
-    {#        <source src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" type="audio/mpeg" id="star_sound">#}
-    {#    </audio>#}
+    {#
+<audio controls>#}
+    {#
+    <source src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" type="audio/mpeg" id="star_sound">
+    #}
+    {#
+</audio>#}
 
     <audio id="audiotag1" src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" preload="auto"></audio>
     <a href="javascript:play_star_sound();" style="display: none" id="play_star_sound"></a>
@@ -79,7 +107,117 @@
         function play_star_sound() {
             document.getElementById('audiotag1').play();
         }
+
     </script>
+
+
+    {# modal to change timer time #}
+    <div class="modal" id="timer_modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Set Class Time Length</p>
+                <button class="delete" aria-label="close" onclick="close_modal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time">00:50:00</h1>
+                <div class="columns">
+                    <div class="column">
+                        <label for="hours"> Hours</label>
+                        <input class="input is-medium" type="number" placeholder="hours" value="0" id="hours"
+                               onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
+                               oninput="update_time()" onautocomplete="update_time()">
+                    </div>
+                    <div class="column">
+                        <label for="minutes">Minutes</label>
+                        <input class="input is-medium" type="number" placeholder="minutes" value="50" id="minutes"
+                               onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
+                               oninput="update_time()" onautocomplete="update_time()">
+                    </div>
+                    <div class="column">
+                        <label for="seconds">Seconds</label>
+                        <input class="input is-medium" type="number" placeholder="seconds" value="0" id="seconds"
+                               onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
+                               oninput="update_time()" onautocomplete="update_time()"
+                        >
+                    </div>
+                    <script>
+                        function close_modal() {
+                            $('#timer_modal').removeClass("modal is-active").addClass("modal");
+                        }
+
+                        function update_time() {
+                            let h = $('#hours');
+                            let m = $('#minutes');
+                            let s = $('#seconds');
+                            let save_changes = $('#save_time');
+                            let hi = parseInt(h.val());
+                            let mi = parseInt(m.val());
+                            let si = parseInt(s.val());
+
+                            if (hi < 0 || hi > 23) {
+                                save_changes.prop('disabled', true);
+                                h.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                return;
+                            } else {
+                                save_changes.prop('disabled', false);
+                                h.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                if (hi < 10)
+                                    hi = "0" + hi;
+                                else
+                                    hi = "" + hi;
+                            }
+                            if (mi < 0 || mi > 59) {
+                                save_changes.prop('disabled', true);
+                                m.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                return;
+                            } else {
+                                save_changes.prop('disabled', false);
+                                m.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                if (mi < 10)
+                                    mi = "0" + mi;
+                                else
+                                    mi = "" + mi;
+                            }
+                            if (si < 0 || si > 59) {
+                                save_changes.prop('disabled', true);
+                                s.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                return;
+                            } else {
+                                save_changes.prop('disabled', false);
+                                s.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                if (si < 10)
+                                    si = "0" + si;
+                                else
+                                    si = "" + si;
+                            }
+
+
+                            $('#time').text(hi + ":" + mi + ":" + si);
+                        }
+
+
+                    </script>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="save_time">Save Changes</button>
+                <button class="button" onclick="close_modal()">Cancel</button>
+            </footer>
+        </div>
+    </div>
+
+
+    {# notifications #}
+    {#
+<div class="notification is-danger is-light" style="position: absolute;bottom: 0;margin-left: 12px;#}
+    {#  margin-right: auto;">#}
+    {#
+    <button class="delete"></button>
+    #}
+    {# <strong>Awesome! Your changes have been Saved.</strong>#}
+    {#
+</div>#}
 {% endblock %}
 
 {#

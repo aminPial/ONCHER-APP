@@ -1,11 +1,35 @@
 import pyautogui as p
 import webview
-from server import socket_io, oncher_app
+
 import multiprocessing
 import sys
-
+import socket
 from webview.platforms.cef import settings, command_line_switches  #
 
+BASE_URL = None
+
+
+def is_port_available(port: int):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    result = False
+    try:
+        sock.bind(("0.0.0.0", port))
+        result = True
+    except Exception as _:
+        pass
+    sock.close()
+    return result
+
+
+available_port = 5000
+while True:
+    if is_port_available(available_port):
+        break
+    else:
+        available_port += 1
+BASE_URL = "http://localhost:{}".format(available_port)
+
+# cef settings
 settings.update({
     # 'remote_debugging_port':8080,
     # "debug": True,
@@ -22,12 +46,13 @@ settings.update({
 # web_security_disabled
 
 
-def start_server():
-    socket_io.run(app=oncher_app, host='0.0.0.0', port=5000)
+def start_server(port: int):
+    from server import socket_io, oncher_app
+    socket_io.run(app=oncher_app, host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':
-    t = multiprocessing.Process(target=start_server)
+    t = multiprocessing.Process(target=start_server, args=(available_port,))
     t.start()
 
     w, h = p.size()
@@ -44,7 +69,7 @@ if __name__ == '__main__':
     w3w, w3h = w2w, int(h * 0.15)
 
     second_window = webview.create_window('',
-                                          url="http://localhost:5000/window_2",
+                                          url=f"{BASE_URL}/window_2",
                                           x=w2x,
                                           y=w2y,
                                           width=w2w,
@@ -52,7 +77,7 @@ if __name__ == '__main__':
                                           height=w2h,
                                           resizable=False)
     third_window = webview.create_window('',
-                                         url='http://localhost:5000/window_3',
+                                         url=f'{BASE_URL}/window_3',
                                          x=w3x,
                                          y=w3y,
                                          width=w3w,
@@ -60,7 +85,7 @@ if __name__ == '__main__':
                                          resizable=False,
                                          frameless=True)
     first_window = webview.create_window('',
-                                         url='http://localhost:5000/window_1',
+                                         url=f'{BASE_URL}/window_1',
                                          x=w1x,
                                          y=w1y,
                                          width=w1w,
@@ -68,7 +93,7 @@ if __name__ == '__main__':
                                          frameless=True,
                                          resizable=False)
     # https://stackoverflow.com/questions/65279193/how-to-close-pywebview-window-from-javascript-using-pywebview-api
-    webview.start(gui='cef')
+    webview.start(gui='cef', debug=True)
     t.close()
     t.terminate()
     sys.exit()

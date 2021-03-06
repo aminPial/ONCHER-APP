@@ -2,6 +2,7 @@
 
 {% block script_link %}
     <script src="{{ url_for('static', filename='js/window3.js') }}"></script>
+
 {% endblock %}
 
 {% block css_link %}
@@ -11,13 +12,78 @@
 
 {% block body %}
 
-    <div class="columns">
-{#        <div class="column">#}
-{#            <i class="fa fa-star" style="color: gold;font-size: 36px" id="star_animation_trigger"></i>#}
-{#            <i class="fa fa-chevron-circle-left" id="previous_page" style="font-size: 28px;color: #1d72aa"></i>#}
-{#            <p>5</p>#}
-{#            <i class="fa fa-chevron-circle-right" id="next_page" style="font-size: 28px;color: #1d72aa"></i>#}
-{#        </div>#}
+    {#
+<div class="columns">#}
+    {#
+    <div class="column">#}
+    {# <i class="fa fa-star" style="color: gold;font-size: 36px" id="star_animation_trigger"></i>#}
+    {# <i class="fa fa-chevron-circle-left" id="previous_page" style="font-size: 28px;color: #1d72aa"></i>#}
+    {# <p>5</p>#}
+    {# <i class="fa fa-chevron-circle-right" id="next_page" style="font-size: 28px;color: #1d72aa"></i>#}
+    {#
     </div>
+    #}
+
+    {#
+</div>#}
+    <div class="columns" style="margin-left: 8px;margin-top: 8px" id="toolbar">
+        <div class="column">
+            <button class="button" id="timer_settings"><i class="fas fa-clock"></i></button>
+        </div>
+        <div class="column">
+            <button class="button is-danger is-light" id="start_end_timer_button">Start</button>
+        </div>
+        <div class="column">
+            <i class="fa fa-star" style="color: gold;font-size: 36px" id="star_animation_trigger"></i>
+        </div>
+
+        <!-- Drawing tools -->
+        <div class="column">
+            <i class="fa fa-pencil-alt" style="color: cyan;font-size: 36px" id="draw_tool"></i>
+        </div>
+        <div class="column">
+            <i class="fa fa-eraser" style="color: cyan;font-size: 36px" id="erase_tool"></i>
+        </div>
+        <div class="column">
+            <i class="fa fa-broom" style="color: cyan;font-size: 36px" id="clear_tool"></i>
+        </div>
+        <div class="column">
+            <i class="fa fa-pencil-ruler" style="color: cyan;font-size: 36px" id="thickness_tool"></i>
+        </div>
+        <div class="column">
+            <i class="fa fa-palette" style="color: cyan;font-size: 36px" id="color_pick_tool"></i>
+
+        </div>
+        <div class="column">
+            <i class="fa fa-font" style="color: cyan;font-size: 36px" id="text_tool"></i>
+        </div>
+
+    </div>
+
+    <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="colors">
+
+
+        {% for color_name in colors %}
+            <div class="column">
+                <span id="{{ color_name }}_color"
+                      style="border-radius: 50%;height: 50px;width: 50px;background-color: {{ color_name }};
+                              display: inline-block"></span>
+                <script>
+                    $('#{{ color_name }}_color').click(function () {
+                     //   alert("{{ color_name }}");
+                        let socket = io.connect('http://localhost:5001');
+                        socket.emit('drawing_tools_signal_receive', {
+                            'type_of_action': 'color_change',
+                            'color': '{{ color_name }}'
+                        });
+
+                        $('#toolbar').show(1500);
+                        $('#colors').hide(1000);
+                    });
+                </script>
+            </div>
+        {% endfor %}
+    </div>
+
 
 {% endblock %}
