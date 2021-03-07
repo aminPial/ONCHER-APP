@@ -1,3 +1,7 @@
-html,body {
-    background-image: linear-gradient(to left, rgb(229, 228, 225), rgb(243, 241, 206));
+html {
+    min-height:100%;
+    min-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }

@@ -24,14 +24,172 @@ html {
     z-index: -1;
 }
 
-.animation_div {
-    position: absolute;
-    z-index: 2;
-    width: 100%;
-    text-align: center;
-}
+/*.animation_div {*/
+/*    position: absolute;*/
+/*    z-index: 2;*/
+/*    width: 100%;*/
+/*    text-align: center;*/
+/*}*/
 
 #drawing-board {
     position: absolute;
     z-index: 2;
+}
+
+
+.content .trophy img {
+    display: block;
+    margin: auto;
+    padding-top: 80px;
+    max-width: 128px;
+    filter: drop-shadow(0 0 4px #000);
+    transition: 0.5s;
+    animation: animate 2s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.1);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+#drag_and_drop_section {
+    font-weight: bold;
+    text-align: center;
+    padding: 1em 0;
+    margin: 1em 0;
+    color: gold;
+    border: 2px dashed gold;
+    border-radius: 7px;
+    cursor: default;
+}
+
+/* dice animation styles */
+.dice {
+    height: 200px;
+    width: 200px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: translateZ(-100px) rotateY(-45deg) rotateX(-45deg);
+    transition: transform 1s;
+}
+
+.panel {
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    perspective: 400px;
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.dot {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin: 4px;
+    background-color: gold;
+}
+
+.side {
+    position: absolute;
+    background-color: black;
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    line-height: 200px;
+}
+
+.one {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: rotateX(-90deg) translateZ(100px);
+    z-index: 1;
+}
+
+.two {
+    display: flex;
+    justify-content: space-between;
+    transform: rotateY(180deg) translateZ(100px);
+    z-index: 2;
+}
+
+.two .dot:nth-of-type(2) {
+    align-self: flex-end;
+}
+
+.three {
+    display: flex;
+    justify-content: space-between;
+    transform: rotateY(90deg) translateZ(100px);
+    z-index: 3;
+}
+
+.three .dot:nth-of-type(2) {
+    align-self: center;
+}
+
+.three .dot:nth-of-type(3) {
+    align-self: flex-end;
+}
+
+.four {
+    z-index: 4;
+    transform: rotateY(0deg) translateZ(100px);
+}
+
+.four,
+.six {
+    display: flex;
+    justify-content: space-between;
+}
+
+.four .kolona,
+.six .kolona {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.five {
+    display: flex;
+    justify-content: space-between;
+    transform: rotateY(-90deg) translateZ(100px);
+    z-index: 5;
+}
+
+.five .kolona {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.five .kolona:nth-of-type(2) {
+    justify-content: center;
+}
+
+.six {
+    transform: rotateX(90deg) translateZ(100px);
+    z-index: 6;
 }

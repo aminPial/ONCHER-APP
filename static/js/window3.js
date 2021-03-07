@@ -16,8 +16,29 @@ $(document).ready(function () {
 
     // 1. star animation
     $('#star_animation_trigger').click(function () {
+        // todo: make animation like the AWARD ICON pops up from W3 to W2... and thus hide the star icon from W3
+        // make the animation trigger icon -> disable
+       // $('#star_animation_trigger').unbind('click');
         socket.emit('animation_trigger', {"data": "star"});
+        // then after X ms make it enable again
+        // setTimeout(function () {
+        //         $('#star_animation_trigger').bind('click');
+        //     }, 4500);
     });
+
+    // todo: games
+
+    // todo: toss
+
+
+    // dice
+    $('#dice_animation_trigger').click(function () {
+        // check todo in star animation click function
+        socket.emit('animation_trigger', {"data": "dice"});
+    });
+
+
+
 
     // timer trigger
     $('#start_end_timer_button').click(function () {
@@ -60,7 +81,14 @@ $(document).ready(function () {
 
 
     $('#thickness_tool').click(function () {
-        socket.emit('drawing_tools_signal_receive', {'type_of_action': 'thickness_size'});
+        $('#toolbar').hide(500)
+        $('#thickness').show(200);
+    });
+
+    // close thickness select
+    $('#close_thickness_select').click(function () {
+        $('#toolbar').show(500)
+        $('#thickness').hide(200);
     });
 
 

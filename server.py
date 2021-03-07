@@ -16,6 +16,7 @@ config = {
 oncher_app.config.update(config)
 socket_io = SocketIO(oncher_app, cors_allowed_origins='*')
 database_cluster = SQLAlchemy(oncher_app)
+
 # CORS(oncher_app)
 
 
@@ -35,7 +36,7 @@ def add_header(r):
 
 from routers import *
 from models import *
-
+database_cluster.create_all()
 
 # @oncher_app.route('/favicon.ico')
 # def favicon_ico():

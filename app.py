@@ -28,7 +28,7 @@ while True:
     else:
         available_port += 1
 BASE_URL = "http://localhost:{}".format(available_port)
-
+print(f"BASE URL {BASE_URL}")
 # cef settings
 settings.update({
     # 'remote_debugging_port':8080,

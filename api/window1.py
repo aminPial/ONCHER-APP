@@ -1,4 +1,4 @@
-from server import oncher_app, database_cluster
+from server import oncher_app, database_cluster, socket_io
 from flask import render_template
 from flask import request
 from flask import jsonify
@@ -50,7 +50,7 @@ def upload_document():
         encoded_url = ""
         src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217"""
 
-    emit("my response",
+    emit("ppt_or_ppt_upload_signal",
          {"link": src_to_load},
          namespace='/', broadcast=True)
 
@@ -75,9 +75,26 @@ def add_student():
 #     print('received message: ' + str(data))
 #
 #
-# @socket_io.on('message')
-# def handle_message_2(data):
-#     print('received message: ' + str(data))
+
+# student select signal receive
+@socket_io.on('student_select_signal_receive')
+def student_select_signal_receive(data):
+    # print('received message: ' + str(data))
+    # we need to emit it to window 2 (from window1)
+    student_object = StudentsData.query.filter_by(id=data['id']).first()
+    # print(student_object.__dict__)
+    assert student_object is not None, "student object is None after selection"
+    student_object: StudentsData
+    payload = {
+        "id": student_object.id,
+        "name": student_object.name,
+        "star": student_object.total_stars,
+        "diamond": student_object.total_stars // 10
+    }
+    emit('select_student_signal_receive', payload, namespace='/', broadcast=True)
+
+
+
 
 @oncher_app.route('/test')
 def test():

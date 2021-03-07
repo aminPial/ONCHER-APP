@@ -74,5 +74,7 @@ def drawing_tools_signal_receive(data):
     }
     if data['type_of_action'] == 'color_change':
         payload['color'] = data['color']  # if color_change action then we insert color in the payload
+    elif data['type_of_action'] == 'thickness_size':
+        payload['thickness_size'] = data['thickness_size']
 
     emit('drawing_tools_trigger', payload, namespace='/', broadcast=True)

@@ -2,7 +2,7 @@
 
 {% block script_link %}
     <script src="{{ url_for('static', filename='js/window2.js') }}"></script>
-<script src="{{ url_for('static', filename='js/libraries/jscolor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/libraries/jscolor.js') }}"></script>
 {% endblock %}
 
 {% block css_link %}
@@ -14,57 +14,138 @@
 
     <div class="box" style="margin: 8px;">
         <div class="columns">
-            <div class="column">
-                <figure class="image is-48x48">
-                    <img src="https://cdn4.iconfinder.com/data/icons/occupation-and-people-avatar-vol-2-2/128/man_avatar_student_young_people_male_graduated-512.png"
-                         alt="">
-                </figure>
+            <div class="column" id="app_logo_section">
+                <img src="{{ url_for('static',filename='images/app_logo.png') }}"
+                     alt="Oncher App">
+
             </div>
-            <div class="column is-narrow-desktop" style="margin-top: 10px">
-                <h1 class="title is-5">Eoin Morgan&nbsp;&nbsp;&nbsp;</h1>
+            <div class="column is-narrow-desktop" style="margin-top: 10px;visibility: hidden" id="student_name_div">
+
             </div>
 
-
-            <div class="column is-narrow-desktop" style="margin-top: 4px">
-                {% for i in range(5) %}
-                    <i class="fa fa-star" style="font-size: 36px;color: gold"></i>
-                {% endfor %}
-                {% for i in range(5) %}
-                    <i class="fa fa-star" style="font-size: 36px"></i>
+            <div class="column is-narrow-desktop" style="margin-top: 4px;visibility: hidden" id="stars_bar">
+                {% for i in range(10) %}
+                    <i class="fa fa-star" style="font-size: 36px" id="star_count_{{ i }}"></i>
                 {% endfor %}
             </div>
 
-            <div class="column is-1">
+            <div class="column is-1" id="stars_count_div" style=";visibility: hidden">
                 <button class="button is-medium title is-light is-warning"><i class="fal fa-star"
                                                                               style="font-size: 24px;color: gold"></i>
-                    <span style="margin-left: 8px;"></span>24
+                    <span style="margin-left: 8px;" id="star_count">0</span>
                 </button>
             </div>
 
-            <div class="column" style="margin-left: 4px">
+            <div class="column" style="margin-left: 4px;visibility: hidden" id="diamond_count_div">
                 <button class="button is-medium title is-light is-primary "><i class="fal fa-diamond"
                                                                                style="font-size: 24px;color: cyan"></i>
-                    <span style="margin-left: 8px;"></span>5
+                    <span style="margin-left: 8px;" id="diamond_count">0</span>
                 </button>
             </div>
 
-            <div class="column" style="padding-right: 8px">
-                <button class="button is-medium title is-danger is-light is-outlined" id="time_count">00:00
+            <div class="column" style="padding-right: 8px;visibility: hidden" id="time_count_div">
+                <button class="button is-medium title is-success is-light is-outlined box" id="time_count">00:00
                 </button>
             </div>
 
         </div>
     </div>
 
+    <div class="box" id="initial_box"
+         style="margin: 8px 8px 0;
+         padding: 0;border: none;border-radius: 0;">
+        <div class="columns">
+            <div class="column">
+                <img src="{{ url_for('static',filename='images/init.gif') }}" alt="gif" width="500px" height="350px"
+                     style="pointer-events: none">
+            </div>
+            <div class="column is-half-desktop">
+                <h1 class="title is-1" style="font-family: 'HP Simplified',serif;padding: 16px;margin-left: 32px">Teach
+                    with ONCHER</h1>
+                <section class="section" id="drag_and_drop_section" style="margin: 16px">
+                    <img style="margin: 16px" src="{{ url_for('static', filename='images/pdf_pic.jpg') }}" alt="pdf_pic"
+                         width="128px"
+                         height="128px">
+                    <h5 class="title is-5" style="font-family: 'HP Simplified',serif;
+                    margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>
+                    <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt, .pptm,
+                        .pptx</h6>
+                </section>
+            </div>
+        </div>
 
-    <div class="animation_div" style="display: none">
-        <img src="{{ url_for('static', filename='images/star.gif') }}" alt="happy_gif"
-             width="196px"
-             height="196px" id="star_animation">
+    </div>
+    {#    <div class="animation_div" style="display: none">#}
+    {#        <img src="{{ url_for('static', filename='images/star.gif') }}" alt="happy_gif"#}
+    {#             width="196px"#}
+    {#             height="196px" id="star_animation">#}
+    {#    </div>#}
+
+    {# star animation #}
+    <div class="content" style="display:none;" id="star_animation_div">
+        <div class="trophy">
+            <img src="https://i.ibb.co/kVZ3CN6/trophy.png" alt="trophy">
+        </div>
+    </div>
+
+    {# dice animation #}
+
+    <div class="panel" style="display: none;margin-top: 50px;" id="dice_animation_div">
+        <div class="dice">
+            <div class="side one">
+                <span class="dot"></span>
+            </div>
+            <div class="side two">
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="side three">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="side four">
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+            <div class="side five">
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="kolona">
+                    <span class="dot"></span>
+                </div>
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+            <div class="side six">
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="kolona">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="box" id="iframe-container"
-         style="margin: 0;padding: 0;border: none;border-radius: 0">
+         style="margin: 0;padding: 0;border: none;border-radius: 8px;display: none">
         {#
     <iframe class="responsive-iframe" id="responsive-iframe" allowfullscreen width="100%" height="500px" frameBorder="0"
             #}
@@ -195,8 +276,6 @@
 
                             $('#time').text(hi + ":" + mi + ":" + si);
                         }
-
-
                     </script>
                 </div>
             </section>

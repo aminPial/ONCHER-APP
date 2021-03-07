@@ -28,11 +28,32 @@
 </div>#}
     <div class="columns" style="margin-left: 8px;margin-top: 8px" id="toolbar">
         <div class="column">
-            <button class="button" id="timer_settings"><i class="fas fa-clock"></i></button>
+            <button class="button" id="timer_settings"
+                    style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"><i
+                    class="fas fa-clock"></i></button>
         </div>
         <div class="column">
-            <button class="button is-danger is-light" id="start_end_timer_button">Start</button>
+            <button style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+                    class="button is-danger is-light" id="start_end_timer_button">Start
+            </button>
         </div>
+
+        <div class="column">
+            <i class="fa fa-gamepad" style="color: #ee00ff;font-size: 40px;" id="games_start_trigger"></i>
+        </div>
+        <div class="column">
+            <i class="fa fa-dice" style="color: #cf6c6c;font-size: 36px" id="dice_animation_trigger"></i>
+        </div>
+        <div class="column">
+            <i class="fa fa-hand-holding-usd" style="color: #5ed45e;font-size: 36px" id="toss_animation_trigger"></i>
+        </div>
+
+        <div class="column">
+            <h3 class="title is-3"><span id="kids_trigger" onclick="" style="color: gold"><b>K</b></span>/<span onclick="" id="adult_trigger"
+                                                                                                     style="color: cornflowerblue"><b>A</b></span></h3>
+        </div>
+
+
         <div class="column">
             <i class="fa fa-star" style="color: gold;font-size: 36px" id="star_animation_trigger"></i>
         </div>
@@ -58,11 +79,15 @@
             <i class="fa fa-font" style="color: cyan;font-size: 36px" id="text_tool"></i>
         </div>
 
+    <div class="column">
+            <i class="fa fa-camera" style="color: #c673e7;font-size: 36px" id="take_screenshot"></i>
+        </div>
+
+
     </div>
 
+    {# colors #}
     <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="colors">
-
-
         {% for color_name in colors %}
             <div class="column">
                 <span id="{{ color_name }}_color"
@@ -70,20 +95,65 @@
                               display: inline-block"></span>
                 <script>
                     $('#{{ color_name }}_color').click(function () {
-                     //   alert("{{ color_name }}");
-                        let socket = io.connect('http://localhost:5001');
+
+                        let socket = io.connect('/');
                         socket.emit('drawing_tools_signal_receive', {
                             'type_of_action': 'color_change',
                             'color': '{{ color_name }}'
                         });
 
-                        $('#toolbar').show(1500);
-                        $('#colors').hide(1000);
+                        $('#toolbar').show(500);
+                        $('#colors').hide(200);
                     });
                 </script>
             </div>
         {% endfor %}
+        <span id="close_color_select" style="background-color: indianred;
+                display: inline-block"> <i class="fas fa-window-close"></i> </span>
     </div>
+
+
+    {# thickness #}
+    <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="thickness">
+        <div class="column">
+            <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(3)">
+                <b>Fine Tune Pen</b>
+                <progress style="margin-top: 6px;width: 100px;height: 5px;"
+                          class="progress is-danger" value="100" max="100"></progress>
+            </div>
+        </div>
+        <div class="column">
+            <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(5)">
+                <b>Medium Tune Pen</b>
+                <progress style="margin-top: 6px;width: 130px;height: 9px;"
+                          class="progress is-danger" value="100" max="100"></progress>
+            </div>
+        </div>
+        <div class="column">
+            <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(7)">
+                <b>Thick Tune Pen</b>
+                <progress style="margin-top: 6px;width: 110px;height: 13px;"
+                          class="progress is-danger" value="100" max="100"></progress>
+            </div>
+        </div>
+        <div class="column">
+            <span id="close_thickness_select" class="fas fa-window-close"
+            ></span>
+        </div>
+    </div>
+
+    <script>
+        function thickness_emit(thickness_size) {
+            let socket = io.connect('/'); // todo: does this work?
+            socket.emit('drawing_tools_signal_receive', {
+                'type_of_action': 'thickness_size',
+                'thickness_size': thickness_size
+            });
+
+            $('#toolbar').show(500);
+            $('#thickness').hide(200);
+        }
+    </script>
 
 
 {% endblock %}
