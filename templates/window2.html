@@ -76,7 +76,7 @@
             </div>
         </div>
 
-        <div class="columns" id="choose_games" style="display: none">
+        <div class="columns" id="choose_games" style="display: none;">
             <div class="column box" id="game_1" style="margin:8px;height:450px;">
                 <h2 class="title is-2" style="color: white">TikTakToe</h2>
             </div>
@@ -101,10 +101,10 @@
             <div class="column" id="score_area">
                 <h4 class="title is-4" style="color: #5efa0a" id="whose-turn">Teacher's Turn</h4>
 
-                <h4 class="title is-4" style="color: #aee0de">Student's Score</h4>
+                <h4 class="title is-4" style="color: cornflowerblue">Student's Score (X)</h4>
                 <h2 class="title is-3" style="color: gold" id="student-score">0</h2>
                 <br>
-                <h4 class="title is-4" style="color: #d9a9a9">Teacher's Score</h4>
+                <h4 class="title is-4" style="color: hotpink">Teacher's Score (O)</h4>
                 <h2 class="title is-3" style="color: gold" id="teacher-score">0</h2>
             </div>
 
@@ -187,13 +187,14 @@
                             <div class="column box" style="margin: 8px" id="tik_tak_toe_{{ i }}_{{ j }}"
                                  onclick="change_tik_tak_toe_result({{ i }},{{ j }})">
                                 <img style="height: 96px;width: 96px;z-index: 0" id="card_{{ i }}_{{ j }}"
-                                     src="{{ url_for('static', filename='images/pdf_pic.jpg') }}" alt="{{ i }}">
+                                     src="https://i2.wp.com/files.123freevectors.com/wp-content/uploads/new/animals/370-cartoon-dog-vector-image.png?w=800&q=95"
+                                     alt="{{ i }}">
 
                                 <i class="fa fa-times"
-                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden"
+                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden;color: cornflowerblue"
                                    id="cross_{{ i }}_{{ j }}"></i>
                                 <i class="fa fa-circle"
-                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden"
+                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden;color: hotpink"
                                    id="circle_{{ i }}_{{ j }}"></i>
                             </div>
                         {% endfor %}
@@ -217,18 +218,64 @@
     {# start => match game screen #}
     <div class="box" id="match_game" style="background: #207bdd;display: none;margin: 8px">
         <h3 class="title is-3" style="font-weight: bolder">MATCH</h3>
-        <h6 class="subtitle is-6" style="display: none">Please choose Grade and Lesson</h6>
+        <h6 class="subtitle is-6" style="display: none;">Please choose Grade and Lesson</h6>
 
+        <script>
+            let last_selected = null; // [i,j]
+            // let colors = [[], [], []];
+            let already_chosen = [];
 
+            function chosen_first_grid(j, i) {
+                if (last_selected != null && !already_chosen.includes(last_selected)) {
+                    $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css({'box-shadow': ''});
+                    $(`#number_${last_selected[0]}_${last_selected[1]}`).css({'color': 'black'});
+                }
+                //card_1.effect("shake", {direction: "up", times: 5, distance: 50}, 2000);
+                $(`#match_1_${i}_${j}`).css({'box-shadow': '10px 10px 5px hotpink'});
+                $(`#number_${i}_${j}`).css({'color': 'hotpink'});
+                last_selected = [i, j];
+            }
+
+            function chosen_second_grid(j, i) {
+                // todo: get the mapping between grid-1 and grid-2, thus used to match
+                // todo: if correct/wrong make sound
+                if (last_selected != null) {
+                    document.getElementById('play_star_sound').click();
+                    $(`#match_2_${j}_${i}`).hide(1500);
+                    $(`#number_${last_selected[0]}_${last_selected[1]}`).css({'font-size': '18px', 'color': 'green'}
+                    ).hide().show(1500).text($(`#name_${i}_${j}`).text());
+                    $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css({'pointer-events': 'none'}).css({'box-shadow': '10px 10px 5px green'});// make the 1st grid elem unclickable
+                    // todo: if correct then add to already chose
+                    already_chosen.push(last_selected);
+                    // $(`#letter_${i}_${j}`).text('✔️');
+                } else {
+                    // todo: show a notification that nothing is selected from grid-1
+                }
+
+            }
+        </script>
 
         <div class="columns">
             {# game's first part #}
+            {% set grid_num = [[1,2,3],[4,5,6],[7,8,9]] %}
             <div class="box column is-two-fifths" style="background: black">
+                {% set num=0 %}
                 {% for j in range(3) %}
                     <div class="columns">
                         {% for i in range(3) %}
-                            <div class="column box" style="margin: 8px" id="match_1_{{ i }}_{{ j }}">
-
+                            {% set num= num + 1 %}
+                            <div class="column box"
+                                 style="margin: 8px;"
+                                 id="match_1_{{ i }}_{{ j }}"
+                                 onclick="chosen_first_grid({{ j }},
+                                         {{ i }})">
+                                <h2 class="title is-3" id="number_{{ i }}_{{ j }}"
+                                    style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ grid_num[j][i] }}</h2>
+                                <img
+                                        style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                        id="match_card_2_{{ i }}_{{ j }}"
+                                        src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                                        alt="{{ i }}">
                             </div>
                         {% endfor %}
                     </div>
@@ -236,13 +283,17 @@
                 {% endfor %}
             </div>
             {# game's second part #}
+            {% set grid_letter = [['A','B','C'],['D','E','F'],['G','H','I']] %}
             <div class="box column is-two-fifths" style="background: black;margin-left: 16px">
                 {% for j in range(3) %}
                     <div class="columns">
                         {% for i in range(3) %}
-                            <div class="column box" style="margin: 8px" id="match_2_{{ i }}_{{ j }}">
-                                <img style="height: 96px;width: 96px;z-index: 0" id="match_card_2_{{ i }}_{{ j }}"
-                                     src="{{ url_for('static', filename='images/pdf_pic.jpg') }}" alt="{{ i }}">
+                            <div class="column box" style="margin: 8px;height: 126px;background: #02c9ff"
+                                 id="match_2_{{ i }}_{{ j }}" onclick="chosen_second_grid({{ i }},{{ j }})">
+                                <h2 class="title is-2" id="letter_{{ i }}_{{ j }}"
+                                    style="font-weight: bolder;color: black">{{ grid_letter[j][i] }}</h2>
+                                <h5 class="title is-5 has-text-centered" style="color: blue" id="name_{{ i }}_{{ j }}">
+                                    Elephant</h5>
                             </div>
                         {% endfor %}
                     </div>
@@ -256,11 +307,63 @@
             </div>
         </div>
     </div>
+
     {# end => match game screen #}
 
 
 
+    {# start => find game screen #}
+    <div class="box" id="find_game" style="background: black;display: none;margin: 8px">
+        <div class="columns">
+            <div class="column">
+                <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">FIND</h3>
+            </div>
+            <div class="column">
+                {# todo: start button #}
+                <h3 class="title is-3" style="color:green;">Time: 00:08</h3>
+                <div class="columns">
+                    <div class="column box is-center is-full">
+                        <img
+                                style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                id="card_"
+                                src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                                alt="_">
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <h3 class="title is-3" style="color: gold">Points: 0</h3>
+            </div>
+        </div>
+        <div class="columns">
+            {% for k in range(5) %}
+                <div class="column box" style="margin: 8px">
+                    <h2 class="title is-3" id="number_{{ k }}"
+                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
+                    <img
+                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                            id="card_{{ k }}"
+                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            alt="{{ k }}">
+                </div>
+            {% endfor %}
+        </div>
+        <div class="columns">
+            {% for y in range(5,9) %}
+                <div class="column box" style="margin: 8px">
+                    <h2 class="title is-3" id="number_{{ y }}"
+                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ y }}</h2>
+                    <img
+                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                            id="card_{{ y }}"
+                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            alt="{{ y }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 
+    {# end => find game screen #}
 
 
 

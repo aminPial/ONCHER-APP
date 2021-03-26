@@ -96,26 +96,11 @@ $(document).ready(function () {
         }
     });
 
-    // todo:...................
-    let chosen_image = null;
-
-    function choose_from_grid_1(key_name) {
-        chosen_image = key_name;
-    }
-
-    function check_after_chosen_from_2(letter_name) {
-        if (grid_data[chosen_image] === letter_name) {
-            // means correct
-            // todo: implement a nice interface
-            alert("Nice, Correct");
-        } else {
-            // not correct
-            alert("Incorrect");
-        }
-    }
 
 
     $('#game_3').click(function () {
+        $('#initial_box').hide(1000);
+        $('#find_game').show(1200);
 
     });
     $('#game_4').click(function () {
