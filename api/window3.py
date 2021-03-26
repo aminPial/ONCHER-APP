@@ -78,3 +78,15 @@ def drawing_tools_signal_receive(data):
         payload['thickness_size'] = data['thickness_size']
 
     emit('drawing_tools_trigger', payload, namespace='/', broadcast=True)
+
+
+# K/A
+@socket_io.on('k_a_switch')
+def k_or_a_receive_signal(data):
+    print(data)
+    emit('k_a_emit_signal', {'k_or_a': data['k_or_a']}, namespace='/', broadcast=True)
+
+
+@socket_io.on('switch_to_games_receive')
+def switch_to_games(data):
+    emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)

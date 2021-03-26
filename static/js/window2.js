@@ -49,11 +49,97 @@ $(document).ready(function () {
 
     });
 
+
+    // GAMES <<<<
+    socket.on('switch_to_games_emit', function (data) {
+        // let initial = data['is_initial'];
+        $('#intro_screen').hide(1000);
+        $('#choose_games').show(1200);
+    });
+
+    // on click games
+    $('#game_1').click(function () {
+        $('#initial_box').hide(1000);
+        $('#tik_tak_toe').show(1200);
+    });
+
+
+    // game 1 related button clicks
+    $('#new_game').click(function () {
+        $('#tik_tak_toe').hide(1000);
+        $('#choose_games').show(1200);
+    });
+    $('#back_to_lesson').click(function () {
+        $('#tik_tak_toe').hide(1000);
+        $('#intro_screen').show(1200); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
+    });
+
+
+    $('#game_2').click(function () {
+        $('#initial_box').hide(1000);
+        $('#match_game').show(1200);
+    });
+
+    // logics of match game
+    let grid_data = {};
+    socket.on('grade_lesson_change', function (data) {
+        grid_data = data['grid_data']; // {'CAT.jpg':A, 'DOG.png':B..}
+        let grid_itself = data['grid_itself']; // [['cat.jpg',...],[],[]]
+        // update the images
+        for (let m = 0; m < 3; m++) {
+            for (let n = 0; n < 3; n++) {
+                $(`#match_1_${m}_${n}`).empty().append('<img style="height: 96px;width: 96px;z-index: 0" id="match_card_1_' + `${m}_${n}"\n` +
+                    '                \n' +
+                    '                                    src=' + `"/static/saved/${grid_itself[m][n]}"` + ` alt="${grid_itself[m][n]}">`);
+
+            }
+        }
+    });
+
+    // todo:...................
+    let chosen_image = null;
+
+    function choose_from_grid_1(key_name) {
+        chosen_image = key_name;
+    }
+
+    function check_after_chosen_from_2(letter_name) {
+        if (grid_data[chosen_image] === letter_name) {
+            // means correct
+            // todo: implement a nice interface
+            alert("Nice, Correct");
+        } else {
+            // not correct
+            alert("Incorrect");
+        }
+    }
+
+
+    $('#game_3').click(function () {
+
+    });
+    $('#game_4').click(function () {
+
+    });
+
+
     // show the selected student's data (name, star, diamond and etc.)
     // global variables
     let STUDENT_ID = null; // this is needed when sending signal to update star count in server
 
+    // this variable is dependent on the K/A socket emit
+    let k_or_a = "K";
+    let current_student_data = null;
+
+
     socket.on('select_student_signal_receive', function (data) {
+        current_student_data = data;
+        update_student_bar();
+    });
+
+    function update_student_bar() {
+        let data = current_student_data;
+        // alert(k_or_a);
         // data -> {'name': 'Alex', 'star': 0, 'diamond': 0, 'id': 'this is needed to send signal to server to add stars'}
 
         // &nbsp; for space at right
@@ -62,14 +148,27 @@ $(document).ready(function () {
         let left_stars = parseInt(data['star']) % 10;// as there are 10 stars each, so current sprint progress
         if (left_stars == null)
             left_stars = 0;
-        for (let i = 0; i < left_stars; i++)
-            $(`#star_count_${i}`).css('color', 'gold'); // update the style -> make the color gold
+        for (let i = 0; i < left_stars; i++) {
+            $(`#star_count_${i}`).css('color', k_or_a === "K" ? 'gold' : 'green'); // update the style -> make the color gold
+            document.getElementById(`star_count_${i}`).className = k_or_a === "K" ? "fa fa-star" : "fa fa-check";
+        }
         // clear the styles afters
-        for (let i = left_stars; i < 10; i++) // as 0  index so for 10 items 0...9
+        for (let i = left_stars; i < 10; i++) { // as 0  index so for 10 items 0...9
             $(`#star_count_${i}`).css('color', '');
+            document.getElementById(`star_count_${i}`).className = k_or_a === "K" ? "fa fa-star" : "fa fa-check";
+        }
         // total
         $('#star_count').text(data['star'].toString());
         $('#diamond_count').text(data['diamond'].toString());
+        if (k_or_a === "K") {
+            document.getElementById("star_icon").className = "fa fa-star";
+            $('#diamond_count_div').css({'visibility': 'visible', 'margin-left': '12px'});
+            $('#star_icon').css({'font-size': '24px', 'color': 'gold'});
+        } else {
+            $('#diamond_count_div').css({'visibility': 'hidden', 'margin-left': '12px'});
+            document.getElementById("star_icon").className = "fas fa-check";
+            $('#star_icon').css({'font-size': '24px', 'color': 'green'});
+        }
         // show if hidden previously => on first student choice
         if (STUDENT_ID == null) {
             $('#app_logo_section').empty().append("<figure class=\"image is-48x48\">\n" +
@@ -83,7 +182,7 @@ $(document).ready(function () {
             $('#diamond_count_div').css('visibility', 'visible');
         }
         STUDENT_ID = data['id'];
-    });
+    }
 
     // animation trigger receive from window 3
 
@@ -157,9 +256,29 @@ $(document).ready(function () {
                 "transform",
                 "translateZ(-100px) rotateY(" + x + "deg) rotateX(" + y + "deg)"
             );
+        } else if (animation_type === "toss") {
+            $('#toss_animation_div').show(1).delay(2500).hide(1);
+            let coin = $('#coin');
+            // x == 0 is head
+            if (Math.floor(Math.random() * 2) === 0)
+                coin.empty().append(
+                    '<img class="heads animate-coin" src="https://upload.wikimedia.org/wikipedia/en/5/52/British_fifty_pence_coin_2015_obverse.png"/>');
+            else
+                coin.empty().append(
+                    '<img class="tails animate-coin" src="https://upload.wikimedia.org/wikipedia/en/d/d8/British_fifty_pence_coin_2015_reverse.png"/>');
+
         }
 
     });
+
+
+    // K_A
+    // todo: implement dynamic change here..... already selected and then when you choose K/A then update it..
+    socket.on('k_a_emit_signal', function (data) {
+        k_or_a = data['k_or_a'];
+        update_student_bar();
+    });
+
 
     let should_stop = false;
 

@@ -42,7 +42,7 @@ database_cluster.create_all()
 # def favicon_ico():
 #     return ""
 
-
+#
 # if __name__ == '__main__':
 #     database_cluster.create_all()
 #     socket_io.run(oncher_app, port=5000, debug=True)

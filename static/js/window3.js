@@ -18,7 +18,7 @@ $(document).ready(function () {
     $('#star_animation_trigger').click(function () {
         // todo: make animation like the AWARD ICON pops up from W3 to W2... and thus hide the star icon from W3
         // make the animation trigger icon -> disable
-       // $('#star_animation_trigger').unbind('click');
+        // $('#star_animation_trigger').unbind('click');
         socket.emit('animation_trigger', {"data": "star"});
         // then after X ms make it enable again
         // setTimeout(function () {
@@ -29,15 +29,16 @@ $(document).ready(function () {
     // todo: games
 
     // todo: toss
-
+    $('#toss_animation_trigger').click(function () {
+        // check todo in star animation click function
+        socket.emit('animation_trigger', {"data": "toss"});
+    });
 
     // dice
     $('#dice_animation_trigger').click(function () {
         // check todo in star animation click function
         socket.emit('animation_trigger', {"data": "dice"});
     });
-
-
 
 
     // timer trigger
@@ -54,6 +55,27 @@ $(document).ready(function () {
     // open time settings
     $('#timer_settings').click(function () {
         socket.emit('open_time_settings', {'': ''});
+    });
+
+    // K/A switch
+    let k_or_a = "K";
+    $('#K_A_switch').click(function () {
+        if(k_or_a==="K"){
+            k_or_a = "A";
+            $('#kids_trigger').css({'color':'black'});
+            $('#adult_trigger').css({'color':'gold'});
+        }
+        else{
+            k_or_a = "K";
+            $('#adult_trigger').css({'color':'black'});
+            $('#kids_trigger').css({'color':'gold'});
+        }
+        socket.emit('k_a_switch', {'k_or_a': k_or_a});
+    });
+
+    // games
+    $('#games_start_trigger').click(function () {
+         socket.emit('switch_to_games_receive', {'': 'games korte hbe'});
     });
 
 

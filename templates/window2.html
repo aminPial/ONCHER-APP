@@ -2,7 +2,7 @@
 
 {% block script_link %}
     <script src="{{ url_for('static', filename='js/window2.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/libraries/jscolor.js') }}"></script>
+    {#    <script src="{{ url_for('static', filename='js/libraries/jscolor.js') }}"></script>#}
 {% endblock %}
 
 {% block css_link %}
@@ -22,23 +22,24 @@
             <div class="column is-narrow-desktop" style="margin-top: 10px;visibility: hidden" id="student_name_div">
 
             </div>
-
+            {#  #}
             <div class="column is-narrow-desktop" style="margin-top: 4px;visibility: hidden" id="stars_bar">
                 {% for i in range(10) %}
                     <i class="fa fa-star" style="font-size: 36px" id="star_count_{{ i }}"></i>
                 {% endfor %}
             </div>
 
-            <div class="column is-1" id="stars_count_div" style=";visibility: hidden">
-                <button class="button is-medium title is-light is-warning"><i class="fal fa-star"
-                                                                              style="font-size: 24px;color: gold"></i>
+            <div class="column is-1" id="stars_count_div" style="visibility: hidden">
+                <button class="button is-medium title is-light is-warning box"><i class="fal fa-star"
+                                                                                  style="font-size: 24px;color: gold"
+                                                                                  id="star_icon"></i>
                     <span style="margin-left: 8px;" id="star_count">0</span>
                 </button>
             </div>
 
-            <div class="column" style="margin-left: 4px;visibility: hidden" id="diamond_count_div">
-                <button class="button is-medium title is-light is-primary "><i class="fal fa-diamond"
-                                                                               style="font-size: 24px;color: cyan"></i>
+            <div class="column" style="margin-left: 8px;visibility: hidden" id="diamond_count_div">
+                <button class="button is-medium title is-light is-primary box"><i class="fal fa-diamond"
+                                                                                  style="font-size: 24px;color: cyan"></i>
                     <span style="margin-left: 8px;" id="diamond_count">0</span>
                 </button>
             </div>
@@ -53,8 +54,9 @@
 
     <div class="box" id="initial_box"
          style="margin: 8px 8px 0;
-         padding: 0;border: none;border-radius: 0;">
-        <div class="columns">
+         padding: 16px;border: none;border-radius: 0;">
+
+        <div class="columns" id="intro_screen">
             <div class="column">
                 <img src="{{ url_for('static',filename='images/init.gif') }}" alt="gif" width="500px" height="350px"
                      style="pointer-events: none">
@@ -67,14 +69,201 @@
                          width="128px"
                          height="128px">
                     <h5 class="title is-5" style="font-family: 'HP Simplified',serif;
-                    margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>
+                            margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>
                     <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt, .pptm,
                         .pptx</h6>
                 </section>
             </div>
         </div>
 
+        <div class="columns" id="choose_games" style="display: none">
+            <div class="column box" id="game_1" style="margin:8px;height:450px;">
+                <h2 class="title is-2" style="color: white">TikTakToe</h2>
+            </div>
+            <div class="column box" id="game_2" style="margin:8px;height:450px;">
+                <h2 class="title is-2" style="color: white">MATCH</h2>
+            </div>
+            <div class="column box" id="game_3" style="margin:8px;height:450px;">
+                <h2 class="title is-2" style="color: white">FIND</h2>
+            </div>
+            <div class="column box" id="game_4" style="margin:8px;height:450px;">
+                <h2 class="title is-2" style="color: white">LISTEN</h2>
+            </div>
+        </div>
+
     </div>
+
+
+    {# start => tik-tak-toe game screen #}
+
+    <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px">
+        <div class="columns is-one-quarter">
+            <div class="column" id="score_area">
+                <h4 class="title is-4" style="color: #5efa0a" id="whose-turn">Teacher's Turn</h4>
+
+                <h4 class="title is-4" style="color: #aee0de">Student's Score</h4>
+                <h2 class="title is-3" style="color: gold" id="student-score">0</h2>
+                <br>
+                <h4 class="title is-4" style="color: #d9a9a9">Teacher's Score</h4>
+                <h2 class="title is-3" style="color: gold" id="teacher-score">0</h2>
+            </div>
+
+            <script>
+                // tik-tak-toe game logics
+                // variables
+                let whose_turn = "teacher"; // first move will be "teacher"
+                let arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]]; // -1 means empty, 0 means teacher 1 means student
+
+                // teacher is 0 and student is X
+                function change_tik_tak_toe_result(i, j) {
+                    // i, j is the clicked position in the 3 x 3 grid of tik-tak-toe game
+                    let tik_tak_toe_card = $(`#tik_tak_toe_${i}_${j}`);
+                    let card_image = $(`#card_${i}_${j}`);
+                    if (whose_turn === "teacher") {
+                        $(`#circle_${i}_${j}`).css('visibility', 'visible');
+                        whose_turn = "student";
+                        arr[i][j] = 0;
+                        $('#whose-turn').hide().text("Student's Turn").show(1000);
+                    } else {
+                        $(`#cross_${i}_${j}`).css('visibility', 'visible');
+                        whose_turn = "teacher";
+                        arr[i][j] = 5;
+                        $('#whose-turn').hide().text("Teacher's Turn").show(1500);
+                    }
+                    // now check if there is any cross (potential points)
+                    // row and col check
+                    for (let x = 0; x < 3; x++) {
+                        let row_tot = 0;
+                        let col_tot = 0;
+                        for (let y = 0; y < 3; y++) {
+                            row_tot += arr[x][y];
+                            col_tot += arr[y][x];
+                        }
+                        // alert(" " + row_tot + " " + col_tot);
+                        if (row_tot === 0 || row_tot === 15)
+                            // done for row
+                            return reset_game(row_tot === 0 ? "teacher" : "student");
+                        if (col_tot === 0 || col_tot === 15)
+                            return reset_game(col_tot === 0 ? "teacher" : "student");
+                    }
+                    // 2 diagonal check
+                    let D1 = arr[0][0] + arr[1][1] + arr[2][2];
+                    if (D1 === 0 || D1 === 15)
+                        return reset_game(D1 === 0 ? "teacher" : "student");
+
+                    let D2 = arr[0][2] + arr[1][1] + arr[2][0];
+                    if (D2 === 0 || D2 === 15)
+                        return reset_game(D2 === 0 ? "teacher" : "student");
+                }
+
+                function reset_game(who_won) {
+                    // todo: implement function
+                    for (let x = 0; x < 3; x++) {
+                        for (let y = 0; y < 3; y++) {
+                            $(`#circle_${x}_${y}`).css('visibility', 'hidden');
+                            $(`#cross_${x}_${y}`).css('visibility', 'hidden');
+                        }
+                    }
+                    if (who_won === "teacher") {
+                        let teacher_score = parseInt($('#teacher-score').text());
+                        teacher_score++;
+                        $('#teacher-score').text("" + teacher_score);
+                    } else {
+                        let student_score = parseInt($('#student-score').text());
+                        student_score++;
+                        $('#student-score').text("" + student_score);
+                    }
+                    arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]];
+                    whose_turn = "teacher"
+
+                }
+            </script>
+
+            <div class="column is-half" id="game_area">
+
+                {% for j in range(3) %}
+                    <div class="columns">
+                        {% for i in range(3) %}
+                            <div class="column box" style="margin: 8px" id="tik_tak_toe_{{ i }}_{{ j }}"
+                                 onclick="change_tik_tak_toe_result({{ i }},{{ j }})">
+                                <img style="height: 96px;width: 96px;z-index: 0" id="card_{{ i }}_{{ j }}"
+                                     src="{{ url_for('static', filename='images/pdf_pic.jpg') }}" alt="{{ i }}">
+
+                                <i class="fa fa-times"
+                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden"
+                                   id="cross_{{ i }}_{{ j }}"></i>
+                                <i class="fa fa-circle"
+                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden"
+                                   id="circle_{{ i }}_{{ j }}"></i>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                {% endfor %}
+
+
+            </div>
+
+            <div class="column is-one-quarter" id="others_area">
+                <button class="button is-success" id="new_game">New Game</button>
+                <br>
+                <button class="button is-danger" id="back_to_lesson" style="margin-top: 12px">Back To Lesson</button>
+            </div>
+        </div>
+    </div>
+
+    {# end => tik-tak-toe game screen #}
+
+    {# start => match game screen #}
+    <div class="box" id="match_game" style="background: #207bdd;display: none;margin: 8px">
+        <h3 class="title is-3" style="font-weight: bolder">MATCH</h3>
+        <h6 class="subtitle is-6" style="display: none">Please choose Grade and Lesson</h6>
+
+
+
+        <div class="columns">
+            {# game's first part #}
+            <div class="box column is-two-fifths" style="background: black">
+                {% for j in range(3) %}
+                    <div class="columns">
+                        {% for i in range(3) %}
+                            <div class="column box" style="margin: 8px" id="match_1_{{ i }}_{{ j }}">
+
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                {% endfor %}
+            </div>
+            {# game's second part #}
+            <div class="box column is-two-fifths" style="background: black;margin-left: 16px">
+                {% for j in range(3) %}
+                    <div class="columns">
+                        {% for i in range(3) %}
+                            <div class="column box" style="margin: 8px" id="match_2_{{ i }}_{{ j }}">
+                                <img style="height: 96px;width: 96px;z-index: 0" id="match_card_2_{{ i }}_{{ j }}"
+                                     src="{{ url_for('static', filename='images/pdf_pic.jpg') }}" alt="{{ i }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                {% endfor %}
+            </div>
+            <div class="column is-one-fifth">
+                <button class="button is-success" id="new_game">New Game</button>
+                <br>
+                <button class="button is-danger" id="back_to_lesson" style="margin-top: 12px">Back To Lesson</button>
+            </div>
+        </div>
+    </div>
+    {# end => match game screen #}
+
+
+
+
+
+
+
     {#    <div class="animation_div" style="display: none">#}
     {#        <img src="{{ url_for('static', filename='images/star.gif') }}" alt="happy_gif"#}
     {#             width="196px"#}
@@ -143,6 +332,20 @@
             </div>
         </div>
     </div>
+
+    {# toss animation #}
+    <div id="toss_animation_div" style="display: none">
+        {#        <img id="featureCoin"#}
+        {#             src="https://upload.wikimedia.org/wikipedia/en/5/52/British_fifty_pence_coin_2015_obverse.png"/>#}
+        <div id='coin'>
+
+        </div>
+    </div>
+
+
+
+
+
 
     <div class="box" id="iframe-container"
          style="margin: 0;padding: 0;border: none;border-radius: 8px;display: none">
@@ -287,20 +490,8 @@
     </div>
 
 
-    {# notifications #}
-    {#
-<div class="notification is-danger is-light" style="position: absolute;bottom: 0;margin-left: 12px;#}
-    {#  margin-right: auto;">#}
-    {#
-    <button class="delete"></button>
-    #}
-    {# <strong>Awesome! Your changes have been Saved.</strong>#}
-    {#
-</div>#}
+
 {% endblock %}
 
-{#
 
-https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
 
-#}
