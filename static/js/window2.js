@@ -64,38 +64,26 @@ $(document).ready(function () {
     });
 
 
-    // game 1 related button clicks
-    $('#new_game').click(function () {
-        $('#tik_tak_toe').hide(1000);
-        $('#choose_games').show(1200);
-    });
-    $('#back_to_lesson').click(function () {
-        $('#tik_tak_toe').hide(1000);
-        $('#intro_screen').show(1200); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
-    });
-
-
     $('#game_2').click(function () {
         $('#initial_box').hide(1000);
         $('#match_game').show(1200);
     });
 
     // logics of match game
-    let grid_data = {};
-    socket.on('grade_lesson_change', function (data) {
-        grid_data = data['grid_data']; // {'CAT.jpg':A, 'DOG.png':B..}
-        let grid_itself = data['grid_itself']; // [['cat.jpg',...],[],[]]
-        // update the images
-        for (let m = 0; m < 3; m++) {
-            for (let n = 0; n < 3; n++) {
-                $(`#match_1_${m}_${n}`).empty().append('<img style="height: 96px;width: 96px;z-index: 0" id="match_card_1_' + `${m}_${n}"\n` +
-                    '                \n' +
-                    '                                    src=' + `"/static/saved/${grid_itself[m][n]}"` + ` alt="${grid_itself[m][n]}">`);
-
-            }
-        }
-    });
-
+    // let grid_data = {};
+    // socket.on('grade_lesson_change', function (data) {
+    //     grid_data = data['grid_data']; // {'CAT.jpg':A, 'DOG.png':B..}
+    //     let grid_itself = data['grid_itself']; // [['cat.jpg',...],[],[]]
+    //     // update the images
+    //     for (let m = 0; m < 3; m++) {
+    //         for (let n = 0; n < 3; n++) {
+    //             $(`#match_1_${m}_${n}`).empty().append('<img style="height: 96px;width: 96px;z-index: 0" id="match_card_1_' + `${m}_${n}"\n` +
+    //                 '                \n' +
+    //                 '                                    src=' + `"/static/saved/${grid_itself[m][n]}"` + ` alt="${grid_itself[m][n]}">`);
+    //
+    //         }
+    //     }
+    // });
 
 
     $('#game_3').click(function () {
@@ -104,7 +92,68 @@ $(document).ready(function () {
 
     });
     $('#game_4').click(function () {
+        $('#initial_box').hide(1000);
+        $('#listen_game').show(1200);
+        socket.emit('game_4_initialize', {'': ''});
+    });
 
+
+    // back funcs
+
+    // first game
+    $('#new_game_from_game_1').click(function () {
+        $('#tik_tak_toe').hide(1000);
+        $('#intro_screen').hide(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
+        $('#choose_games').show();
+        $('#initial_box').show(1200);
+    });
+    $('#back_to_lesson_from_game_1').click(function () {
+        $('#tik_tak_toe').hide(1000);
+        $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
+        $('#choose_games').hide();
+        $('#initial_box').show(1200);
+    });
+
+    // second game
+    $('#new_game_from_game_2').click(function () {
+        $('#match_game').hide(1000);
+        $('#intro_screen').hide(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
+        $('#choose_games').show();
+        $('#initial_box').show(1200);
+    });
+    $('#back_to_lesson_from_game_2').click(function () {
+        $('#match_game').hide(1000);
+        $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
+        $('#choose_games').hide();
+        $('#initial_box').show(1200);
+    });
+
+    // third game
+    $('#new_game_from_game_3').click(function () {
+        $('#find_game').hide(1000);
+        $('#intro_screen').hide();
+        $('#choose_games').show();
+        $('#initial_box').show(1200);
+    });
+    $('#back_to_lesson_from_game_3').click(function () {
+        $('#find_game').hide(1000);
+        $('#intro_screen').show();
+        $('#choose_games').hide();
+        $('#initial_box').show(1200);
+    });
+
+    // fourth game
+    $('#new_game_from_game_4').click(function () {
+        $('#listen_game').hide(1000);
+        $('#intro_screen').hide();
+        $('#choose_games').show();
+        $('#initial_box').show(1200);
+    });
+    $('#back_to_lesson_from_game_4').click(function () {
+        $('#listen_game').hide(1000);
+        $('#intro_screen').show();
+        $('#choose_games').hide();
+        $('#initial_box').show(1200);
     });
 
 
@@ -315,7 +364,7 @@ $(document).ready(function () {
                             minutes) + ":" + (seconds > 9 ? seconds : "0" + seconds);
 
                     // If the count down is over, write some text
-                    if (distance < 0 || should_stop) {
+                    if (distance <= 0 || should_stop) {
                         console.log("here");
                         clearInterval(x);
                         document.getElementById("time_count").innerHTML = "00:00";
@@ -556,3 +605,6 @@ $(document).ready(function () {
 
 
 });
+
+
+

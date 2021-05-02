@@ -1,4 +1,6 @@
 # main screen
+from flask_socketio import emit
+
 from server import oncher_app, socket_io, database_cluster
 from flask import render_template
 import pickle
@@ -35,3 +37,10 @@ def add_star_to_student_record(data):
     student_object.total_stars = student_object.total_stars + 1
     database_cluster.session.commit()
     return {}
+
+
+@socket_io.on('game_4_initialize')
+def game_4_initialize(data):
+    print(data)
+    emit('game_4_init_emit_signal', {'image_name': 'CAT' if 'image_name' not in data.keys() else data['image_name']},
+         namespace='/', broadcast=True)

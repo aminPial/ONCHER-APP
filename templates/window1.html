@@ -17,7 +17,7 @@
             <div class="dropdown-trigger">
                 <button class="button is-danger is-outlined is-light" aria-haspopup="true"
                         aria-controls="dropdown-menu3">
-                    <span>Pick Student&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span id="base_student_text">Pick Student&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                     <span class="icon is-small">
         <i class="fas fa-angle-down" aria-hidden="true"></i>
       </span>
@@ -27,13 +27,15 @@
                 <div class="dropdown-content">
 
                     {% for student in students %}
-                        <a onclick="send_student_select_signal({{ student.id }})" class="dropdown-item">
+                        <a onclick="send_student_select_signal({{ student.id }},'{{ student.name }}')"
+                           class="dropdown-item">
                             {{ student.name }}
                         </a>
                     {% endfor %}
 
                     <script>
-                        function send_student_select_signal(student_db_id) {
+                        function send_student_select_signal(student_db_id, student_name) {
+                            $('#base_student_text').text(student_name);
                             let socket = io.connect('/');
                             socket.emit('student_select_signal_receive', {
                                 'id': student_db_id
@@ -89,7 +91,7 @@
             <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
             <div class="dropdown-trigger">
                 <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
-                    <span>5</span>
+                    <span id="base_grade_text">--</span>
                     <span class="icon is-small">
         <i class="fas fa-angle-down" aria-hidden="true"></i>
       </span>
@@ -97,14 +99,22 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu3" role="menu">
                 <div class="dropdown-content">
+                    {% for grade in grade_lessons %}
+                        <a onclick="send_grade_select_signal({{ grade }})" class="dropdown-item">
+                            {{ grade }}
+                        </a>
+                    {% endfor %}
 
+                    <script>
+                        function send_grade_select_signal(grade) {
+                            $('#base_grade_text').text(`${grade}`);
+                            let socket = io.connect('/');
+                            socket.emit('grade_select_signal_receive', {
+                                'grade': grade
+                            });
+                        }
 
-                    <a href="#" class="dropdown-item">
-                        6
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        7
-                    </a>
+                    </script>
 
                 </div>
             </div>
@@ -114,7 +124,7 @@
             <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>
             <div class="dropdown-trigger">
                 <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
-                    <span>12</span>
+                    <span id="base_lesson_text">--</span>
                     <span class="icon is-small">
         <i class="fas fa-angle-down" aria-hidden="true"></i>
       </span>
@@ -122,13 +132,24 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu5" role="menu">
                 <div class="dropdown-content">
+                    {# todo: lessons must have to be mapped with grade..... use js to update it #}
+                    {% for grade in grade_lessons %}
+                        <a onclick="send_lesson_select_signal({{ grade }})" class="dropdown-item">
+                            {{ grade }}
+                        </a>
+                    {% endfor %}
 
-                    <a href="#" class="dropdown-item">
-                        13
-                    </a>
-                    <a href="#" class="dropdown-item">
-                        14
-                    </a>
+                    <script>
+                        function send_lesson_select_signal(lesson) {
+                            $('#base_lesson_text').text(`${lesson}`)
+                            let socket = io.connect('/');
+                            socket.emit('lesson_select_signal_receive', {
+                                'lesson': lesson
+                            });
+                        }
+
+                    </script>
+
 
                 </div>
             </div>
@@ -141,9 +162,9 @@
         </div>
     </div>
 
-{#    <div class="notification is-success is-light" style="z-index: 2;position: absolute;margin: 8px">#}
-{#        Student: <strong>Alex</strong> has been added.#}
-{#    </div>#}
+    {#    <div class="notification is-success is-light" style="z-index: 2;position: absolute;margin: 8px">#}
+    {#        Student: <strong>Alex</strong> has been added.#}
+    {#    </div>#}
 
 
 

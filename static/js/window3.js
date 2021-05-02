@@ -60,22 +60,21 @@ $(document).ready(function () {
     // K/A switch
     let k_or_a = "K";
     $('#K_A_switch').click(function () {
-        if(k_or_a==="K"){
+        if (k_or_a === "K") {
             k_or_a = "A";
-            $('#kids_trigger').css({'color':'black'});
-            $('#adult_trigger').css({'color':'gold'});
-        }
-        else{
+            $('#kids_trigger').css({'color': 'black'});
+            $('#adult_trigger').css({'color': 'gold'});
+        } else {
             k_or_a = "K";
-            $('#adult_trigger').css({'color':'black'});
-            $('#kids_trigger').css({'color':'gold'});
+            $('#adult_trigger').css({'color': 'black'});
+            $('#kids_trigger').css({'color': 'gold'});
         }
         socket.emit('k_a_switch', {'k_or_a': k_or_a});
     });
 
     // games
     $('#games_start_trigger').click(function () {
-         socket.emit('switch_to_games_receive', {'': 'games korte hbe'});
+        socket.emit('switch_to_games_receive', {'': 'games korte hbe'});
     });
 
 
@@ -111,6 +110,13 @@ $(document).ready(function () {
     $('#close_thickness_select').click(function () {
         $('#toolbar').show(500)
         $('#thickness').hide(200);
+    });
+
+    // last game => game4 special function
+    socket.on('game_4_init_emit_signal', function (data) {
+         // this will be used for "SAY CAT" and etc.
+        $('#image_name').text(data['image_name']); // has to be ALL CAPS
+        $('#game_4_special').show();
     });
 
 

@@ -95,7 +95,6 @@
 
 
     {# start => tik-tak-toe game screen #}
-
     <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px">
         <div class="columns is-one-quarter">
             <div class="column" id="score_area">
@@ -113,19 +112,21 @@
                 // variables
                 let whose_turn = "teacher"; // first move will be "teacher"
                 let arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]]; // -1 means empty, 0 means teacher 1 means student
+                let count_clicks = 0;
 
                 // teacher is 0 and student is X
                 function change_tik_tak_toe_result(i, j) {
+                    count_clicks++;
                     // i, j is the clicked position in the 3 x 3 grid of tik-tak-toe game
                     let tik_tak_toe_card = $(`#tik_tak_toe_${i}_${j}`);
                     let card_image = $(`#card_${i}_${j}`);
                     if (whose_turn === "teacher") {
-                        $(`#circle_${i}_${j}`).css('visibility', 'visible');
+                        $(`#canvas_circle_${i}__${j}`).css('visibility', 'visible');
                         whose_turn = "student";
                         arr[i][j] = 0;
                         $('#whose-turn').hide().text("Student's Turn").show(1000);
                     } else {
-                        $(`#cross_${i}_${j}`).css('visibility', 'visible');
+                        $(`#canvas_cross_${i}__${j}`).css('visibility', 'visible');
                         whose_turn = "teacher";
                         arr[i][j] = 5;
                         $('#whose-turn').hide().text("Teacher's Turn").show(1500);
@@ -154,17 +155,25 @@
                     let D2 = arr[0][2] + arr[1][1] + arr[2][0];
                     if (D2 === 0 || D2 === 15)
                         return reset_game(D2 === 0 ? "teacher" : "student");
+
+                    if (count_clicks === 9) {
+                        alert("Draw man");
+                        // todo: return reset_game()
+                    }
+                    // todo: check for draw..... and show and it's draw... and reset
                 }
 
                 function reset_game(who_won) {
                     // todo: implement function
                     for (let x = 0; x < 3; x++) {
                         for (let y = 0; y < 3; y++) {
-                            $(`#circle_${x}_${y}`).css('visibility', 'hidden');
-                            $(`#cross_${x}_${y}`).css('visibility', 'hidden');
+                            $(`#canvas_circle_${x}__${y}`).css('visibility', 'hidden');
+                            $(`#canvas_cross_${x}__${y}`).css('visibility', 'hidden');
                         }
                     }
-                    if (who_won === "teacher") {
+                    if (who_won === "none") {
+
+                    } else if (who_won === "teacher") {
                         let teacher_score = parseInt($('#teacher-score').text());
                         teacher_score++;
                         $('#teacher-score').text("" + teacher_score);
@@ -174,9 +183,27 @@
                         $('#student-score').text("" + student_score);
                     }
                     arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]];
-                    whose_turn = "teacher"
+                    whose_turn = "teacher";
+                    count_clicks = 0;
 
                 }
+
+                // on change grade and lesson, change the card images
+                let socket = io.connect('/');
+                socket.on('grade_and_lesson_change', function (data) {
+                    // games_name => tik_tak_toe, find, match, listen
+                    // data = { 'game_name':array, 'game_name_1': array,... }
+                    // data = [['image_url_1', 'image_url_2','i_u_3'], [...., ..., ...]]
+                    // clean the cards inside content
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            $(`#card_${i}_${j}`).attr('src', data['tik_tak_toe'][i][j]);
+                        }
+                    }
+                    reset_game("none");
+                });
+
+
             </script>
 
             <div class="column is-half" id="game_area">
@@ -184,31 +211,58 @@
                 {% for j in range(3) %}
                     <div class="columns">
                         {% for i in range(3) %}
-                            <div class="column box" style="margin: 8px" id="tik_tak_toe_{{ i }}_{{ j }}"
+                            <div class="column box" style="position:relative;margin: 8px"
+                                 id="tik_tak_toe_{{ i }}_{{ j }}"
                                  onclick="change_tik_tak_toe_result({{ i }},{{ j }})">
-                                <img style="height: 96px;width: 96px;z-index: 0" id="card_{{ i }}_{{ j }}"
+
+                                <img style="height: 96px;width: 96px;z-index: 1;position: absolute"
+                                     id="card_{{ i }}_{{ j }}"
                                      src="https://i2.wp.com/files.123freevectors.com/wp-content/uploads/new/animals/370-cartoon-dog-vector-image.png?w=800&q=95"
                                      alt="{{ i }}">
 
-                                <i class="fa fa-times"
-                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden;color: cornflowerblue"
-                                   id="cross_{{ i }}_{{ j }}"></i>
-                                <i class="fa fa-circle"
-                                   style="font-size: 90px;z-index: 4;position: absolute;visibility: hidden;color: hotpink"
-                                   id="circle_{{ i }}_{{ j }}"></i>
+                                {# draw circle #}
+                                <canvas id="canvas_circle_{{ i }}__{{ j }}" width="110" height="110"
+                                        style="z-index: 2;position: relative;visibility: hidden"></canvas>
+                                <script>
+                                    var ctx = document.getElementById("canvas_circle_{{ i }}__{{ j }}").getContext("2d");
+                                    ctx.lineWidth = 7;
+                                    ctx.strokeStyle = 'cornflowerblue';
+                                    ctx.beginPath();
+                                    ctx.arc(55, 55, 50, 0, 2 * Math.PI);
+                                    ctx.stroke();
+                                </script>
+
+                                {# draw cross #}
+                                <canvas id="canvas_cross_{{ i }}__{{ j }}" width="110" height="100"
+                                        style="z-index: 3;position: relative;margin-top: -110px;visibility: hidden"></canvas>
+                                <script>
+                                    var ctx2 = document.getElementById("canvas_cross_{{ i }}__{{ j }}").getContext("2d");
+                                    ctx2.lineWidth = 7;
+                                    ctx2.strokeStyle = 'hotpink';
+                                    ctx2.beginPath();
+                                    var x = 40;
+                                    var y = 15;
+                                    ctx2.moveTo(x - 20, y - 20);
+                                    ctx2.lineTo(x + 40, y + 40);
+                                    ctx2.moveTo(x + 40, y - 20);
+                                    ctx2.lineTo(x - 20, y + 40);
+                                    ctx2.stroke();
+                                </script>
+
                             </div>
                         {% endfor %}
                     </div>
-
                 {% endfor %}
 
 
             </div>
 
             <div class="column is-one-quarter" id="others_area">
-                <button class="button is-success" id="new_game">New Game</button>
+                <button class="button is-success" id="new_game_from_game_1">New Game</button>
                 <br>
-                <button class="button is-danger" id="back_to_lesson" style="margin-top: 12px">Back To Lesson</button>
+                <button class="button is-danger" id="back_to_lesson_from_game_1" style="margin-top: 12px">Back To
+                    Lesson
+                </button>
             </div>
         </div>
     </div>
@@ -301,9 +355,11 @@
                 {% endfor %}
             </div>
             <div class="column is-one-fifth">
-                <button class="button is-success" id="new_game">New Game</button>
+                <button class="button is-success" id="new_game_from_game_2">New Game</button>
                 <br>
-                <button class="button is-danger" id="back_to_lesson" style="margin-top: 12px">Back To Lesson</button>
+                <button class="button is-danger" id="back_to_lesson_from_game_2" style="margin-top: 12px">Back To
+                    Lesson
+                </button>
             </div>
         </div>
     </div>
@@ -313,22 +369,149 @@
 
 
     {# start => find game screen #}
-    <div class="box" id="find_game" style="background: black;display: none;margin: 8px">
+    <div class="box" id="find_game" style="background: #8b35d5;display: none;margin: 8px">
         <div class="columns">
             <div class="column">
                 <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">FIND</h3>
             </div>
             <div class="column">
                 {# todo: start button #}
-                <h3 class="title is-3" style="color:green;">Time: 00:08</h3>
-                <div class="columns">
-                    <div class="column box is-center is-full">
-                        <img
-                                style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                                id="card_"
-                                src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
-                                alt="_">
+                <h2 class="title is-3" style="color:green;">
+                    {% for i in range(5) %}&nbsp;{% endfor %}
+                    <span style="color: #5ce55c" id="find_game_timer">00:08</span>
+                    <span style="color: #60b8f3"><i class="fa fa-play" id="start_find_game_timer"
+                                                    style="cursor: pointer"></i></span>
+                    <script>
+
+                        // todo: from where we are getting the flashcard names and all?
+                        let the_find_game_array = []; // flat array AKA 1-Dimension
+                        let index_elem_map = new Map();
+                        // on change grade and lesson, change the card images
+                        let socket = io.connect('/');
+                        socket.on('grade_and_lesson_change', function (data) {
+                            // games_name => tik_tak_toe, find, match, listen
+                            // data = { 'game_name':array, 'game_name_1': array,... }
+                            // data = [['image_url_1', 'image_url_2','i_u_3'], [...., ..., ...]]
+                            // clean the cards inside content
+                            // this one is "find" game
+                            the_find_game_array = data['find']; // {'find': [.....]} 9 elements and a singular array
+                            // we create a map, to match the random elem with the index while TESTING
+                            for (let i = 0; i < the_find_game_array.length; i++)
+                                index_elem_map.set(the_find_game_array[i], i);
+                        });
+
+                        // find game javascript
+                        $('#start_find_game_timer').click(function () {
+                            // todo: change the icon
+                            // for now just hide the icon
+                            $('#start_find_game_timer').hide();
+
+                            const countDownDate = new Date();
+                            const TIME_TO_SHOW_IN_SEC = 8 + 2; // +2 means extra 2 seconds to process the code and start the timer
+                            countDownDate.setSeconds(countDownDate.getSeconds() + TIME_TO_SHOW_IN_SEC); //
+
+                            let x = setInterval(function () {
+
+                                // Get today's date and time
+                                const now = new Date().getTime();
+
+                                // Find the distance between now and the count down date
+                                const distance = countDownDate - now;
+
+                                // Time calculations for days, hours, minutes and seconds
+                                // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                // Output the result in an element with id="demo"
+                                document.getElementById("find_game_timer").innerHTML = "00:0" + seconds;
+
+                                // If the count down is over, write some text
+                                if (distance <= 0) { // || should_stop
+
+                                    // when the time is over we need to clear the images and show the test image
+                                    // show the test card
+                                    $('#test_card').show(1000);
+                                    // remove the images and white background from the show cards
+                                    for (let i = 0; i < 10; i++) {
+                                        $(`#card_${i}`).attr({'src': '', 'alt': ''});
+                                        $(`#find_card_box_${i}`).attr({'background': '#8b35d5'});
+                                    }
+                                    clearInterval(x);
+                                    start_test_timer(); // START THE TESTING PROCESS
+                                }
+                            }, 1000);
+
+                        });
+
+                        // shuffle an array - util code
+                        /**
+                         * Shuffles array in place. ES6 version
+                         * @param {Array} a items An array containing the items.
+                         */
+                        function shuffle(a) {
+                            for (let i = a.length - 1; i > 0; i--) {
+                                const j = Math.floor(Math.random() * (i + 1));
+                                [a[i], a[j]] = [a[j], a[i]];
+                            }
+                            return a;
+                        }
+
+
+                        // after the show timer ends we call this function to start the test timer and it's functionalities...
+                        // Returns a Promise that resolves after "ms" Milliseconds
+                        const timer = ms => new Promise(res => setTimeout(res, ms))
+
+                        async function start_test_timer() {
+                            let arr = shuffle(the_find_game_array);
+                            // as there are 9 show cards so we will work with it
+                            for (let i = 0; i < 9; i++) {
+                                $('#test_card_image').attr({'src': arr[i], 'alt': ''}); // todo: is the src correct?
+                                initialize_a_test_timer();
+                                // synchronous sleep for 5 seconds!
+                                await timer(10000); // check with 8
+                            }
+                        }
+
+                        function initialize_a_test_timer() {
+
+                            document.getElementById("find_game_timer").innerHTML = "00:05";
+                            const countDownDate = new Date();
+                            const TIME_TO_SHOW_IN_SEC = 5 + 2; // +2 means extra 2 seconds to process the code and start the timer
+                            countDownDate.setSeconds(countDownDate.getSeconds() + TIME_TO_SHOW_IN_SEC); //
+
+                            let x = setInterval(function () {
+
+                                // Find the distance between now and the count down date
+                                const distance = countDownDate - new Date().getTime();
+
+                                // Time calculations for days, hours, minutes and seconds
+                                // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                                // Output the result in an element with id="demo"
+                                document.getElementById("find_game_timer").innerHTML = "00:0" + seconds;
+
+                                // If the count down is over, write some text
+                                if (distance <= 0) { // || should_stop
+
+
+                                    clearInterval(x);
+
+                                }
+                            }, 1000);
+                        }
+
+                    </script>
+                </h2>
+                <div class="columns" style="display: none">
+                    <div class="column box" style="margin-right: 125px">
+                        <img class="is-centered"
+                             style="height: 64px;width: 64px;margin: 0;padding: 0;align-content: center"
+                             id="card_"
+                             src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                             alt="_">
                     </div>
+
                 </div>
             </div>
             <div class="column">
@@ -336,8 +519,20 @@
             </div>
         </div>
         <div class="columns">
+            {# this is the test card #}
+
+            <div class="column box" style="margin: 8px;display: none" id="test_card">
+                <img
+                        style="height: 100px;width: 100px;z-index: 0;margin: 0;padding: 8px;align-content: center"
+                        id="test_card_image"
+                        src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                        alt="test_card_image">
+            </div>
+
+            {# normal 9 show cards #}
+
             {% for k in range(5) %}
-                <div class="column box" style="margin: 8px">
+                <div class="column box" style="margin: 8px" id="find_card_box_{{ k }}">
                     <h2 class="title is-3" id="number_{{ k }}"
                         style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
                     <img
@@ -348,9 +543,11 @@
                 </div>
             {% endfor %}
         </div>
+
+
         <div class="columns">
-            {% for y in range(5,9) %}
-                <div class="column box" style="margin: 8px">
+            {% for y in range(6,10) %}
+                <div class="column box" style="margin: 8px" id="find_card_box_{{ y }}">
                     <h2 class="title is-3" id="number_{{ y }}"
                         style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ y }}</h2>
                     <img
@@ -361,10 +558,85 @@
                 </div>
             {% endfor %}
         </div>
+        <section class="section" style="float: right">
+            <button class="button is-success" id="new_game_from_game_3">New Game</button>
+            <button class="button is-danger" id="back_to_lesson_from_game_3"
+                    style="margin-left: 12px">Back To Lesson
+            </button>
+        </section>
     </div>
 
     {# end => find game screen #}
 
+    {# listen => listen game screen #}
+    <div class="box" id="listen_game" style="background: black;display: none;margin: 8px">
+        <div class="columns">
+            <div class="column">
+                <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">LISTEN</h3>
+            </div>
+            <div class="column">
+                <h3 class="title is-3"
+                    style="margin-right: 64px"><span style="color: #fa0a62">Points:</span> <span id="listen_game_points"
+                                                                                                 style="color: gold">0</span>
+                </h3>
+            </div>
+        </div>
+        <script>
+            let now_correct_option = -1; // index starts from 0 to n
+            let socket = io.connect('/');
+
+            function check_if_correct(k) {
+                // todo: implement if else
+                //   if (k === now_correct_option) {
+                // means correct
+                document.getElementById('play_star_sound').click();
+                // hide that card
+                $(`#number_listen_${k}`).css({'visibility': 'hidden'});
+                socket.emit('game_4_initialize', {'image_name': 'COW'}); // todo: this will get changed
+                let points = $('#listen_game_points');
+                let prev_point = parseInt(points.text());
+                prev_point++;
+                points.hide().show(1300).text(`${prev_point}`);
+                // } else {
+                //     // in-correct
+                // }
+            }
+        </script>
+        <div class="columns" style="margin-top: 12px">
+            {% for k in range(5) %}
+                <div class="column box" style="margin: 8px" onclick="check_if_correct({{ k }})"
+                     id="number_listen_{{ k }}">
+                    <h2 class="title is-3"
+                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
+                    <img
+                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                            id="card_listen_{{ k }}"
+                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            alt="{{ k }}">
+                </div>
+            {% endfor %}
+        </div>
+        <div class="columns">
+            {% for y in range(5,9) %}
+                <div class="column box" style="margin: 8px">
+                    <h2 class="title is-3" id="number_listen_{{ y }}"
+                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ y }}</h2>
+                    <img
+                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                            id="card_listen_{{ y }}"
+                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            alt="{{ y }}">
+                </div>
+            {% endfor %}
+        </div>
+        <section class="section" style="float: right">
+            <button class="button is-success" id="new_game_from_game_4">New Game</button>
+            <button class="button is-danger" id="back_to_lesson_from_game_4"
+                    style="margin-left: 12px">Back To Lesson
+            </button>
+        </section>
+    </div>
+    {# listen => listen game screen #}
 
 
     {#    <div class="animation_div" style="display: none">#}

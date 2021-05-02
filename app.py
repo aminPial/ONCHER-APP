@@ -15,7 +15,7 @@ def is_port_available(port: int):
     try:
         sock.bind(("0.0.0.0", port))
         result = True
-    except Exception as _:
+    except Exception:
         pass
     sock.close()
     return result
