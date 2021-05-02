@@ -387,8 +387,9 @@
                         let the_find_game_array = []; // flat array AKA 1-Dimension
                         let index_elem_map = new Map();
                         // on change grade and lesson, change the card images
-                        let socket = io.connect('/');
+                        // let socket = io.connect('/');
                         socket.on('grade_and_lesson_change', function (data) {
+                            alert("response received in find game socket...");
                             // games_name => tik_tak_toe, find, match, listen
                             // data = { 'game_name':array, 'game_name_1': array,... }
                             // data = [['image_url_1', 'image_url_2','i_u_3'], [...., ..., ...]]
@@ -493,10 +494,7 @@
 
                                 // If the count down is over, write some text
                                 if (distance <= 0) { // || should_stop
-
-
                                     clearInterval(x);
-
                                 }
                             }, 1000);
                         }

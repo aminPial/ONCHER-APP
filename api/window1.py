@@ -13,7 +13,16 @@ from app import BASE_URL
 
 @oncher_app.route('/window_1')
 def window_1():
-    grade_lessons = {5: [11, 12, 13], 6: [3, 4, 5]}  # dummy for now => {grade: [lessons in list]}
+    grade_lesson_folders = os.listdir(os.path.join('..', 'static', 'u_data'))
+    # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
+    grade_lessons = {}  # dummy for now => {grade: [lessons in list]}
+    for folder_names in grade_lesson_folders:
+        print(folder_names)
+        split = folder_names.split("_")  # [1] is grade name and [-1] is lesson
+        if split[1] not in grade_lessons.keys():
+            grade_lessons[split[1]] = []
+        grade_lessons[split[1]].append(split[-1]) # todo: should we append the src to load or plain
+
     return render_template('window1.html', students=StudentsData.query.all(),
                            BASE_URL=BASE_URL, grade_lessons=grade_lessons)
 
@@ -115,6 +124,7 @@ def grade_select_signal_receive(data):
 
 @socket_io.on('lesson_select_signal_receive')
 def lesson_select_signal_receive(data):
+    # data => {'grade': X, 'lesson': Y} > if lesson is not selected then default, same for grade or what? todo: <
     print(data)
     payload = []
     emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
