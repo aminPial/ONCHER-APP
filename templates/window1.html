@@ -106,11 +106,39 @@
                     {% endfor %}
 
                     <script>
+                        let grade_lessons_arr = {{ grade_lessons | tojson }}; // {grade: [lessons] }
+                       // alert(" > " + grade_lessons_arr);
+                        let socket = io.connect('/');
+                        // current selected grade and lesson
+                        let current_grade = null;
+                        let current_lesson = null;
+
                         function send_grade_select_signal(grade) {
-                            $('#base_grade_text').text(`${grade}`);
-                            let socket = io.connect('/');
-                            socket.emit('grade_select_signal_receive', {
-                                'grade': grade
+                            current_grade = grade;
+                            current_lesson = grade_lessons_arr[current_grade][0]; // as newly selected grade, lesson is not yet selected
+                            $('#base_grade_text').text(`${current_grade}`);
+                            $('#base_lesson_text').text(`${current_lesson}`);
+
+                            let l = $('#lessons_div');
+                            l.empty();
+                            for (let i = 0; i < grade_lessons_arr[current_grade].length; i++) {
+                                l.append("<a onclick=\"send_lesson_select_signal(" + `${grade_lessons_arr[current_grade][i]}` + ")\" class=\"dropdown-item\">\n" +
+                                    "                            \n" + `${grade_lessons_arr[current_grade][i]}` +
+                                    "                        </a>")
+                            }
+                            // also change the lessons (that are mapped with grade) in lesson dropdown option
+                            socket.emit('grade_lesson_select_signal_receive', {
+                                'grade': current_grade, 'lesson': current_lesson
+                            });
+                        }
+
+                        // lesson select func
+                        function send_lesson_select_signal(lesson) {
+                            current_lesson = lesson;
+                            $('#base_lesson_text').text(`${current_lesson}`);
+                            // also change the lessons (that are mapped with grade) in lesson dropdown option
+                            socket.emit('grade_lesson_select_signal_receive', {
+                                'grade': current_grade, 'lesson': current_lesson // if null then send first lesson
                             });
                         }
 
@@ -131,27 +159,12 @@
                 </button>
             </div>
             <div class="dropdown-menu" id="dropdown-menu5" role="menu">
-                <div class="dropdown-content">
-                    {# todo: lessons must have to be mapped with grade..... use js to update it #}
-                    {% for grade in grade_lessons %}
-                        <a onclick="send_lesson_select_signal({{ grade }})" class="dropdown-item">
-                            {{ grade }}
-                        </a>
-                    {% endfor %}
-
-                    <script>
-                        function send_lesson_select_signal(lesson) {
-                            $('#base_lesson_text').text(`${lesson}`)
-                            let socket = io.connect('/');
-                            socket.emit('lesson_select_signal_receive', {
-                                'lesson': lesson
-                            });
-                        }
-
-                    </script>
+                <div class="dropdown-content" id="lessons_div">
+                    {# empty... will be appended by JS on grade select.. #}
 
 
                 </div>
+
             </div>
         </div>
     </section>

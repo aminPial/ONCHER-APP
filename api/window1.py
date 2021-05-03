@@ -13,7 +13,8 @@ from app import BASE_URL
 
 @oncher_app.route('/window_1')
 def window_1():
-    grade_lesson_folders = os.listdir(os.path.join('..', 'static', 'u_data'))
+    print(os.getcwd())
+    grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'u_data'))
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons = {}  # dummy for now => {grade: [lessons in list]}
     for folder_names in grade_lesson_folders:
@@ -21,7 +22,7 @@ def window_1():
         split = folder_names.split("_")  # [1] is grade name and [-1] is lesson
         if split[1] not in grade_lessons.keys():
             grade_lessons[split[1]] = []
-        grade_lessons[split[1]].append(split[-1]) # todo: should we append the src to load or plain
+        grade_lessons[split[1]].append(split[-1])  # todo: should we append the src to load or plain
 
     return render_template('window1.html', students=StudentsData.query.all(),
                            BASE_URL=BASE_URL, grade_lessons=grade_lessons)
@@ -109,25 +110,25 @@ current_grade = None
 current_lesson = None
 
 
-@socket_io.on('grade_select_signal_receive')
-def grade_select_signal_receive(data):
-    print(data)
-    a = 'https://i2.wp.com/files.123freevectors.com/wp-content/uploads/new/animals/370-cartoon-dog-vector-image.png?w=800&q=95'
-    b = 'https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg'
-    payload = [
-        [a if data['grade'] == 5 else b
-         for _ in range(3)]
-        for _ in range(3)]
-    print(payload)
-    emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
-
-
-@socket_io.on('lesson_select_signal_receive')
-def lesson_select_signal_receive(data):
-    # data => {'grade': X, 'lesson': Y} > if lesson is not selected then default, same for grade or what? todo: <
-    print(data)
-    payload = []
-    emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
+@socket_io.on('grade_lesson_select_signal_receive')
+def grade_lesson_select_signal_receive(data):
+    # data => {'grade': X, 'lesson': Y}
+    # print(data)
+    # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
+    assert data['grade'] and data['lesson'], "Invalid grade/lesson due to null value"
+    folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
+                                                         lesson=data['lesson'])  # what if one of them is null?
+    full_path = os.path.join(sys.path[0], 'static', 'u_data', folder_name)
+    if os.path.exists(full_path):
+        files_path = os.listdir(full_path)
+        # print("files path {}".format(files_path))
+        # a = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/lexa-tabby-cat-painting-dora-hathazi-mendes.jpg"
+        payload = ['/static/u_data/{}/{}'.format(folder_name, f) for f in files_path]
+        print(len(payload))
+        emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
+    else:
+        print("Path {} doesn't exist".format(full_path))
+        return
 
 # @oncher_app.route('/test')
 # def test():

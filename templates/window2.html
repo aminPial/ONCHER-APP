@@ -191,14 +191,11 @@
                 // on change grade and lesson, change the card images
                 let socket = io.connect('/');
                 socket.on('grade_and_lesson_change', function (data) {
-                    // games_name => tik_tak_toe, find, match, listen
-                    // data = { 'game_name':array, 'game_name_1': array,... }
-                    // data = [['image_url_1', 'image_url_2','i_u_3'], [...., ..., ...]]
-                    // clean the cards inside content
-                    for (let i = 0; i < 3; i++) {
-                        for (let j = 0; j < 3; j++) {
-                            $(`#card_${i}_${j}`).attr('src', data['tik_tak_toe'][i][j]);
-                        }
+                    // data => [src of images.., '/static/u_data/...']
+                    for (let k = 0; k < 9; k++) { // 9 images
+                        let i = Math.floor(k / 3);
+                        let j = k % 3;
+                        $(`#card_${i}_${j}`).attr('src', data[k]);
                     }
                     reset_game("none");
                 });
@@ -275,6 +272,33 @@
         <h6 class="subtitle is-6" style="display: none;">Please choose Grade and Lesson</h6>
 
         <script>
+            let card_array = [];
+            socket.on('grade_and_lesson_change', function (data) {
+                card_array = data;
+                let card_image_name_map = new Map();
+                // match_card_2_{i} => normal card
+                for (let k = 0; k < 9; k++) {
+                    let i = Math.floor(k / 3);
+                    let j = k % 3;
+                    $(`#match_card_2_${i}_${j}`).attr({'src': data[k], 'alt': ''});
+                    // we need to parse the name of the image from the url
+                    let image_name = card_array[k].split("/");
+                    let image_name_1 = image_name[image_name.length - 1].split(".");
+                    card_image_name_map.set(image_name_1[0], k);
+                }
+                // shuffling for second card..
+                let shuffled_card_array = shuffle(card_array);
+                for (let m = 0; m < 9; m++) {
+                    let i = Math.floor(m / 3);
+                    let j = m % 3;
+                    let image_name_2 = shuffled_card_array[m].split("/");
+                    let image_name_3 = image_name_2[image_name_2.length - 1].split(".");
+                    $(`#name_${i}_${j}`).text(`${image_name_3[0]}`.toUpperCase());
+                }
+
+            });
+
+            // todo: the below code is for matching ... use the "MAP" created above
             let last_selected = null; // [i,j]
             // let colors = [[], [], []];
             let already_chosen = [];
@@ -389,16 +413,16 @@
                         // on change grade and lesson, change the card images
                         // let socket = io.connect('/');
                         socket.on('grade_and_lesson_change', function (data) {
-                            alert("response received in find game socket...");
-                            // games_name => tik_tak_toe, find, match, listen
-                            // data = { 'game_name':array, 'game_name_1': array,... }
-                            // data = [['image_url_1', 'image_url_2','i_u_3'], [...., ..., ...]]
-                            // clean the cards inside content
-                            // this one is "find" game
-                            the_find_game_array = data['find']; // {'find': [.....]} 9 elements and a singular array
+                            the_find_game_array = data; // {'find': [.....]} 9 elements and a singular array
                             // we create a map, to match the random elem with the index while TESTING
-                            for (let i = 0; i < the_find_game_array.length; i++)
+                            for (let i = 0; i < the_find_game_array.length; i++) {
                                 index_elem_map.set(the_find_game_array[i], i);
+                                // alert("i: " + i);
+                                $(`#find_card_${i}`).attr({
+                                    'src': the_find_game_array[i],
+                                    'alt': `${the_find_game_array[i]}`
+                                });
+                            }
                         });
 
                         // find game javascript
@@ -535,8 +559,8 @@
                         style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
                     <img
                             style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                            id="card_{{ k }}"
-                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            id="find_card_{{ k }}"
+                            src=""
                             alt="{{ k }}">
                 </div>
             {% endfor %}
@@ -544,14 +568,14 @@
 
 
         <div class="columns">
-            {% for y in range(6,10) %}
+            {% for y in range(5,9) %}
                 <div class="column box" style="margin: 8px" id="find_card_box_{{ y }}">
                     <h2 class="title is-3" id="number_{{ y }}"
-                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ y }}</h2>
+                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
                     <img
                             style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                            id="card_{{ y }}"
-                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            id="find_card_{{ y }}"
+                            src=""
                             alt="{{ y }}">
                 </div>
             {% endfor %}
