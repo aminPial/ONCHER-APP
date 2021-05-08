@@ -1,18 +1,68 @@
 $(document).ready(function () {
     let socket = io.connect('/');
-    // socket.on('connect', function () {
-    //     socket.emit('my event', {data: 'Connected from windows2.html'});
-    // });
 
+    // canvases and ctx-es | size will be equal
+    let canvases = [];
+    let ctx_es = []
     socket.on('ppt_or_ppt_upload_signal', function (data) {
-        // console.log('Received link: ', data["link"]);
-        // $('#responsive-iframe').attr('src', data["link"]);
-        // todo: loading in the init screen... iframe onload... specially needed for the ppt as we will be uploading to server
-        $('#iframe-container').empty().append("<iframe class=\"responsive-iframe\" id=\"responsive-iframe\" allowFullScreen width=\"100%\" height=\"500px\"\n" +
-            "                frameBorder=\"0\"\n" +
-            "                src=\"" + data['link'] + "\">").show();
-        $('#time_count_div').css('visibility', 'visible');
-        $('#initial_box').hide();
+        let doc_container = $('#iframe-container');
+        let loading_container = $('#loading_box');
+        let initial_box = $('#initial_box');
+
+        if (data['is_loading']) {
+            // alert("is loading");
+            // todo: show loading anim and all
+            initial_box.hide();
+            doc_container.hide();
+            loading_container.show();
+            $('#time_count_div').css('visibility', 'hidden');
+        } else {
+            doc_container.empty(); // clear all the content inside it
+
+            if (data['is_pdf']) {
+                for (let i = 0; i < data['page_count']; i++) {
+                    // current image format is .png # you have to change it in window 1 and here to take effect the change
+                    doc_container.append("<img style='visibility: hidden' id='img_'"+ `${i}` + "\"" +" style='margin-top: 8px;' " + `src="${data['parsed_pdf_dir_path'] + "/" + i + ".png"}"`
+                        + " alt=" + `"${i}"/>`);
+
+                    // doc_container.append(" <canvas width='800px' height='800px' id=\"pdf_canvas_" + `${i}` + "\"" + ">\n" +
+                    //     "            Your browser does not support the HTML5 canvas tag.\n" +
+                    //     "        </canvas>\n");
+                    // var myCanvas = document.getElementById(`pdf_canvas_${i}`);
+                    // var ctx = myCanvas.getContext('2d');
+                    // // canvases.push(myCanvas);
+                    // // ctx_es.push(ctx);
+                    // var img = document.getElementById(`img_${i}`);
+                    // ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+                    //
+                    //
+                    // var canvas_2 = document.getElementById(`pdf_canvas_${i}`);
+                    // var context = canvas_2.getContext('2d');
+                    //
+                    // context.beginPath();
+                    // context.rect(188, 50, 200, 100);
+                    // context.fillStyle = 'yellow';
+                    // context.fill();
+                    // context.lineWidth = 7;
+                    // context.strokeStyle = 'black';
+                    // context.stroke();
+
+                    // img.src = `${data['parsed_pdf_dir_path'] + "/" + i + ".png"}`;
+                }
+            } else {
+                // for ppt, pptm
+                doc_container.append("<iframe class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
+                    " allowFullScreen width=\"100%\" height=\"500px\"\n" +
+                    "                frameBorder=\"0\"\n" +
+                    "                src=\"" + data['link'] + "\">").show();
+            }
+
+            initial_box.hide();
+            loading_container.hide();
+            doc_container.show();
+            $('#time_count_div').css('visibility', 'visible');
+        }
+
 
     });
 
@@ -32,22 +82,22 @@ $(document).ready(function () {
 
 
     // PDF/PPT  navigation signal receive
-    socket.on('navigation_signal_receive', function (data) {
-
-        let iframe = $('#responsive-iframe');
-
-        if (data["action"] === "previous_page") {
-            //find button inside iframe
-            // let button = iframe.contents().find('#previous');
-            // //trigger button click
-            // button.trigger("click");
-            $('#previous').click();
-        } else if (data["action"] === "next_page") {
-            $('#next').click();
-            // click(600, 200);
-        }
-
-    });
+    // socket.on('navigation_signal_receive', function (data) {
+    //
+    //     let iframe = $('#responsive-iframe');
+    //
+    //     if (data["action"] === "previous_page") {
+    //         //find button inside iframe
+    //         // let button = iframe.contents().find('#previous');
+    //         // //trigger button click
+    //         // button.trigger("click");
+    //         $('#previous').click();
+    //     } else if (data["action"] === "next_page") {
+    //         $('#next').click();
+    //         // click(600, 200);
+    //     }
+    //
+    // });
 
 
     // GAMES <<<<
@@ -395,9 +445,8 @@ $(document).ready(function () {
 
 
     // drawing tools and all
-    let canvas = null;
-    let ctx = null;
-
+    // let canvas = null;
+    // let ctx = null;
 
     socket.on('drawing_tools_trigger', function (data) {
         // draw, erase, color, thickness, text, full_clear
@@ -405,7 +454,7 @@ $(document).ready(function () {
 
         if (type_of_action === 'draw' || type_of_action === "full_clear") {
             $('#drawing-div').empty().append(
-                "<canvas id=\"drawing-board\" width=\"1500\" height=\"800\"></canvas>");
+                "<canvas id=\"drawing-board\"  width=\"1500\" height=\"800\"></canvas>");
             // init from here
             canvas = document.getElementById("drawing-board");
             ctx = canvas.getContext("2d");

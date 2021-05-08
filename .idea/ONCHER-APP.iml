@@ -11,6 +11,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (ONCHER-APP)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="all" level="application" />
+    <orderEntry type="library" name="animejs" level="application" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />

@@ -32,7 +32,7 @@ html {
 /*}*/
 
 #drawing-board {
-    position: absolute;
+    position: relative;
     z-index: 2;
 }
 
@@ -271,3 +271,4 @@ html {
 	background-size: 400% 400%;
 	animation: game_gradient 1s ease infinite;
 }
+
