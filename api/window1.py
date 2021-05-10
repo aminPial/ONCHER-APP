@@ -10,7 +10,7 @@ import requests
 from models import StudentsData
 from app import BASE_URL
 import fitz
-import shutil
+from PIL import Image
 
 
 @oncher_app.route('/window_1')
@@ -25,8 +25,10 @@ def window_1():
         if split[1] not in grade_lessons.keys():
             grade_lessons[split[1]] = []
         grade_lessons[split[1]].append(split[-1])  # todo: should we append the src to load or plain
-
-    return render_template('window1.html', students=StudentsData.query.all(),
+    students = [s.__dict__ for s in StudentsData.query.all()]
+    [a.pop('_sa_instance_state') for a in students]
+    print(students)
+    return render_template('window1.html', students=students,
                            BASE_URL=BASE_URL, grade_lessons=grade_lessons)
 
 
@@ -47,7 +49,7 @@ def upload_ppt_to_server(local_file_location: str) -> bool:
 
 
 # pdf file parser
-def parse_pdf_file(pdf_file_path: str) -> (str, int):
+def parse_pdf_file(pdf_file_path: str):
     """
     returns:
       pdf_file_path_after_parsing_to_images
@@ -60,11 +62,15 @@ def parse_pdf_file(pdf_file_path: str) -> (str, int):
     print("page extract directory: {}".format(page_extract_directory))
     if os.path.exists(page_extract_directory):
         # shutil.rmtree(page_extract_directory)
-        return pdf_file_name, len(os.listdir(page_extract_directory))
+        images = os.listdir(page_extract_directory)
+        w, h = Image.open(os.path.join(page_extract_directory, images[0])).size
+        print("Image Size from Pre is {} {}".format(w, h))
+        return pdf_file_name, len(images), w, h
     os.makedirs(page_extract_directory)
 
     doc = fitz.open(pdf_file_path)
     no_of_pages = doc.pageCount
+    w, h = 0, 0
     for page_no, _ in enumerate(doc):
         print("Extracting {} Page no: {}".format(pdf_file_name, page_no))
         page = doc.loadPage(page_no)  # number of page
@@ -80,7 +86,11 @@ def parse_pdf_file(pdf_file_path: str) -> (str, int):
         # change color channel accordingly, you can use png, jpg, jpeg
         output = os.path.join(page_extract_directory, "{}.png".format(page_no))
         pix.writePNG(output)
-    return pdf_file_name, no_of_pages  # (pdf_file_name and pages count)
+        im = Image.open(output)
+        w, h = im.size
+        print("Image Size: {} {}".format(w, h))
+
+    return [pdf_file_name, no_of_pages, w, h]  # (pdf_file_name and pages count and image w & h)
 
 
 @oncher_app.route('/upload_document', methods=['POST'])
@@ -103,10 +113,12 @@ def upload_document():
         # src_to_load = r"""{}/static/js/ViewerJS/index.html#../../files/{}""".format(BASE_URL, file.filename)
         # print(src_to_load)
         payload['is_pdf'] = True
-        pdf_file_name, page_count = parse_pdf_file(full_file_path)
+        pdf_file_name, page_count, w, h = parse_pdf_file(full_file_path)
         # below 2 vars will gen urls like => "/static/cache/test.pdf/0.jpg, /static/cache/test.pdf/1.jpg"
         payload['parsed_pdf_dir_path'] = "/static/cache/{}".format(pdf_file_name)
         payload['page_count'] = page_count
+        payload['width'] = w
+        payload['height'] = h
 
     elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
         # todo: here we need to upload the ppt.pptx to server then encode the server download url

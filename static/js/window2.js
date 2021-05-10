@@ -3,8 +3,11 @@ $(document).ready(function () {
 
     // canvases and ctx-es | size will be equal
     let canvases = [];
-    let ctx_es = []
+    let ctx_es = [];
+    let current_canvas = null;
     socket.on('ppt_or_ppt_upload_signal', function (data) {
+
+
         let doc_container = $('#iframe-container');
         let loading_container = $('#loading_box');
         let initial_box = $('#initial_box');
@@ -20,25 +23,37 @@ $(document).ready(function () {
             doc_container.empty(); // clear all the content inside it
 
             if (data['is_pdf']) {
-                for (let i = 0; i < data['page_count']; i++) {
-                    // current image format is .png # you have to change it in window 1 and here to take effect the change
-                    doc_container.append("<img style='visibility: hidden' id='img_'"+ `${i}` + "\"" +" style='margin-top: 8px;' " + `src="${data['parsed_pdf_dir_path'] + "/" + i + ".png"}"`
-                        + " alt=" + `"${i}"/>`);
+                // for (let i = 0; i < data['page_count']; i++) {
+                //     // current image format is .png # you have to change it in window 1 and here to take effect the change
+                //     doc_container.append("<img id= " + `"img_${i}"` + " style='margin-top: 8px;' " +
+                //         `src="${data['parsed_pdf_dir_path'] + "/" + i + ".png"}"`
+                //         + " alt=" + `"${i}"/>`);
+                // }
+                let ratio = data['width'] / data['height'];
+                let width = $(document).width() - 0; // extra space - X
+                let height = width / ratio;
 
-                    // doc_container.append(" <canvas width='800px' height='800px' id=\"pdf_canvas_" + `${i}` + "\"" + ">\n" +
-                    //     "            Your browser does not support the HTML5 canvas tag.\n" +
-                    //     "        </canvas>\n");
-                    // var myCanvas = document.getElementById(`pdf_canvas_${i}`);
-                    // var ctx = myCanvas.getContext('2d');
-                    // // canvases.push(myCanvas);
-                    // // ctx_es.push(ctx);
-                    // var img = document.getElementById(`img_${i}`);
-                    // ctx.drawImage(img, 0, 0); // Or at whatever offset you like
-                    //
-                    //
-                    // var canvas_2 = document.getElementById(`pdf_canvas_${i}`);
-                    // var context = canvas_2.getContext('2d');
-                    //
+                for (let j = 0; j < data['page_count']; j++) {
+                    doc_container.append("<canvas  " + " id=\"pdf_canvas_" + `${j}` + "\"" + ">\n" +
+                        "            Your browser does not support the HTML5 canvas tag.\n" +
+                        "        </canvas>\n");
+                    $(`#pdf_canvas_${j}`).attr({
+                        'width': `${width}px`,
+                        'height': `${height}px`
+                    }).css({
+                        // todo: BASE_URL, get from the JSON e.g: data['BASE_URL']
+                        'background': `url("http://localhost:5000${data['parsed_pdf_dir_path']}/${j}.png")`,
+                        'background-position': 'center',
+                        'background-size': '100% 100%'
+                    }).hover(function () {
+                        revise_canvas_on_click(j);
+                    });
+
+                    const myCanvas = document.getElementById(`pdf_canvas_${j}`);
+                    const context = myCanvas.getContext('2d');
+                    canvases.push(myCanvas);
+                    ctx_es.push(context);
+
                     // context.beginPath();
                     // context.rect(188, 50, 200, 100);
                     // context.fillStyle = 'yellow';
@@ -46,8 +61,6 @@ $(document).ready(function () {
                     // context.lineWidth = 7;
                     // context.strokeStyle = 'black';
                     // context.stroke();
-
-                    // img.src = `${data['parsed_pdf_dir_path'] + "/" + i + ".png"}`;
                 }
             } else {
                 // for ppt, pptm
@@ -65,6 +78,62 @@ $(document).ready(function () {
 
 
     });
+
+    function revise_canvas_on_click(index) {
+       // alert("Index: " + index);
+        let canvas_to_render = canvases[index];
+        let current_ctx = ctx_es[index];
+
+        if (current_canvas !== canvas_to_render) {
+            let BB = canvas_to_render.getBoundingClientRect();
+            let offsetX = BB.left;
+            let offsetY = BB.top;
+
+            let lastX, lastY;
+            let isDown = false;
+
+            canvas_to_render.onmousedown = handleMousedown;
+            canvas_to_render.onmousemove = handleMousemove;
+            canvas_to_render.onmouseup = handleMouseup;
+
+
+            function handleMousedown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                lastX = e.clientX - offsetX;
+                lastY = e.clientY - offsetY;
+                isDown = true;
+            }
+
+            function handleMouseup(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                isDown = false;
+            }
+
+            function handleMousemove(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isDown) {
+                    return;
+                }
+
+                let mouseX = e.clientX - offsetX;
+                let mouseY = e.clientY - offsetY;
+
+                current_ctx.beginPath();
+
+                current_ctx.moveTo(lastX, lastY);
+                current_ctx.lineTo(mouseX, mouseY);
+                current_ctx.stroke();
+
+                lastX = mouseX;
+                lastY = mouseY;
+            }
+        }
+    }
+
 
     // function click(x, y) {
     //     let ev = new MouseEvent('click', {
@@ -444,87 +513,92 @@ $(document).ready(function () {
     });
 
 
-    // drawing tools and all
-    // let canvas = null;
-    // let ctx = null;
-
     socket.on('drawing_tools_trigger', function (data) {
         // draw, erase, color, thickness, text, full_clear
         let type_of_action = data['type_of_action'];
+        let canvas_count = canvases.length;
+        for (let c = 0; c < canvas_count; c++) {
+            let ctx = ctx_es[c];
+            let current_canvas = canvases[c];
+            if (type_of_action === 'draw' || type_of_action === "full_clear") {
+                // $('#drawing-div').empty().append(
+                //     "<canvas id=\"drawing-board\"  width=\"1500\" height=\"800\"></canvas>");
+                // // init from here
+                // canvas = document.getElementById("drawing-board");
+                // ctx = canvas.getContext("2d");
 
-        if (type_of_action === 'draw' || type_of_action === "full_clear") {
-            $('#drawing-div').empty().append(
-                "<canvas id=\"drawing-board\"  width=\"1500\" height=\"800\"></canvas>");
-            // init from here
-            canvas = document.getElementById("drawing-board");
-            ctx = canvas.getContext("2d");
-            ctx.lineWidth = "3";
-            ctx.strokeStyle = "red"; // Green path
-            ctx.globalCompositeOperation = "source-over";
-
-        } else if (type_of_action === "erase") {
-            // ctx.strokeStyle = 'green';
-            ctx.globalCompositeOperation = "destination-out";
-            ctx.arc(95, 50, 50, 0, 2 * Math.PI);
-            ctx.fill();
-        } else if (type_of_action === "thickness_size") {
-            ctx.lineWidth = data["thickness_size"];
-            ctx.globalCompositeOperation = "source-over";
-        } else if (type_of_action === "color_change") {
-            //  alert(type_of_action);
-            ctx.strokeStyle = data["color"];
-            ctx.globalCompositeOperation = "source-over";
-        }
+                ctx.lineWidth = "3";
+                ctx.strokeStyle = "red"; // Green path
+                ctx.globalCompositeOperation = "source-over";
 
 
-        // re initialize the draw board functions
-        // is_draw = False means erase action
-        let BB = canvas.getBoundingClientRect();
-        let offsetX = BB.left;
-        let offsetY = BB.top;
-
-        let lastX, lastY;
-        let isDown = false;
-
-        canvas.onmousedown = handleMousedown;
-        canvas.onmousemove = handleMousemove;
-        canvas.onmouseup = handleMouseup;
-
-
-        function handleMousedown(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            lastX = e.clientX - offsetX;
-            lastY = e.clientY - offsetY;
-            isDown = true;
-        }
-
-        function handleMouseup(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            isDown = false;
-        }
-
-        function handleMousemove(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if (!isDown) {
-                return;
+            } else if (type_of_action === "erase") {
+                // ctx.strokeStyle = 'green';
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.arc(95, 50, 50, 0, 2 * Math.PI);
+                ctx.fill();
+            } else if (type_of_action === "thickness_size") {
+                ctx.lineWidth = data["thickness_size"];
+                ctx.globalCompositeOperation = "source-over";
+            } else if (type_of_action === "color_change") {
+                //  alert(type_of_action);
+                ctx.strokeStyle = data["color"];
+                ctx.globalCompositeOperation = "source-over";
             }
 
-            let mouseX = e.clientX - offsetX;
-            let mouseY = e.clientY - offsetY;
+            ctx_es[c] = ctx;
 
-            ctx.beginPath();
 
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(mouseX, mouseY);
-            ctx.stroke();
+            // re initialize the draw board functions
+            // is_draw = False means erase action
+            let BB = current_canvas.getBoundingClientRect();
+            let offsetX = BB.left;
+            let offsetY = BB.top;
 
-            lastX = mouseX;
-            lastY = mouseY;
+            let lastX, lastY;
+            let isDown = false;
+
+            current_canvas.onmousedown = handleMousedown;
+            current_canvas.onmousemove = handleMousemove;
+            current_canvas.onmouseup = handleMouseup;
+
+
+            function handleMousedown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                lastX = e.clientX - offsetX;
+                lastY = e.clientY - offsetY;
+                isDown = true;
+            }
+
+            function handleMouseup(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                isDown = false;
+            }
+
+            function handleMousemove(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isDown) {
+                    return;
+                }
+
+                let mouseX = e.clientX - offsetX;
+                let mouseY = e.clientY - offsetY;
+
+                ctx.beginPath();
+
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.stroke();
+
+                lastX = mouseX;
+                lastY = mouseY;
+            }
         }
+
 
     });
 

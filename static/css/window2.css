@@ -24,6 +24,12 @@ html {
     z-index: -1;
 }
 
+/*canvas{*/
+/*    background-image: url("../images/pdf_pic.jpg");*/
+/*    background-position: center;*/
+/*    background-size: 100% 100%;*/
+/*}*/
+
 /*.animation_div {*/
 /*    position: absolute;*/
 /*    z-index: 2;*/
@@ -31,10 +37,10 @@ html {
 /*    text-align: center;*/
 /*}*/
 
-#drawing-board {
-    position: relative;
-    z-index: 2;
-}
+/*#drawing-board {*/
+/*    position: relative;*/
+/*    z-index: 2;*/
+/*}*/
 
 
 .content .trophy img {
