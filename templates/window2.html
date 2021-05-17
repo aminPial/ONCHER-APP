@@ -103,14 +103,14 @@
 
     {# settings page #}
     <div class="box" id="settings_box" style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 8px;height: 500px;">
+         padding: 16px;border: none;border-radius: 8px;height: 500px;display: none">
         <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
             <span id="configure-back">
                 <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp; </span>Configure Lesson Docs</h4>
         {# todo:.... UPLOAD PPT/PDF as per GL #}
         {# todo:.... UPLOAD Flashcard(with vocab) as per GL #}
         {# todo: ask FRAZERH that what will the ZIP containing Lessons and all be like? from the site users will download #}
-        <div class="columns" style="margin-top:20px;margin-left: 4px;">
+        <div class="columns" style="margin-top:20px;margin-left: 4px;" id="settings_cards">
             <div class="column">
                 <div class="box" id="upload_ppt_pdf"
                      style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));">
@@ -140,9 +140,9 @@
 
 
         <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
-            `
-            <div class="block">
-                <h5 class="subtitle is-4">Select Grade & Lesson</h5>
+            `<h5 class="subtitle is-4">Select Grade & Lesson</h5>
+            <div class="container" style="padding: 4px">
+
                 <div class="dropdown" id="grade_list" style="margin-left: 2px">
                     <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
                     <div class="dropdown-trigger">
@@ -216,10 +216,10 @@
                     </div>
                 </div>
             </div>
-        <br>
+            <br>
+            <h5 class="subtitle is-4">Add Document (ppt, pptm, pptx, pdf)</h5>
+            <div class="container" style="padding: 4px">
 
-            <div class="block">
-                <h5 class="subtitle is-4">Add Document (ppt, pptm, pptx, pdf)</h5>
                 <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
                     <div class="file is-primary" style="font-weight: bolder;">
                         <label class="file-label">
@@ -238,8 +238,39 @@
 
                 </form>
             </div>
+            <hr>
+            <div style="margin-left: 4px">
+
+                <button style="font-weight: bolder;background: #e31266"
+                        type="button" class="button is-link field is-inline-block-mobile"
+                        id="add_ppt" onclick="add_documents(false)"><i class="fa fa-plus"></i>&nbsp; ADD
+                </button>
+            </div>
 
         </section>
+
+        <script>
+            function add_documents(is_flashcard) {
+                // is_flashcard = false means ppt,pdf
+                let fd = new FormData(document.getElementById("fileinfo"));
+                let grade = $('#base_grade_text').text();
+                let lesson = $('#base_lesson_text').text();
+                if (grade !== "--" && lesson !== "--") {
+                    fd.append("grade", grade);
+                    fd.append("lesson", lesson);
+                    $.ajax({
+                        url: "/upload_document",
+                        type: "POST",
+                        data: fd,
+                        processData: false,  // tell jQuery not to process the data
+                        contentType: false   // tell jQuery not to set contentType
+                    }).done(function (data) {
+                    });
+                } else {
+                    // error
+                }
+            }
+        </script>
 
 
         {# add flashcard #}

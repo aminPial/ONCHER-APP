@@ -1,24 +1,5 @@
 $(document).ready(function () {
 
-    $('input[type=file]').change(function () {
-        submitForm();
-    });
-
-    function submitForm() {
-        console.log("submit event");
-        let fd = new FormData(document.getElementById("fileinfo"));
-        fd.append("label", "WEBUPLOAD");
-        $.ajax({
-            url: "/upload_document",
-            type: "POST",
-            data: fd,
-            processData: false,  // tell jQuery not to process the data
-            contentType: false   // tell jQuery not to set contentType
-        }).done(function (data) {
-        });
-        return false;
-    }
-
 
     // Get all dropdowns on the page that aren't hoverable.
     const dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
@@ -242,6 +223,7 @@ $(document).ready(function () {
     $('#upload_ppt_pdf').click(function () {
         $('#upload_ppt_pdf').hide();
         $('#flashcard_upload').hide();
+        $('#settings_cards').hide();
         $('#add_ppt_pdf_div').show();
     });
 
