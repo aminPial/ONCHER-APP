@@ -1,4 +1,61 @@
 $(document).ready(function () {
+
+    $('input[type=file]').change(function () {
+        submitForm();
+    });
+
+    function submitForm() {
+        console.log("submit event");
+        let fd = new FormData(document.getElementById("fileinfo"));
+        fd.append("label", "WEBUPLOAD");
+        $.ajax({
+            url: "/upload_document",
+            type: "POST",
+            data: fd,
+            processData: false,  // tell jQuery not to process the data
+            contentType: false   // tell jQuery not to set contentType
+        }).done(function (data) {
+        });
+        return false;
+    }
+
+
+    // Get all dropdowns on the page that aren't hoverable.
+    const dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
+
+    if (dropdowns.length > 0) {
+        // For each dropdown, add event handler to open on click.
+        dropdowns.forEach(function (el) {
+            el.addEventListener('click', function (e) {
+                e.stopPropagation();
+                el.classList.toggle('is-active');
+            });
+        });
+
+        // If user clicks outside dropdown, close it.
+        document.addEventListener('click', function (e) {
+            closeDropdowns();
+        });
+    }
+
+    /*
+     * Close dropdowns by removing `is-active` class.
+     */
+    function closeDropdowns() {
+        dropdowns.forEach(function (el) {
+            el.classList.remove('is-active');
+        });
+    }
+
+// Close dropdowns if ESC pressed
+    document.addEventListener('keydown', function (event) {
+        let e = event || window.event;
+        if (e.key === 'Esc' || e.key === 'Escape') {
+            closeDropdowns();
+        }
+    });
+
+
     let socket = io.connect('/');
 
     // canvases and ctx-es | size will be equal
@@ -80,7 +137,7 @@ $(document).ready(function () {
     });
 
     function revise_canvas_on_click(index) {
-       // alert("Index: " + index);
+        // alert("Index: " + index);
         let canvas_to_render = canvases[index];
         let current_ctx = ctx_es[index];
 
@@ -166,6 +223,32 @@ $(document).ready(function () {
     //         // click(600, 200);
     //     }
     //
+    // });
+    socket.on('configure_signal_receive', function (data) {
+        // on get the show config page signal
+        $('#intro_screen').hide();
+        $('#initial_box').hide();
+        $('#choose_games').hide();
+        $('#settings_box').show();
+    });
+
+    $('#configure-back').click(function () {
+        $('#intro_screen').show();
+        $('#initial_box').hide();
+        $('#choose_games').hide();
+        $('#settings_box').hide();
+    });
+
+    $('#upload_ppt_pdf').click(function () {
+        $('#upload_ppt_pdf').hide();
+        $('#flashcard_upload').hide();
+        $('#add_ppt_pdf_div').show();
+    });
+
+    // $('#flashcard_upload').click(function () {
+    //     $('#upload_ppt_pdf').hide();
+    //     $('#flashcard_upload').hide();
+    //     $('#add_flashcard_div').show();
     // });
 
 

@@ -15,7 +15,7 @@ from PIL import Image
 
 @oncher_app.route('/window_1')
 def window_1():
-    print(os.getcwd())
+    # print(os.getcwd())
     grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'u_data'))
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons = {}  # dummy for now => {grade: [lessons in list]}
@@ -169,6 +169,10 @@ def student_select_signal_receive(data):
         "diamond": student_object.total_stars // 10
     }
     emit('select_student_signal_receive', payload, namespace='/', broadcast=True)
+
+@socket_io.on('configure_signal_emitter')
+def configure_signal_emitter(data):
+    emit('configure_signal_receive', {}, namespace='/', broadcast=True)
 
 
 # we need these vars

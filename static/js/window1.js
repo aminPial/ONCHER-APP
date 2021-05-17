@@ -1,24 +1,11 @@
-function submitForm() {
-    console.log("submit event");
-    let fd = new FormData(document.getElementById("fileinfo"));
-    fd.append("label", "WEBUPLOAD");
-    $.ajax({
-        url: "/upload_document",
-        type: "POST",
-        data: fd,
-        processData: false,  // tell jQuery not to process the data
-        contentType: false   // tell jQuery not to set contentType
-    }).done(function (data) {
-    });
-    return false;
-}
 
-$(document).ready(function () {
-    // const socket = io.connect('http://127.0.0.1:5000');
-    $('input[type=file]').change(function () {
-        submitForm();
-    });
+
+// on click settings, send signal to window 2
+$('#configure').click(function () {
+    // let socket = io.connect('/');
+    socket.emit('configure_signal_emitter', {});
 });
+
 
 // student list on select toggle (JS version)
 // let dropdown = document.querySelector('.dropdown');

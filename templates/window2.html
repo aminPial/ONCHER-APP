@@ -100,58 +100,213 @@
         </div>
 
     </div>
-<script>
-function revise_canvas_on_click(index) {
-        let canvas_to_render = canvases[index];
 
-        let BB = canvas_to_render.getBoundingClientRect();
-        let offsetX = BB.left;
-        let offsetY = BB.top;
+    {# settings page #}
+    <div class="box" id="settings_box" style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 8px;height: 500px;">
+        <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
+            <span id="configure-back">
+                <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp; </span>Configure Lesson Docs</h4>
+        {# todo:.... UPLOAD PPT/PDF as per GL #}
+        {# todo:.... UPLOAD Flashcard(with vocab) as per GL #}
+        {# todo: ask FRAZERH that what will the ZIP containing Lessons and all be like? from the site users will download #}
+        <div class="columns" style="margin-top:20px;margin-left: 4px;">
+            <div class="column">
+                <div class="box" id="upload_ppt_pdf"
+                     style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));">
+                    <img
+                            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                            background: white;padding: 4px;"
+                            src="https://www.pdftoppt.net/images/logo-pdftoppt.net.png"
+                            alt="add_ppt_pdf" width="128px"
+                            height="128px"/>
+                    <h1 class="title is-1" style="color: white;font-weight: bolder">ADD PPT,PDF</h1>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box" id="flashcard_upload" style="
+                background-image: linear-gradient(to left, rgba(215,12,181,0.91), rgb(198,31,232));">
+                    <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
+                         src="https://api.macmillanenglish.com/fileadmin/user_upload/Blog_and_Resources/Resources/resources_3/Flashcards.jpg"
+                         alt="add_flashcard" width="128px"
+                         height="128px"/>
+                    <h1 class="title is-1" style="color: white;font-weight: bolder">ADD FLASHCARD</h1>
+                </div>
+            </div>
+        </div>
 
-        let lastX, lastY;
-        let isDown = false;
 
-        canvas_to_render.onmousedown = handleMousedown;
-        canvas_to_render.onmousemove = handleMousemove;
-        canvas_to_render.onmouseup = handleMouseup;
+        {# add ppt, pdf #}
 
 
-        function handleMousedown(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            lastX = e.clientX - offsetX;
-            lastY = e.clientY - offsetY;
-            isDown = true;
-        }
+        <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
+            `
+            <div class="block">
+                <h5 class="subtitle is-4">Select Grade & Lesson</h5>
+                <div class="dropdown" id="grade_list" style="margin-left: 2px">
+                    <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
+                    <div class="dropdown-trigger">
+                        <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
+                            <span id="base_grade_text">--</span>
+                            <span class="icon is-small">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                        <div class="dropdown-content">
+                            {% for grade in grade_lessons %}
+                                <a onclick="send_grade_select_signal({{ grade }})" class="dropdown-item">
+                                    {{ grade }}
+                                </a>
+                            {% endfor %}
 
-        function handleMouseup(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            isDown = false;
-        }
+                            <script>
+                                let grade_lessons_arr = {{ grade_lessons | tojson }}; // {grade: [lessons] }
+                                // alert(" > " + grade_lessons_arr);
+                                // current selected grade and lesson
+                                let current_grade = null;
+                                let current_lesson = null;
 
-        function handleMousemove(e) {
-            e.preventDefault();
-            e.stopPropagation();
+                                function send_grade_select_signal(grade) {
+                                    current_grade = grade;
+                                    current_lesson = grade_lessons_arr[current_grade][0]; // as newly selected grade, lesson is not yet selected
+                                    $('#base_grade_text').text(`${current_grade}`);
+                                    $('#base_lesson_text').text(`${current_lesson}`);
 
-            if (!isDown) {
-                return;
+                                    let l = $('#lessons_div');
+                                    l.empty();
+                                    for (let i = 0; i < grade_lessons_arr[current_grade].length; i++) {
+                                        l.append("<a onclick=\"send_lesson_select_signal(" + `${grade_lessons_arr[current_grade][i]}` + ")\" class=\"dropdown-item\">\n" +
+                                            "                            \n" + `${grade_lessons_arr[current_grade][i]}` +
+                                            "                        </a>")
+                                    }
+
+                                }
+
+                                // lesson select func
+                                function send_lesson_select_signal(lesson) {
+                                    current_lesson = lesson;
+                                    $('#base_lesson_text').text(`${current_lesson}`);
+                                }
+
+                            </script>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dropdown" id="lesson_list" style="margin-left: 6px;margin-right: 2px">
+                    <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>
+                    <div class="dropdown-trigger">
+                        <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
+                            <span id="base_lesson_text">--</span>
+                            <span class="icon is-small">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu5" role="menu">
+                        <div class="dropdown-content" id="lessons_div">
+                            {# empty... will be appended by JS on grade select.. #}
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        <br>
+
+            <div class="block">
+                <h5 class="subtitle is-4">Add Document (ppt, pptm, pptx, pdf)</h5>
+                <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
+                    <div class="file is-primary" style="font-weight: bolder;">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="myfile" id="myfile">
+                            <span class="file-cta">
+                        <span class="file-icon">
+                          <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                          Upload PPT/PDF
+                        </span>
+                            </span>
+                        </label>
+
+                    </div>
+
+                </form>
+            </div>
+
+        </section>
+
+
+        {# add flashcard #}
+        {#  todo: .............. #}
+
+
+    </div>
+
+    {# todo: view SS report and make report.. #}
+
+    {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
+
+
+
+
+    <script>
+        function revise_canvas_on_click(index) {
+            let canvas_to_render = canvases[index];
+
+            let BB = canvas_to_render.getBoundingClientRect();
+            let offsetX = BB.left;
+            let offsetY = BB.top;
+
+            let lastX, lastY;
+            let isDown = false;
+
+            canvas_to_render.onmousedown = handleMousedown;
+            canvas_to_render.onmousemove = handleMousemove;
+            canvas_to_render.onmouseup = handleMouseup;
+
+
+            function handleMousedown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                lastX = e.clientX - offsetX;
+                lastY = e.clientY - offsetY;
+                isDown = true;
             }
 
-            let mouseX = e.clientX - offsetX;
-            let mouseY = e.clientY - offsetY;
+            function handleMouseup(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                isDown = false;
+            }
 
-            ctx.beginPath();
+            function handleMousemove(e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(mouseX, mouseY);
-            ctx.stroke();
+                if (!isDown) {
+                    return;
+                }
 
-            lastX = mouseX;
-            lastY = mouseY;
+                let mouseX = e.clientX - offsetX;
+                let mouseY = e.clientY - offsetY;
+
+                ctx.beginPath();
+
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.stroke();
+
+                lastX = mouseX;
+                lastY = mouseY;
+            }
         }
-    }
-</script>
+    </script>
 
     {# start => tik-tak-toe game screen #}
     <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px">
@@ -934,18 +1089,18 @@ function revise_canvas_on_click(index) {
         {#
     </iframe>
     #}
-{#        <canvas id="pdf_canvas_" width="100%" height="100%">#}
-{#            #}
-{#        </canvas>#}
-{#        <script>#}
-{#            var myCanvas = document.getElementById(`pdf_canvas_${i}`);#}
-{#            var ctx = myCanvas.getContext('2d');#}
-{#            var img = new Image();#}
-{#            img.onload = function () {#}
-{#                ctx.drawImage(img, 0, 0); // Or at whatever offset you like#}
-{#            };#}
-{#            img.src = `${data['parsed_pdf_dir_path'] + "/" + i + ".png"}`;#}
-{#        </script>#}
+        {#        <canvas id="pdf_canvas_" width="100%" height="100%">#}
+        {#            #}
+        {#        </canvas>#}
+        {#        <script>#}
+        {#            var myCanvas = document.getElementById(`pdf_canvas_${i}`);#}
+        {#            var ctx = myCanvas.getContext('2d');#}
+        {#            var img = new Image();#}
+        {#            img.onload = function () {#}
+        {#                ctx.drawImage(img, 0, 0); // Or at whatever offset you like#}
+        {#            };#}
+        {#            img.src = `${data['parsed_pdf_dir_path'] + "/" + i + ".png"}`;#}
+        {#        </script>#}
 
     </div>
 

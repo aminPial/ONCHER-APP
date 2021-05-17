@@ -8,11 +8,22 @@ from flask import jsonify
 from flask import request
 from app import BASE_URL
 from models import StudentsData
+import os
+import sys
 
 
 @oncher_app.route('/window_2')
 def window_2():
-    return render_template('window2.html', BASE_URL=BASE_URL)
+    grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'u_data'))
+    grade_lessons = {}  # dummy for now => {grade: [lessons in list]}
+    for folder_names in grade_lesson_folders:
+        print(folder_names)
+        split = folder_names.split("_")  # [1] is grade name and [-1] is lesson
+        if split[1] not in grade_lessons.keys():
+            grade_lessons[split[1]] = []
+        grade_lessons[split[1]].append(split[-1])  # todo: should we append the src to load or plain
+    print("grade lessons from window 2 ... {}".format(grade_lessons))
+    return render_template('window2.html', BASE_URL=BASE_URL, grade_lessons=grade_lessons)
 
 
 @oncher_app.route('/save_time_count', methods=['POST'])
