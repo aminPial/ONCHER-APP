@@ -103,7 +103,7 @@
 
     {# settings page #}
     <div class="box" id="settings_box" style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 8px;height: 500px;display: none">
+         padding: 16px;border: none;border-radius: 8px;height: 500px;display: none;overflow: auto">
         <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
             <span id="configure-back">
                 <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp; </span>Configure Lesson Docs</h4>
@@ -114,116 +114,174 @@
             <div class="column">
                 <div class="box" id="upload_ppt_pdf"
                      style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));">
-                    <img
-                            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-                            background: white;padding: 4px;"
-                            src="https://www.pdftoppt.net/images/logo-pdftoppt.net.png"
-                            alt="add_ppt_pdf" width="128px"
-                            height="128px"/>
+                    {#                    <img#}
+                    {#                            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);#}
+                    {#                            background: white;padding: 4px;"#}
+                    {#                            src="https://www.pdftoppt.net/images/logo-pdftoppt.net.png"#}
+                    {#                            alt="add_ppt_pdf" width="128px"#}
+                    {#                            height="128px"/>#}
                     <h1 class="title is-1" style="color: white;font-weight: bolder">ADD PPT,PDF</h1>
                 </div>
             </div>
             <div class="column">
                 <div class="box" id="flashcard_upload" style="
                 background-image: linear-gradient(to left, rgba(215,12,181,0.91), rgb(198,31,232));">
-                    <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
-                         src="https://api.macmillanenglish.com/fileadmin/user_upload/Blog_and_Resources/Resources/resources_3/Flashcards.jpg"
-                         alt="add_flashcard" width="128px"
-                         height="128px"/>
+                    {#                    <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"#}
+                    {#                         src="https://api.macmillanenglish.com/fileadmin/user_upload/Blog_and_Resources/Resources/resources_3/Flashcards.jpg"#}
+                    {#                         alt="add_flashcard" width="128px"#}
+                    {#                         height="128px"/>#}
                     <h1 class="title is-1" style="color: white;font-weight: bolder">ADD FLASHCARD</h1>
                 </div>
             </div>
         </div>
 
 
+        {# grade lesson table #}
+        <section class="section" id="grade_lesson_list_section">
+            <table class="table is-fullwidth">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Grade</th>
+                    <th>Lesson</th>
+                    <th>Study Materials</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for grade in grade_lessons %}
+                    {% for object in grade_lessons[grade] %}
+                        <tr id="study_materials_{{ loop.index }}_{{ grade }}" style="cursor: pointer">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ grade }}</td>
+                            <td>{{ object.lesson }}</td>
+                            <td>{{ object.folder_name }}</td>
+                            <td><i class="fa fa-edit" style="color: #f620d9"></i></td>
+                        </tr>
+                        <script>
+                            $('#study_materials_{{ loop.index }}_{{ grade }}').hover(function () {
+                                $('#study_materials_{{ loop.index }}_{{ grade }}').attr({'class': 'is-selected'});
+                            }).mouseleave(function () {
+                                $('#study_materials_{{ loop.index }}_{{ grade }}}').attr({'class': ''});
+                            });
+                        </script>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+
         {# add ppt, pdf #}
 
 
         <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
-            `<h5 class="subtitle is-4">Select Grade & Lesson</h5>
+            `<h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
             <div class="container" style="padding: 4px">
 
-                <div class="dropdown" id="grade_list" style="margin-left: 2px">
-                    <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
-                    <div class="dropdown-trigger">
-                        <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
-                            <span id="base_grade_text">--</span>
-                            <span class="icon is-small">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
-      </span>
-                        </button>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-                        <div class="dropdown-content">
-                            {% for grade in grade_lessons %}
-                                <a onclick="send_grade_select_signal({{ grade }})" class="dropdown-item">
-                                    {{ grade }}
-                                </a>
-                            {% endfor %}
-
-                            <script>
-                                let grade_lessons_arr = {{ grade_lessons | tojson }}; // {grade: [lessons] }
-                                // alert(" > " + grade_lessons_arr);
-                                // current selected grade and lesson
-                                let current_grade = null;
-                                let current_lesson = null;
-
-                                function send_grade_select_signal(grade) {
-                                    current_grade = grade;
-                                    current_lesson = grade_lessons_arr[current_grade][0]; // as newly selected grade, lesson is not yet selected
-                                    $('#base_grade_text').text(`${current_grade}`);
-                                    $('#base_lesson_text').text(`${current_lesson}`);
-
-                                    let l = $('#lessons_div');
-                                    l.empty();
-                                    for (let i = 0; i < grade_lessons_arr[current_grade].length; i++) {
-                                        l.append("<a onclick=\"send_lesson_select_signal(" + `${grade_lessons_arr[current_grade][i]}` + ")\" class=\"dropdown-item\">\n" +
-                                            "                            \n" + `${grade_lessons_arr[current_grade][i]}` +
-                                            "                        </a>")
-                                    }
-
-                                }
-
-                                // lesson select func
-                                function send_lesson_select_signal(lesson) {
-                                    current_lesson = lesson;
-                                    $('#base_lesson_text').text(`${current_lesson}`);
-                                }
-
-                            </script>
-
-                        </div>
-                    </div>
+                <div class="control has-icons-left" style="display: inline-block">
+                    <input class="input is-primary is-medium" type="number" id="grade_field" placeholder="INPUT GRADE"
+                           name="grade_field">
+                    <span class="icon is-small is-left">
+      <i class="fas fa-graduation-cap"></i>
+    </span>
+                </div>
+                <div class="control has-icons-left" style="display: inline-block">
+                    <input class="input is-success is-medium" type="number" id="lesson_field" placeholder="INPUT LESSON"
+                           name="lesson_field">
+                    <span class="icon is-small is-left">
+      <i class="fas fa-book-open"></i>
+    </span>
                 </div>
 
-                <div class="dropdown" id="lesson_list" style="margin-left: 6px;margin-right: 2px">
-                    <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>
-                    <div class="dropdown-trigger">
-                        <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
-                            <span id="base_lesson_text">--</span>
-                            <span class="icon is-small">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
-      </span>
-                        </button>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu5" role="menu">
-                        <div class="dropdown-content" id="lessons_div">
-                            {# empty... will be appended by JS on grade select.. #}
-
-
-                        </div>
-
-                    </div>
-                </div>
+                {#                <div class="dropdown" id="grade_list" style="margin-left: 2px">#}
+                {#                    <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>#}
+                {#                    <div class="dropdown-trigger">#}
+                {#                        <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">#}
+                {#                            <span id="base_grade_text">--</span>#}
+                {#                            <span class="icon is-small">#}
+                {#        <i class="fas fa-angle-down" aria-hidden="true"></i>#}
+                {#      </span>#}
+                {#                        </button>#}
+                {#                    </div>#}
+                {#                    <div class="dropdown-menu" id="dropdown-menu3" role="menu">#}
+                {#                        <div class="dropdown-content">#}
+                {#                            {% for grade in grade_lessons %}#}
+                {#                                <a onclick="send_grade_select_signal({{ grade }})" class="dropdown-item">#}
+                {#                                    {{ grade }}#}
+                {#                                </a>#}
+                {#                            {% endfor %}#}
+                {##}
+                {#                            <script>#}
+                {#                                let grade_lessons_arr = {{ grade_lessons | tojson }}; // {grade: [lessons] }#}
+                {#                                // alert(" > " + grade_lessons_arr);#}
+                {#                                // current selected grade and lesson#}
+                {#                                let current_grade = null;#}
+                {#                                let current_lesson = null;#}
+                {##}
+                {#                                function send_grade_select_signal(grade) {#}
+                {#                                    current_grade = grade;#}
+                {#                                    current_lesson = grade_lessons_arr[current_grade][0]['lesson']; // as newly selected grade, lesson is not yet selected#}
+                {#                                    $('#base_grade_text').text(`${current_grade}`);#}
+                {#                                    $('#base_lesson_text').text(`${current_lesson}`);#}
+                {##}
+                {#                                    let l = $('#lessons_div');#}
+                {#                                    l.empty();#}
+                {#                                    for (let i = 0; i < grade_lessons_arr[current_grade].length; i++) {#}
+                {#                                        l.append("<a onclick=\"send_lesson_select_signal(" + `${grade_lessons_arr[current_grade][i]['lesson']}` + ")\" class=\"dropdown-item\">\n" +#}
+                {#                                            "                            \n" + `${grade_lessons_arr[current_grade][i]['lesson']}` +#}
+                {#                                            "                        </a>")#}
+                {#                                    }#}
+                {#                                }#}
+                {##}
+                {#                                // lesson select func#}
+                {#                                function send_lesson_select_signal(lesson) {#}
+                {#                                    current_lesson = lesson;#}
+                {#                                    $('#base_lesson_text').text(`${current_lesson}`);#}
+                {#                                }#}
+                {##}
+                {#                            </script>#}
+                {##}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
+                {##}
+                {#                <div class="dropdown" id="lesson_list" style="margin-left: 6px;margin-right: 2px">#}
+                {#                    <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>#}
+                {#                    <div class="dropdown-trigger">#}
+                {#                        <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">#}
+                {#                            <span id="base_lesson_text">--</span>#}
+                {#                            <span class="icon is-small">#}
+                {#        <i class="fas fa-angle-down" aria-hidden="true"></i>#}
+                {#      </span>#}
+                {#                        </button>#}
+                {#                    </div>#}
+                {#                    <div class="dropdown-menu" id="dropdown-menu5" role="menu">#}
+                {#                        <div class="dropdown-content" id="lessons_div">#}
+                {# empty... will be appended by JS on grade select.. #}
+                {##}
+                {#                        </div>#}
+                {##}
+                {#                    </div>#}
+                {#                </div>#}
             </div>
+
+
             <br>
-            <h5 class="subtitle is-4">Add Document (ppt, pptm, pptx, pdf)</h5>
+            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Document (ppt, pptm, pptx, pdf)</h5>
             <div class="container" style="padding: 4px">
 
                 <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
                     <div class="file is-primary" style="font-weight: bolder;">
                         <label class="file-label">
                             <input class="file-input" type="file" name="myfile" id="myfile">
+                            <script>
+                                $('input[type=file]').change(function () {
+                                    var filename = $('input[type=file]').val().split('\\').pop();
+                                    // alert("filename: " + filename);
+                                    $('#filename_text').text(filename);
+                                });
+                            </script>
                             <span class="file-cta">
                         <span class="file-icon">
                           <i class="fas fa-upload"></i>
@@ -231,6 +289,9 @@
                         <span class="file-label">
                           Upload PPT/PDF
                         </span>
+                            </span>
+                            <span id="filename_text" style="margin: 8px;color: #f82222">
+
                             </span>
                         </label>
 
@@ -243,7 +304,7 @@
 
                 <button style="font-weight: bolder;background: #e31266"
                         type="button" class="button is-link field is-inline-block-mobile"
-                        id="add_ppt" onclick="add_documents(false)"><i class="fa fa-plus"></i>&nbsp; ADD
+                        id="add_ppt" onclick="add_documents(0)"><i class="fa fa-plus"></i>&nbsp; ADD
                 </button>
             </div>
 
@@ -251,6 +312,9 @@
 
         <script>
             function add_documents(is_flashcard) {
+                // initiate loading
+                $('#add_ppt').empty().text('UPLOADING'
+                ).attr({'class': 'button is-link is-loading'});
                 // is_flashcard = false means ppt,pdf
                 let fd = new FormData(document.getElementById("fileinfo"));
                 let grade = $('#base_grade_text').text();
@@ -258,6 +322,7 @@
                 if (grade !== "--" && lesson !== "--") {
                     fd.append("grade", grade);
                     fd.append("lesson", lesson);
+                    fd.append("is_flashcard", is_flashcard);
                     $.ajax({
                         url: "/upload_document",
                         type: "POST",
@@ -265,9 +330,15 @@
                         processData: false,  // tell jQuery not to process the data
                         contentType: false   // tell jQuery not to set contentType
                     }).done(function (data) {
+                        $('#upload_ppt_pdf').show();
+                        $('#flashcard_upload').show();
+                        $('#grade_lesson_list_section').show();
+                        $('#add_ppt_pdf_div').hide();
+                        // todo: add newly uploaded doc in the table. Should we just append or get new data from db???
                     });
                 } else {
                     // error
+                    alert("Please select grade & lesson both");
                 }
             }
         </script>

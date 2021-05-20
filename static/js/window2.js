@@ -224,6 +224,7 @@ $(document).ready(function () {
         $('#upload_ppt_pdf').hide();
         $('#flashcard_upload').hide();
         $('#settings_cards').hide();
+        $('#grade_lesson_list_section').hide();
         $('#add_ppt_pdf_div').show();
     });
 

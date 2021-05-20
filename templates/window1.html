@@ -35,7 +35,7 @@
 
                     <script>
                         function send_student_select_signal(student_object) {
-                          //  $('#base_student_text').text(student_object["name"]);
+                            //  $('#base_student_text').text(student_object["name"]);
                             $('#age').text(student_object['age']);
                             $('#gender').text(student_object['gender'] ? "M" : "F");
                             $('#recent').text(student_object['recent']);
@@ -92,7 +92,7 @@
     </div>
 
     <section style="margin-left: 8px" id="grade_section">
-`
+        `
         <div class="dropdown" id="grade_list" style="margin-left: 2px">
             <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
             <div class="dropdown-trigger">
@@ -204,6 +204,14 @@
                 <input class="input" type="number" id="student_age" placeholder="e.g: 12" name="student_age">
             </div>
         </div>
+
+        <div class="field">
+            <label class="label">Student's Grade</label>
+            <div class="control">
+                <input class="input" type="number" id="student_grade" placeholder="e.g: 4" name="student_grade">
+            </div>
+        </div>
+
         <div class="control">
             <label class="label">Student Sex</label>
             <label class="radio">
@@ -222,29 +230,30 @@
 
     <div class="field-body" style="margin-left: 8px;"
          id="file_upload_section">
-    <button style="font-weight: bolder;background: #e312a8" type="button"
-            class="button is-link field is-inline-block-mobile" id="configure">Configure
+        <button style="font-weight: bolder;background: #e312a8" type="button"
+                class="button is-link field is-inline-block-mobile" id="configure">Configure
         </button>
-      <button style="font-weight: bolder;background: #12e312" type="button" class="button is-link field is-inline-block-mobile" id="view_ss_report">View SS Report
+        <button style="font-weight: bolder;background: #12e312" type="button"
+                class="button is-link field is-inline-block-mobile" id="view_ss_report">View SS Report
         </button>
-{#        <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">#}
-{#            <div class="file is-primary" style="font-weight: bolder;background: #b120e8">#}
-{#                <label class="file-label">#}
-{#                    <input class="file-input" type="file" name="myfile" id="myfile">#}
-{#                    <span class="file-cta">#}
-{#            <span class="file-icon">#}
-{#              <i class="fas fa-upload"></i>#}
-{#            </span>#}
-{#            <span class="file-label">#}
-{#              Upload PPT/PDF#}
-{#                Configure#}
-{#            </span>#}
-{#                </span>#}
-{#                </label>#}
-{##}
-{#            </div>#}
-{##}
-{#        </form>#}
+        {#        <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">#}
+        {#            <div class="file is-primary" style="font-weight: bolder;background: #b120e8">#}
+        {#                <label class="file-label">#}
+        {#                    <input class="file-input" type="file" name="myfile" id="myfile">#}
+        {#                    <span class="file-cta">#}
+        {#            <span class="file-icon">#}
+        {#              <i class="fas fa-upload"></i>#}
+        {#            </span>#}
+        {#            <span class="file-label">#}
+        {#              Upload PPT/PDF#}
+        {#                Configure#}
+        {#            </span>#}
+        {#                </span>#}
+        {#                </label>#}
+        {##}
+        {#            </div>#}
+        {##}
+        {#        </form>#}
 
     </div>
 
