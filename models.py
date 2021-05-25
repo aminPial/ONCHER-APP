@@ -23,13 +23,15 @@ class StudentsData(database_cluster.Model):
 class StudyMaterials(database_cluster.Model):
     id = database_cluster.Column(database_cluster.Integer, primary_key=True)
 
-    grade = database_cluster.Column(database_cluster.Integer, nullable=False)
-    lesson = database_cluster.Column(database_cluster.Integer, nullable=False)
-    folder_name = database_cluster.Column(database_cluster.Text, nullable=False)
+    grade = database_cluster.Column(database_cluster.Integer)
+    lesson = database_cluster.Column(database_cluster.Integer)
+    folder_name = database_cluster.Column(database_cluster.Text)
     # is_flashcard = 0 or 1
     is_flashcard = database_cluster.Column(database_cluster.Integer, default=0)
+    is_pdf = database_cluster.Column(database_cluster.Integer, default=1)
     # this is specific for PDF
     page_count = database_cluster.Column(database_cluster.Integer, default=0)
-    page_width = database_cluster.Column(database_cluster.Integer, default=0)
-    page_height = database_cluster.Column(database_cluster.Integer, default=0)
-    # todo: PPT ? link or what
+    # this is specific for ppt, .pptx and related files
+    ppt_server_url = database_cluster.Column(database_cluster.Text)
+
+

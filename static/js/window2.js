@@ -43,8 +43,7 @@ $(document).ready(function () {
     let canvases = [];
     let ctx_es = [];
     let current_canvas = null;
-    socket.on('ppt_or_ppt_upload_signal', function (data) {
-
+    socket.on('study_doc_update', function (data) {
 
         let doc_container = $('#iframe-container');
         let loading_container = $('#loading_box');
@@ -80,7 +79,7 @@ $(document).ready(function () {
                         'height': `${height}px`
                     }).css({
                         // todo: BASE_URL, get from the JSON e.g: data['BASE_URL']
-                        'background': `url("http://localhost:5000${data['parsed_pdf_dir_path']}/${j}.png")`,
+                        'background': `url("${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png")`,
                         'background-position': 'center',
                         'background-size': '100% 100%'
                     }).hover(function () {
@@ -207,22 +206,19 @@ $(document).ready(function () {
     // });
     socket.on('configure_signal_receive', function (data) {
         // on get the show config page signal
-        $('#intro_screen').hide();
+//        $('#intro_screen').hide();
         $('#initial_box').hide();
         $('#choose_games').hide();
         $('#settings_box').show();
     });
 
     $('#configure-back').click(function () {
-        $('#intro_screen').show();
-        $('#initial_box').hide();
+        $('#initial_box').show();
         $('#choose_games').hide();
         $('#settings_box').hide();
     });
 
     $('#upload_ppt_pdf').click(function () {
-        $('#upload_ppt_pdf').hide();
-        $('#flashcard_upload').hide();
         $('#settings_cards').hide();
         $('#grade_lesson_list_section').hide();
         $('#add_ppt_pdf_div').show();
@@ -253,6 +249,8 @@ $(document).ready(function () {
         $('#initial_box').hide(1000);
         $('#match_game').show(1200);
     });
+
+
 
     // logics of match game
     // let grid_data = {};

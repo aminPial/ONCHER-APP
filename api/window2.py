@@ -1,5 +1,6 @@
 # main screen
 import time
+from typing import List
 
 from flask_socketio import emit
 
@@ -15,8 +16,8 @@ import os
 import sys
 import fitz
 from PIL import Image
-import threading
 import multiprocessing
+import threading
 
 import time
 
@@ -26,13 +27,13 @@ def window_2():
     grade_lessons = {}  # dummy for now => {grade: Object itself]}
     # study_material: StudyMaterials
     for study_material in StudyMaterials.query.all():
+        # print(study_material.__dict__)
         if study_material.grade not in grade_lessons.keys():
             grade_lessons['{}'.format(study_material.grade)] = []
         study_material = study_material.__dict__
         study_material.pop('_sa_instance_state')
-        grade_lessons['{}'.format(study_material.grade)].append('{}'.format(
-            study_material
-        ))
+        grade_lessons['{}'.format(study_material['grade'])].append(study_material)
+    # print("grade lessons: {}".format(grade_lessons))
     return render_template('window2.html', BASE_URL=BASE_URL, grade_lessons=grade_lessons)
 
 
@@ -62,47 +63,57 @@ def add_star_to_student_record(data):
 
 @socket_io.on('game_4_initialize')
 def game_4_initialize(data):
-    print(data)
+    # print(data)
     emit('game_4_init_emit_signal', {'image_name': 'CAT' if 'image_name' not in data.keys() else data['image_name']},
          namespace='/', broadcast=True)
 
 
-PDF_GLOBAL = None
-EXTRACT_DIRECTORY = ''
-W = 0
-H = 0
+# def write_png(pix, output):
+#
 
 
-def parse_each_page(page_no: int):
-    global PDF_GLOBAL
-    global EXTRACT_DIRECTORY
-    global W
-    global H
+def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: bool):
+    """
+    page_start
+    page_end
+    data_block = {'pdf_document_object': <OBJECT>, 'extract_directory':'....'}
+    save_w_h
+    """
 
-    if PDF_GLOBAL and EXTRACT_DIRECTORY:
-        print("Extracting Page no: {}".format(page_no))
-        page = PDF_GLOBAL.loadPage(page_no)  # number of page
-        """
-            # https://stackoverflow.com/questions/46184239/extract-a-page-from-a-pdf-as-a-jpeg
-            # https://stackoverflow.com/questions/63661910/convert-pdf-file-to-multipage-image
-            # image = page.getPixmap(matrix=fitz.Matrix(150/72,150/72)) extracts the image at 150 DPI.
-            # https://github.com/pymupdf/PyMuPDF/issues/181
-        """
-        # zoom = 2
-        # mat = fitz.Matrix(zoom, zoom)
-        # st = time.time()
-        pix = page.getPixmap(matrix=fitz.Matrix(6, 6))  # 300 DPI
-        # print("Zoom Time: {} sec".format(time.time() - st))
-        # change color channel accordingly, you can use png, jpg, jpeg
-        # st = time.time()
-        output = os.path.join(EXTRACT_DIRECTORY, "{}.png".format(page_no))
-        pix.writePNG(output)
-        # print("Write Time: {} sec".format(time.time() - st))
-        if page_no == 0:
-            # calculate w,h only for first page to reduce overhead
-            im = Image.open(output)
-            W, H = im.size
-            print("Image Size: {} {}".format(W, H))
+    pdf_document_object = fitz.open(data_block['pdf_file_path'])
+    extract_directory = data_block['extract_directory']
+
+    if pdf_document_object and extract_directory:
+        # print("Extracting PAGE {}-{} from PID: {}".format(page_start, page_end, os.getpid()))
+        threads = []
+        for page_no in range(page_start, page_end):
+            # print("[+++++] PAGE NO: {}".format(page_no))
+            page = pdf_document_object.loadPage(page_no)  # number of page
+            """
+                # https://stackoverflow.com/questions/46184239/extract-a-page-from-a-pdf-as-a-jpeg
+                # https://stackoverflow.com/questions/63661910/convert-pdf-file-to-multipage-image
+                # image = page.getPixmap(matrix=fitz.Matrix(150/72,150/72)) extracts the image at 150 DPI.
+                # https://github.com/pymupdf/PyMuPDF/issues/181
+            """
+            # zoom = 2
+            # mat = fitz.Matrix(zoom, zoom)
+            # st = time.time()
+            pix = page.getPixmap(matrix=fitz.Matrix(2, 2))  # 300 DPI
+            # print("Zoom Time: {} sec".format(time.time() - st))
+            # change color channel accordingly, you can use png, jpg, jpeg
+            # st = time.time()
+            pix.writePNG(os.path.join(extract_directory, "{}.png".format(page_no)))
+            # threads.append(threading.Thread(target=write_png,
+            #                                 args=(pix, ))
+
+            # print("Write Time: {} sec".format(time.time() - st))
+            # if save_w_h:
+            #     # calculate w,h only for first page to reduce overhead
+            #     im = Image.open(os.path.join(extract_directory, "{}.png".format(page_no))).size
+            #     print("Image Size: {} {}".format(im[0], im[1]))
+
+        [t.start() for t in threads]
+        [t.join() for t in threads]
 
 
 # pdf file parser
@@ -115,27 +126,47 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     """
     # create folder to save the images of the pdf file
     print("pdf file name: {}".format(pdf_file_name))
-    page_extract_directory = os.path.join(sys.path[0], 'static', 'cache', pdf_file_name)
-    print("page extract directory: {}".format(page_extract_directory))
+    extract_directory = os.path.join(sys.path[0], 'static', 'cache', pdf_file_name)
+    print("page extract directory: {}".format(extract_directory))
     # if os.path.exists(page_extract_directory):
     #     # shutil.rmtree(page_extract_directory)
     #     images = os.listdir(page_extract_directory)
     #     w, h = Image.open(os.path.join(page_extract_directory, images[0])).size
     #     print("Already Exists. Image Size from Pre is {} {}".format(w, h))
     #     return [pdf_file_name, len(images), w, h]
-    os.makedirs(page_extract_directory)
-    global EXTRACT_DIRECTORY
-    EXTRACT_DIRECTORY = page_extract_directory
-    global PDF_GLOBAL
-    PDF_GLOBAL = fitz.open(pdf_file_path)
-    no_of_pages = PDF_GLOBAL.pageCount
+    os.makedirs(extract_directory)
+
+    pdf_document_object = fitz.open(pdf_file_path)
+    no_of_pages = pdf_document_object.pageCount
+
     print("NO OF PAGES: {}".format(no_of_pages))
-    for page_no in range(no_of_pages):
-        # t1 = threading.Thread(target=parse_each_page, args=(page_no,))
-        # t1.start()
-        parse_each_page(page_no)
-    print("W and H from Global is {} {}".format(W, H))
-    return [pdf_file_name, no_of_pages, W, H]
+
+    _divide_by_parts = 25
+    pools = []
+    pools: List[multiprocessing.Process]
+    tail_size, partial = divmod(no_of_pages, _divide_by_parts)
+    if tail_size == 0:
+        _divide_by_parts = 1
+
+    # print(tail_size, partial)
+    st = time.time()
+    for page_no in range(partial if tail_size == 0 else (tail_size + (1 if partial else 0))):
+        start = page_no * _divide_by_parts
+        end = ((page_no + 1) * _divide_by_parts)
+        if end > no_of_pages:
+            # print("End {} . No of Pages {}".format(end, no_of_pages))
+            end = no_of_pages
+        pools.append(multiprocessing.Process(target=parse_pdf_block,
+                                             args=({'pdf_file_path': pdf_file_path,
+                                                    'extract_directory': extract_directory, },
+                                                   start,
+                                                   end,
+                                                   # save w, h if first page else don't
+                                                   True if page_no == 0 else False)))
+    [p.start() for p in pools]
+    [p.join() for p in pools]
+    print("Took {} seconds to parse the PDF".format(time.time() - st))
+    return [pdf_file_name, no_of_pages, 0, 0]  # [file_name,page_count , W, H]
 
 
 @oncher_app.route('/upload_document', methods=['POST'])
@@ -163,22 +194,16 @@ def upload_document():
         start = time.time()
         pdf_file_name, page_count, w, h = parse_pdf_file(full_file_path, filename)
         print("[+++] Pdf parsing time {} sec.".format(time.time() - start))
-        # # processing finished, parse_pdf_file() is done
-        # # below 2 vars will gen urls like => "/static/cache/test.pdf/0.jpg, /static/cache/test.pdf/1.jpg"
-        # payload['parsed_pdf_dir_path'] = "/static/cache/{}".format(pdf_file_name)
-        # payload['page_count'] = page_count
-        # payload['width'] = w
-        # payload['height'] = h
 
-        database_cluster.session.add(StudyMaterials(grade=int(form['grade_field']),
-                                                    lesson=int(form['lesson_field']),
+        database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                    lesson=int(form['lesson']),
                                                     folder_name=filename,
-                                                    is_flashcard=int(form['is_flashcard']),
+                                                    is_flashcard=0,
                                                     page_count=page_count,
-                                                    page_width=w,
-                                                    page_height=h
+                                                    is_pdf=1
                                                     ))
         database_cluster.session.commit()
+        # print("After committing. {}".format(StudyMaterials.query.all()))
         return jsonify(status=1, does_exist=False)
 
     # elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
@@ -191,5 +216,3 @@ def upload_document():
     #      payload,
     #      namespace='/',
     #      broadcast=True)
-
-

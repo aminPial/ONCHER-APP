@@ -6,8 +6,9 @@ import os
 import sys
 from flask_socketio import emit
 import requests
-from models import StudentsData
+from models import StudentsData, StudyMaterials
 from app import BASE_URL
+from PIL import Image
 
 
 @oncher_app.route('/window_1')
@@ -17,14 +18,14 @@ def window_1():
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons = {}  # dummy for now => {grade: [lessons in list]}
     for folder_names in grade_lesson_folders:
-        print(folder_names)
+        # print(folder_names)
         split = folder_names.split("_")  # [1] is grade name and [-1] is lesson
         if split[1] not in grade_lessons.keys():
             grade_lessons[split[1]] = []
         grade_lessons[split[1]].append(split[-1])  # todo: should we append the src to load or plain
     students = [s.__dict__ for s in StudentsData.query.all()]
     [a.pop('_sa_instance_state') for a in students]
-    print(students)
+    # print(students)
     return render_template('window1.html', students=students,
                            BASE_URL=BASE_URL, grade_lessons=grade_lessons)
 
@@ -109,7 +110,37 @@ def grade_lesson_select_signal_receive(data):
         # a = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/lexa-tabby-cat-painting-dora-hathazi-mendes.jpg"
         payload = ['/static/u_data/{}/{}'.format(folder_name, f) for f in files_path]
         print(len(payload))
+        # this is for games
         emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
+
+        # this is for ppt and pdf (docs)
+        # # processing finished, parse_pdf_file() is done
+        # # below 2 vars will gen urls like => "/static/cache/test.pdf/0.jpg, /static/cache/test.pdf/1.jpg"
+        # payload['parsed_pdf_dir_path'] = "/static/cache/{}".format(pdf_file_name)
+        # payload['page_count'] = page_count
+        # payload['width'] = w
+        # payload['height'] = h
+        study_mat_query = StudyMaterials.query.filter_by(grade=int(data['grade'])).filter_by(
+            lesson=int(data['lesson'])).first()
+        assert study_mat_query is not None, "study_mat_query object is None. Check. Grade: {} Lesson: {}".format(
+            data['grade'],
+            data['lesson'])
+        study_mat_query: StudyMaterials
+        # todo: what to do for ppt, pptx ? check that
+        parsed_pdf_dir_path = "/static/cache/{}".format(study_mat_query.folder_name)
+        # we need to parse width and height from the doc
+        width, height = Image.open(os.path.join(parsed_pdf_dir_path, os.listdir(parsed_pdf_dir_path)[0])).size
+        print("Parsed Width {} and Height {}".format(width, height))
+        payload = {
+            'is_pdf': True,  # todo: for now it is true but we need to work for the ppt and others related files
+            'parsed_pdf_dir_path': parsed_pdf_dir_path,
+            # these are specially for pdf file
+            'base_url': BASE_URL,
+            'page_count': study_mat_query.page_count,
+            'width': width,
+            'height': height
+        }
+        emit('study_doc_update', payload, namespace='/', broadcast=True)
     else:
         print("Path {} doesn't exist".format(full_path))
         return

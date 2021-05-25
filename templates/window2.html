@@ -148,7 +148,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="grade-lesson-doc-list-body">
                 {% for grade in grade_lessons %}
                     {% for object in grade_lessons[grade] %}
                         <tr id="study_materials_{{ loop.index }}_{{ grade }}" style="cursor: pointer">
@@ -317,9 +317,10 @@
                 ).attr({'class': 'button is-link is-loading'});
                 // is_flashcard = false means ppt,pdf
                 let fd = new FormData(document.getElementById("fileinfo"));
-                let grade = $('#base_grade_text').text();
-                let lesson = $('#base_lesson_text').text();
-                if (grade !== "--" && lesson !== "--") {
+                let grade = $('#grade_field').val();
+                let lesson = $('#lesson_field').val();
+                // alert("grade " + grade + " lesson " + lesson);
+                if (grade !== "" && lesson !== "") {
                     fd.append("grade", grade);
                     fd.append("lesson", lesson);
                     fd.append("is_flashcard", is_flashcard);
@@ -330,10 +331,12 @@
                         processData: false,  // tell jQuery not to process the data
                         contentType: false   // tell jQuery not to set contentType
                     }).done(function (data) {
-                        $('#upload_ppt_pdf').show();
-                        $('#flashcard_upload').show();
+                        // alert('Done..');
+                        $('#settings_cards').show();
                         $('#grade_lesson_list_section').show();
                         $('#add_ppt_pdf_div').hide();
+                        $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; ADD').attr(
+                            {'class': 'button is-link field is-inline-block-mobile'});
                         // todo: add newly uploaded doc in the table. Should we just append or get new data from db???
                     });
                 } else {
