@@ -1,8 +1,8 @@
+from secrets import token_urlsafe
+
 from flask import Flask
-from flask_cors import CORS
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-from secrets import token_urlsafe
 
 oncher_app = Flask(__name__)
 
@@ -16,6 +16,7 @@ config = {
 oncher_app.config.update(config)
 socket_io = SocketIO(oncher_app, cors_allowed_origins='*')
 database_cluster = SQLAlchemy(oncher_app)
+
 
 # CORS(oncher_app)
 
@@ -35,7 +36,7 @@ def add_header(r):
 
 
 from routers import *
-from models import *
+
 database_cluster.create_all()
 
 # @oncher_app.route('/favicon.ico')

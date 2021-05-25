@@ -34,7 +34,9 @@ def window_2():
         study_material.pop('_sa_instance_state')
         grade_lessons['{}'.format(study_material['grade'])].append(study_material)
     # print("grade lessons: {}".format(grade_lessons))
-    return render_template('window2.html', BASE_URL=BASE_URL, grade_lessons=grade_lessons)
+    return render_template('window2.html', BASE_URL=BASE_URL, grade_lessons=grade_lessons,
+                           grade_lesson_load_count=len(grade_lessons)
+                           )
 
 
 @oncher_app.route('/save_time_count', methods=['POST'])
@@ -164,9 +166,9 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
                                                    # save w, h if first page else don't
                                                    True if page_no == 0 else False)))
     [p.start() for p in pools]
-    [p.join() for p in pools]
+    # [p.join() for p in pools]
     print("Took {} seconds to parse the PDF".format(time.time() - st))
-    return [pdf_file_name, no_of_pages, 0, 0]  # [file_name,page_count , W, H]
+    return [pdf_file_name, no_of_pages]  # [file_name,page_count , W, H]
 
 
 @oncher_app.route('/upload_document', methods=['POST'])
@@ -192,7 +194,7 @@ def upload_document():
         # src_to_load = r"""{}/static/js/ViewerJS/index.html#../../files/{}""".format(BASE_URL, file.filename)
         # print(src_to_load)
         start = time.time()
-        pdf_file_name, page_count, w, h = parse_pdf_file(full_file_path, filename)
+        pdf_file_name, page_count = parse_pdf_file(full_file_path, filename)
         print("[+++] Pdf parsing time {} sec.".format(time.time() - start))
 
         database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
@@ -204,7 +206,7 @@ def upload_document():
                                                     ))
         database_cluster.session.commit()
         # print("After committing. {}".format(StudyMaterials.query.all()))
-        return jsonify(status=1, does_exist=False)
+        return jsonify(status=1, does_exist=False,folder_name=filename)
 
     # elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
     #     # todo: here we need to upload the ppt.pptx to server then encode the server download url

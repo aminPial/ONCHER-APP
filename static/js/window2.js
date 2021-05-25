@@ -251,7 +251,6 @@ $(document).ready(function () {
     });
 
 
-
     // logics of match game
     // let grid_data = {};
     // socket.on('grade_lesson_change', function (data) {
@@ -792,8 +791,5 @@ $(document).ready(function () {
 
 
 });
-
-
-
 
 

@@ -13,21 +13,33 @@ from PIL import Image
 
 @oncher_app.route('/window_1')
 def window_1():
-    # print(os.getcwd())
+    # todo: there are 2 grade_lesson dict version. One is flashcard and another is docs(pdf, ppt)
+
+    # docs (ppt, pdf) version
+    grade_lessons_docs_version = {}  # dummy for now => {grade: [lessons in list]}
+    study_material: StudyMaterials
+    for study_material in StudyMaterials.query.all():
+        if study_material.grade not in grade_lessons_docs_version:
+            grade_lessons_docs_version[study_material.grade] = []
+        grade_lessons_docs_version[study_material.grade].append(study_material.lesson)
+
+    # flashcard version
     grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'u_data'))
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
-    grade_lessons = {}  # dummy for now => {grade: [lessons in list]}
+    grade_lessons_flashcard_version = {}  # dummy for now => {grade: [lessons in list]}
     for folder_names in grade_lesson_folders:
         # print(folder_names)
         split = folder_names.split("_")  # [1] is grade name and [-1] is lesson
-        if split[1] not in grade_lessons.keys():
-            grade_lessons[split[1]] = []
-        grade_lessons[split[1]].append(split[-1])  # todo: should we append the src to load or plain
+        if split[1] not in grade_lessons_flashcard_version.keys():
+            grade_lessons_flashcard_version[split[1]] = []
+        grade_lessons_flashcard_version[split[1]].append(split[-1])  # todo: should we append the src to load or plain
+
     students = [s.__dict__ for s in StudentsData.query.all()]
     [a.pop('_sa_instance_state') for a in students]
     # print(students)
     return render_template('window1.html', students=students,
-                           BASE_URL=BASE_URL, grade_lessons=grade_lessons)
+                           BASE_URL=BASE_URL, grade_lessons_docs_version=grade_lessons_docs_version,
+                           grade_lessons_flashcard_version=grade_lessons_flashcard_version)
 
 
 def upload_ppt_to_server(local_file_location: str) -> bool:
