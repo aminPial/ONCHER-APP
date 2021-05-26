@@ -104,8 +104,8 @@ $(document).ready(function () {
             } else {
                 alert("Here");
                 // for ppt, pptm
-                doc_container.append("<iframe style='z-index: 3;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
-                    `  width=\"${width}px\" height=\"450px\"\n` +
+                doc_container.append("<iframe style='z-index: 1;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
+                    ` allowfullscreen  width=\"${width}px\" height=\"500px\"\n` +
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
             }
