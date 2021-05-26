@@ -335,26 +335,32 @@
                         contentType: false   // tell jQuery not to set contentType
                     }).done(function (data) {
                         // alert('Done..');
-                        $('#settings_cards').show();
-                        $('#grade_lesson_list_section').show();
-                        $('#add_ppt_pdf_div').hide();
-                        $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; ADD').attr(
-                            {'class': 'button is-link field is-inline-block-mobile'});
-                        // add the new row
-                        grade_lesson_load_count++;
-                        $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
-                            `    <td>${grade_lesson_load_count}</td>\n` +
-                            `    <td>${grade}</td>\n` +
-                            `    <td>${lesson}</td>\n` +
-                            `    <td>${data['folder_name']}</td>\n` +
-                            `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
-                            "</tr>\n");
+                        if (data['status']) {
+                            $('#settings_cards').show();
+                            $('#grade_lesson_list_section').show();
+                            $('#add_ppt_pdf_div').hide();
+                            $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; ADD').attr(
+                                {'class': 'button is-link field is-inline-block-mobile'});
+                            // add the new row
+                            grade_lesson_load_count++;
+                            $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
+                                `    <td>${grade_lesson_load_count}</td>\n` +
+                                `    <td>${grade}</td>\n` +
+                                `    <td>${lesson}</td>\n` +
+                                `    <td>${data['folder_name']}</td>\n` +
+                                `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
+                                "</tr>\n");
 
-                        $(`#study_materials_${grade_lesson_load_count}_${grade}`).hover(function () {
-                            $(`#study_materials_${grade_lesson_load_count}_${grade}`).attr({'class': 'is-selected'});
-                        }).mouseleave(function () {
-                            $(`#study_materials_${grade_lesson_load_count}_${grade}`).attr({'class': ''});
-                        });
+                            $(`#study_materials_${grade_lesson_load_count}_${grade}`).hover(function () {
+                                $(`#study_materials_${grade_lesson_load_count}_${grade}`).attr({'class': 'is-selected'});
+                            }).mouseleave(function () {
+                                $(`#study_materials_${grade_lesson_load_count}_${grade}`).attr({'class': ''});
+                            });
+                        } else {
+                            alert("Failed to upload");
+                            $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; Failed.Try Again').attr(
+                                {'class': 'button is-link field is-inline-block-mobile'});
+                        }
                     });
                 } else {
                     // error

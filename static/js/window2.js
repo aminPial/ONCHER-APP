@@ -59,6 +59,8 @@ $(document).ready(function () {
         } else {
             doc_container.empty(); // clear all the content inside it
 
+            let width = $(document).width() - 0; // extra space - X
+
             if (data['is_pdf']) {
                 // for (let i = 0; i < data['page_count']; i++) {
                 //     // current image format is .png # you have to change it in window 1 and here to take effect the change
@@ -67,13 +69,13 @@ $(document).ready(function () {
                 //         + " alt=" + `"${i}"/>`);
                 // }
                 let ratio = data['width'] / data['height'];
-                let width = $(document).width() - 0; // extra space - X
                 let height = width / ratio;
 
                 for (let j = 0; j < data['page_count']; j++) {
                     doc_container.append("<canvas  " + " id=\"pdf_canvas_" + `${j}` + "\"" + ">\n" +
                         "            Your browser does not support the HTML5 canvas tag.\n" +
                         "        </canvas>\n");
+                    //alert(`"${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png"`);
                     $(`#pdf_canvas_${j}`).attr({
                         'width': `${width}px`,
                         'height': `${height}px`
@@ -100,11 +102,12 @@ $(document).ready(function () {
                     // context.stroke();
                 }
             } else {
+                alert("Here");
                 // for ppt, pptm
-                doc_container.append("<iframe class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
-                    " allowFullScreen width=\"100%\" height=\"500px\"\n" +
+                doc_container.append("<iframe style='z-index: 3;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
+                    `  width=\"${width}px\" height=\"450px\"\n` +
                     "                frameBorder=\"0\"\n" +
-                    "                src=\"" + data['link'] + "\">").show();
+                    "                src=\"" + data['ppt_url'] + "\">");
             }
 
             initial_box.hide();
@@ -236,6 +239,7 @@ $(document).ready(function () {
         // let initial = data['is_initial'];
         $('#intro_screen').hide(1000);
         $('#choose_games').show(1200);
+
     });
 
     // on click games
@@ -294,6 +298,7 @@ $(document).ready(function () {
         $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').hide();
         $('#initial_box').show(1200);
+        socket.emit('refresh_grades_as_per_docs', {});
     });
 
     // second game
@@ -308,6 +313,7 @@ $(document).ready(function () {
         $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').hide();
         $('#initial_box').show(1200);
+        socket.emit('refresh_grades_as_per_docs', {});
     });
 
     // third game
@@ -322,6 +328,7 @@ $(document).ready(function () {
         $('#intro_screen').show();
         $('#choose_games').hide();
         $('#initial_box').show(1200);
+        socket.emit('refresh_grades_as_per_docs', {});
     });
 
     // fourth game
@@ -336,6 +343,7 @@ $(document).ready(function () {
         $('#intro_screen').show();
         $('#choose_games').hide();
         $('#initial_box').show(1200);
+        socket.emit('refresh_grades_as_per_docs', {});
     });
 
 
@@ -791,5 +799,6 @@ $(document).ready(function () {
 
 
 });
+
 
 

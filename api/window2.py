@@ -1,25 +1,23 @@
 # main screen
+import multiprocessing
+import os
+import pickle
+import sys
 import time
 from typing import List
 
-from flask_socketio import emit
-
-from server import oncher_app, socket_io, database_cluster
-from flask import render_template
-import pickle
-from werkzeug.utils import secure_filename
-from flask import jsonify
-from flask import request
-from app import BASE_URL
-from models import StudentsData, StudyMaterials
-import os
-import sys
 import fitz
-from PIL import Image
-import multiprocessing
-import threading
+import requests
+from flask import jsonify
+from flask import render_template
+from flask import request
+from flask_socketio import emit
+from werkzeug.utils import secure_filename
+from urllib.parse import quote
 
-import time
+from app import BASE_URL
+from models import *
+from server import oncher_app, socket_io, database_cluster
 
 
 @oncher_app.route('/window_2')
@@ -87,7 +85,6 @@ def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: 
 
     if pdf_document_object and extract_directory:
         # print("Extracting PAGE {}-{} from PID: {}".format(page_start, page_end, os.getpid()))
-        threads = []
         for page_no in range(page_start, page_end):
             # print("[+++++] PAGE NO: {}".format(page_no))
             page = pdf_document_object.loadPage(page_no)  # number of page
@@ -113,9 +110,6 @@ def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: 
             #     # calculate w,h only for first page to reduce overhead
             #     im = Image.open(os.path.join(extract_directory, "{}.png".format(page_no))).size
             #     print("Image Size: {} {}".format(im[0], im[1]))
-
-        [t.start() for t in threads]
-        [t.join() for t in threads]
 
 
 # pdf file parser
@@ -171,6 +165,27 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     return [pdf_file_name, no_of_pages]  # [file_name,page_count , W, H]
 
 
+def upload_ppt(full_file_path, retry_count_left=5):
+    if retry_count_left == 0:
+        return {'status': 'failed'}
+    print("Uploading")
+    # todo: here we need to upload the ppt.pptx to server then encode the server download url
+    files = {'doc': open(full_file_path, 'rb')} # todo: memory leak
+    print(files.items())
+    values = {}  # {'key': value}
+    # todo: we will need to change the server for long run
+    url = "https://libwired.com/upload_ppt"
+    try:
+        response = requests.post(url, files=files, data=values)
+        response = response.json()
+        response['status'] = 'ok'
+        return response
+    except Exception as e:
+        # print('Failed to Upload. Retrying {} time'.format(retry_count_left))
+        # upload_ppt(full_file_path, retry_count_left - 1)
+        return {'status': 'failed'}
+
+
 @oncher_app.route('/upload_document', methods=['POST'])
 def upload_document():
     # send "start showing loading animation" signal to window 2
@@ -180,7 +195,8 @@ def upload_document():
 
     file = request.files["myfile"]
     file: request.files
-    filename = secure_filename(file.filename)
+    filename = secure_filename(file.filename).lstrip().rstrip()
+
     full_file_path = os.path.join(sys.path[0], "static", "files", filename)
     file.save(full_file_path)
 
@@ -188,15 +204,11 @@ def upload_document():
     print(request.form.to_dict())
 
     if filename.endswith(".pdf"):
+        # if already exists then we return
         if StudyMaterials.query.filter_by(folder_name=filename).first():
             return jsonify(status=0, does_exist=True)
 
-        # src_to_load = r"""{}/static/js/ViewerJS/index.html#../../files/{}""".format(BASE_URL, file.filename)
-        # print(src_to_load)
-        start = time.time()
         pdf_file_name, page_count = parse_pdf_file(full_file_path, filename)
-        print("[+++] Pdf parsing time {} sec.".format(time.time() - start))
-
         database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
                                                     lesson=int(form['lesson']),
                                                     folder_name=filename,
@@ -205,16 +217,40 @@ def upload_document():
                                                     is_pdf=1
                                                     ))
         database_cluster.session.commit()
+        # todo: emit to update the docs in the dropdown to grade & lesson
         # print("After committing. {}".format(StudyMaterials.query.all()))
-        return jsonify(status=1, does_exist=False,folder_name=filename)
+        return jsonify(status=1, does_exist=False, folder_name=filename)
 
-    # elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
-    #     # todo: here we need to upload the ppt.pptx to server then encode the server download url
-    #     encoded_url = ""
-    #     src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217"""
-    #     payload["src_to_load"] = src_to_load
+    elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
+        st = time.time()
+        response = upload_ppt(full_file_path)
+        print("response from server is {} in {} seconds".format(response, time.time() - st))
+        if response and response['status'] == 'ok' and response['done_uploading']:
+            # https%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx
+            encoded_url = quote('https://libwired.com/static/{}'.format(filename), safe='')
+            print("Encoded Url is {}".format(encoded_url))
+            # https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
+            src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D{encoded_url}&access_token_ttl=0&wdModeSwitchTime=1612594467217""".format(
+                encoded_url=encoded_url
+            )
+            print("Full Url {}".format(src_to_load))
 
-    # emit("ppt_or_ppt_upload_signal",
-    #      payload,
-    #      namespace='/',
-    #      broadcast=True)
+            database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                        lesson=int(form['lesson']),
+                                                        folder_name=filename,
+                                                        is_flashcard=0,
+                                                        is_pdf=0,
+                                                        ppt_server_url=src_to_load
+                                                        ))
+            database_cluster.session.commit()
+            return jsonify(status=1, does_exist=False, folder_name=filename)
+
+        else:
+            return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
+    else:
+        return jsonify(status=0, does_exist=False, folder_name='invalid file extension')
+
+
+@socket_io.on('refresh_grades_as_per_docs')
+def refresh_grades_as_per_docs(data):
+    emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)

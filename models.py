@@ -22,7 +22,7 @@ class StudentsData(database_cluster.Model):
 
 class StudyMaterials(database_cluster.Model):
     id = database_cluster.Column(database_cluster.Integer, primary_key=True)
-
+    # todo: can there be ppt and pdf both under same grade and lesson?
     grade = database_cluster.Column(database_cluster.Integer)
     lesson = database_cluster.Column(database_cluster.Integer)
     folder_name = database_cluster.Column(database_cluster.Text)

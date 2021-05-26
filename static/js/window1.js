@@ -90,6 +90,7 @@ $('#add_button').click(function () {
 $('#add_student').click(function () {
     let student_name = $('#student_name').val();
     let student_age = $('#student_age').val();
+    let student_grade = $('#student_grade').val();
 
     $.ajax({
         url: "/add_student",
@@ -97,7 +98,8 @@ $('#add_student').click(function () {
         data: {
             "student_name": student_name,
             "student_age": student_age,
-            "gender": $('input[name="sex"]:checked').val()
+            "gender": $('input[name="sex"]:checked').val(),
+            'student_grade':student_grade
         }
         // },
         // processData: false,  // tell jQuery not to process the data
