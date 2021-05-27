@@ -168,10 +168,9 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 def upload_ppt(full_file_path, retry_count_left=5):
     if retry_count_left == 0:
         return {'status': 'failed'}
-    print("Uploading")
+    print("Uploading {} to server...".format(full_file_path))
     # todo: here we need to upload the ppt.pptx to server then encode the server download url
     files = {'doc': open(full_file_path, 'rb')} # todo: memory leak
-    print(files.items())
     values = {}  # {'key': value}
     # todo: we will need to change the server for long run
     url = "https://libwired.com/upload_ppt"
@@ -201,7 +200,7 @@ def upload_document():
     file.save(full_file_path)
 
     form = request.form
-    print(request.form.to_dict())
+    # print(request.form.to_dict())
 
     if filename.endswith(".pdf"):
         # if already exists then we return

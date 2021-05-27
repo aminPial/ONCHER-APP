@@ -102,12 +102,19 @@ $(document).ready(function () {
                     // context.stroke();
                 }
             } else {
-                alert("Here");
+                // alert("Here");
                 // for ppt, pptm
                 doc_container.append("<iframe style='z-index: 1;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
                     ` allowfullscreen  width=\"${width}px\" height=\"500px\"\n` +
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
+                // while(true){
+                //     doc_container.click();
+                // }
+             // $('#responsive-iframe').on('load', function () {
+             //     // code will run after iframe has finished loading
+             //     // alert("Loaded");
+             // });
             }
 
             initial_box.hide();
