@@ -1205,7 +1205,7 @@
     {# pdf,ppt loading div #}
     <div class="box" id="iframe-container"
          style="margin: 8px;border-radius: 8px;display: none;padding: 0;
-         height: 550px;overflow-y:auto;background: gold;">
+         height: 550px;overflow-y:auto;background: gold;z-index: -1">
 
         {#
     <iframe class="responsive-iframe" id="responsive-iframe" allowfullscreen width="100%" height="500px" frameBorder="0"
@@ -1232,9 +1232,10 @@
 
     </div>
 
-    {# canvas to draw over... #}
 
-    <div id="drawing-div" style="position: relative">
+    {# canvas to draw over for ppt... #}
+
+    <div id="drawing-div" style="position: absolute;z-index: 20;margin-top: -550px">
 
     </div>
 

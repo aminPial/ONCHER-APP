@@ -43,6 +43,8 @@ $(document).ready(function () {
     let canvases = [];
     let ctx_es = [];
     let current_canvas = null;
+    let current_doc_type = null; // ''
+
     socket.on('study_doc_update', function (data) {
 
         let doc_container = $('#iframe-container');
@@ -62,6 +64,10 @@ $(document).ready(function () {
             let width = $(document).width() - 0; // extra space - X
 
             if (data['is_pdf']) {
+                current_doc_type = 'pdf';
+                // re-int
+                canvases = [];
+                ctx_es = [];
                 // for (let i = 0; i < data['page_count']; i++) {
                 //     // current image format is .png # you have to change it in window 1 and here to take effect the change
                 //     doc_container.append("<img id= " + `"img_${i}"` + " style='margin-top: 8px;' " +
@@ -102,19 +108,46 @@ $(document).ready(function () {
                     // context.stroke();
                 }
             } else {
+                current_doc_type = 'ppt';
+                // re-init
+                canvases = [];
+                ctx_es = [];
                 // alert("Here");
-                // for ppt, pptm
-                doc_container.append("<iframe style='z-index: 1;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
+                // for ppt, pptx
+                doc_container.append("<iframe style='z-index: 2;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
                     ` allowfullscreen  width=\"${width}px\" height=\"500px\"\n` +
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
-                // while(true){
-                //     doc_container.click();
-                // }
-             // $('#responsive-iframe').on('load', function () {
-             //     // code will run after iframe has finished loading
-             //     // alert("Loaded");
-             // });
+
+                $('#responsive-iframe').on('load', function () {
+                    // code will run after iframe has finished loading
+                    // alert("Loaded");
+                    $('#drawing-div').empty().append("<canvas  " + " id=\"ppt_canvas" + "\"" + ">\n" +
+                        "            Your browser does not support the HTML5 canvas tag.\n" +
+                        "        </canvas>\n");
+                    $(`#ppt_canvas`).attr({
+                        'width': `${width}px`,
+                        'height': `${550}px`
+                    });
+                    // .hover(function () {
+                    //                         revise_canvas_on_click(j);
+                    //                     });
+
+                    const myCanvas1 = document.getElementById(`ppt_canvas`);
+                    const context1 = myCanvas1.getContext('2d');
+                    // first we will clear all the canvas and context from the array
+                    // and push only them at [0] index
+                    canvases.push(myCanvas1);
+                    ctx_es.push(context1);
+
+                    //  context1.beginPath();
+                    //  context1.rect(188, 50, 200, 100);
+                    //  context1.fillStyle = 'yellow';
+                    //  context1.fill();
+                    //  context1.lineWidth = 7;
+                    //  context1.strokeStyle = 'green';
+                    //  context1.stroke();
+                });
             }
 
             initial_box.hide();
@@ -418,15 +451,17 @@ $(document).ready(function () {
     // animation trigger receive from window 3
 
     // dice animation preset
-    $("#dice-color").val("#323131");
-    $("#dot-color").val("#ffd700");
+    let dice_color = $("#dice-color");
+    let dot_color = $("#dot-color");
+    dice_color.val("#323131");
+    dot_color.val("#ffd700");
     let rnd;
     let x, y;
-    $("#dot-color").change(function () {
+    dot_color.change(function () {
         const dot = $("#dot-color").val();
         $(".dot").css("background-color", dot);
     });
-    $("#dice-color").change(function () {
+    dice_color.change(function () {
         const dice = $("#dice-color").val();
         $(".side").css("background-color", dice);
     });
