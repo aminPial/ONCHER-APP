@@ -43,7 +43,7 @@ $(document).ready(function () {
     let canvases = [];
     let ctx_es = [];
     let current_canvas = null;
-    let current_doc_type = null; // ''
+    let current_doc_type = null; // 'pdf', 'ppt'
 
     socket.on('study_doc_update', function (data) {
 
@@ -114,39 +114,24 @@ $(document).ready(function () {
                 ctx_es = [];
                 // alert("Here");
                 // for ppt, pptx
-                doc_container.append("<iframe style='z-index: 2;' class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
+                doc_container.append("<iframe class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
                     ` allowfullscreen  width=\"${width}px\" height=\"500px\"\n` +
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
 
+
                 $('#responsive-iframe').on('load', function () {
                     // code will run after iframe has finished loading
                     // alert("Loaded");
-                    $('#drawing-div').empty().append("<canvas  " + " id=\"ppt_canvas" + "\"" + ">\n" +
-                        "            Your browser does not support the HTML5 canvas tag.\n" +
-                        "        </canvas>\n");
-                    $(`#ppt_canvas`).attr({
-                        'width': `${width}px`,
-                        'height': `${550}px`
-                    });
-                    // .hover(function () {
-                    //                         revise_canvas_on_click(j);
-                    //                     });
 
-                    const myCanvas1 = document.getElementById(`ppt_canvas`);
-                    const context1 = myCanvas1.getContext('2d');
-                    // first we will clear all the canvas and context from the array
-                    // and push only them at [0] index
-                    canvases.push(myCanvas1);
-                    ctx_es.push(context1);
 
-                    //  context1.beginPath();
-                    //  context1.rect(188, 50, 200, 100);
-                    //  context1.fillStyle = 'yellow';
-                    //  context1.fill();
-                    //  context1.lineWidth = 7;
-                    //  context1.strokeStyle = 'green';
-                    //  context1.stroke();
+                    // context1.beginPath();
+                    // context1.rect(188, 50, 200, 100);
+                    // context1.fillStyle = 'yellow';
+                    // context1.fill();
+                    // context1.lineWidth = 7;
+                    // context1.strokeStyle = 'green';
+                    // context1.stroke();
                 });
             }
 
@@ -158,6 +143,118 @@ $(document).ready(function () {
 
 
     });
+
+
+    socket.on('drawing_tools_trigger', function (data) {
+        // draw, erase, color, thickness, text, full_clear
+        let type_of_action = data['type_of_action'];
+
+        if (type_of_action === 'draw' || type_of_action === "full_clear") {
+            if (current_doc_type === 'ppt') {
+                //   alert("here");
+                init_drawing_board_for_ppt();
+            }
+        }
+
+        let canvas_count = canvases.length;
+        for (let c = 0; c < canvas_count; c++) {
+            let ctx = ctx_es[c];
+            let current_canvas = canvases[c];
+            if (type_of_action === 'draw' || type_of_action === "full_clear") {
+
+                ctx.lineWidth = "3";
+                ctx.strokeStyle = "red"; // Green path
+                ctx.globalCompositeOperation = "source-over";
+
+
+            } else if (type_of_action === "erase") {
+                // ctx.strokeStyle = 'green';
+                ctx.globalCompositeOperation = "destination-out";
+                ctx.arc(95, 50, 50, 0, 2 * Math.PI);
+                ctx.fill();
+            } else if (type_of_action === "thickness_size") {
+                ctx.lineWidth = data["thickness_size"];
+                ctx.globalCompositeOperation = "source-over";
+            } else if (type_of_action === "color_change") {
+                //  alert(type_of_action);
+                ctx.strokeStyle = data["color"];
+                ctx.globalCompositeOperation = "source-over";
+            }
+
+            ctx_es[c] = ctx;
+
+
+            // re initialize the draw board functions
+            // is_draw = False means erase action
+            let BB = current_canvas.getBoundingClientRect();
+            let offsetX = BB.left;
+            let offsetY = BB.top;
+
+            let lastX, lastY;
+            let isDown = false;
+
+            current_canvas.onmousedown = handleMousedown;
+            current_canvas.onmousemove = handleMousemove;
+            current_canvas.onmouseup = handleMouseup;
+
+
+            function handleMousedown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                lastX = e.clientX - offsetX;
+                lastY = e.clientY - offsetY;
+                isDown = true;
+            }
+
+            function handleMouseup(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                isDown = false;
+            }
+
+            function handleMousemove(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isDown) {
+                    return;
+                }
+
+                let mouseX = e.clientX - offsetX;
+                let mouseY = e.clientY - offsetY;
+
+                ctx.beginPath();
+
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(mouseX, mouseY);
+                ctx.stroke();
+
+                lastX = mouseX;
+                lastY = mouseY;
+            }
+        }
+
+    });
+
+    function init_drawing_board_for_ppt() {
+        $('#drawing-div').empty().append("<canvas  " + " id=\"ppt_canvas" + "\"" + ">\n" +
+            "            Your browser does not support the HTML5 canvas tag.\n" +
+            "        </canvas>\n");
+        $(`#ppt_canvas`).attr({
+            'width': `${$(document).width() - 0}px`,
+            'height': `${550}px`
+        });
+        // .hover(function () {
+        //                         revise_canvas_on_click(j);
+        //                     });
+
+        const myCanvas1 = document.getElementById(`ppt_canvas`);
+        const context1 = myCanvas1.getContext('2d');
+        // first we will clear all the canvas and context from the array
+        // and push only them at [0] index
+        canvases.push(myCanvas1);
+        ctx_es.push(context1);
+    }
 
     function revise_canvas_on_click(index) {
         // alert("Index: " + index);
@@ -625,95 +722,6 @@ $(document).ready(function () {
         });
     });
 
-
-    socket.on('drawing_tools_trigger', function (data) {
-        // draw, erase, color, thickness, text, full_clear
-        let type_of_action = data['type_of_action'];
-        let canvas_count = canvases.length;
-        for (let c = 0; c < canvas_count; c++) {
-            let ctx = ctx_es[c];
-            let current_canvas = canvases[c];
-            if (type_of_action === 'draw' || type_of_action === "full_clear") {
-                // $('#drawing-div').empty().append(
-                //     "<canvas id=\"drawing-board\"  width=\"1500\" height=\"800\"></canvas>");
-                // // init from here
-                // canvas = document.getElementById("drawing-board");
-                // ctx = canvas.getContext("2d");
-
-                ctx.lineWidth = "3";
-                ctx.strokeStyle = "red"; // Green path
-                ctx.globalCompositeOperation = "source-over";
-
-
-            } else if (type_of_action === "erase") {
-                // ctx.strokeStyle = 'green';
-                ctx.globalCompositeOperation = "destination-out";
-                ctx.arc(95, 50, 50, 0, 2 * Math.PI);
-                ctx.fill();
-            } else if (type_of_action === "thickness_size") {
-                ctx.lineWidth = data["thickness_size"];
-                ctx.globalCompositeOperation = "source-over";
-            } else if (type_of_action === "color_change") {
-                //  alert(type_of_action);
-                ctx.strokeStyle = data["color"];
-                ctx.globalCompositeOperation = "source-over";
-            }
-
-            ctx_es[c] = ctx;
-
-
-            // re initialize the draw board functions
-            // is_draw = False means erase action
-            let BB = current_canvas.getBoundingClientRect();
-            let offsetX = BB.left;
-            let offsetY = BB.top;
-
-            let lastX, lastY;
-            let isDown = false;
-
-            current_canvas.onmousedown = handleMousedown;
-            current_canvas.onmousemove = handleMousemove;
-            current_canvas.onmouseup = handleMouseup;
-
-
-            function handleMousedown(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                lastX = e.clientX - offsetX;
-                lastY = e.clientY - offsetY;
-                isDown = true;
-            }
-
-            function handleMouseup(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                isDown = false;
-            }
-
-            function handleMousemove(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (!isDown) {
-                    return;
-                }
-
-                let mouseX = e.clientX - offsetX;
-                let mouseY = e.clientY - offsetY;
-
-                ctx.beginPath();
-
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(mouseX, mouseY);
-                ctx.stroke();
-
-                lastX = mouseX;
-                lastY = mouseY;
-            }
-        }
-
-
-    });
 
     // star animation code
     var confetti = {

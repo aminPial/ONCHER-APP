@@ -54,6 +54,12 @@ def show_loading_screen():
 
 
 if __name__ == '__main__':
+    # special code-blocks for win platform
+    # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
+    if sys.platform.startswith('win'):
+        # On Windows calling this function is necessary.
+        multiprocessing.freeze_support()
+
     # show_loading_screen()
 
     available_port = 5000

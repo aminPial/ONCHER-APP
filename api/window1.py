@@ -10,6 +10,7 @@ from PIL import Image
 from models import *
 from app import BASE_URL
 
+
 @oncher_app.route('/window_1')
 def window_1():
     # todo: there are 2 grade_lesson dict version. One is flashcard and another is docs(pdf, ppt)
@@ -67,6 +68,19 @@ def add_student():
                                                   gender=1 if form['gender'] == "male" else 0,
                                                   which_grade=int(form['student_grade']))
                                      )
+        database_cluster.session.commit()
+        return jsonify(status=1)
+    return jsonify(status=0)
+
+
+@oncher_app.route('/student_note_save', methods=['POST'])
+def student_note_save():
+    form = request.form
+    if form:
+        # print(form.to_dict())
+        q = StudentsData.query.filter_by(id=int(form['id'])).first()
+        q: StudentsData
+        q.note_saved = form['note']
         database_cluster.session.commit()
         return jsonify(status=1)
     return jsonify(status=0)

@@ -18,6 +18,7 @@ class StudentsData(database_cluster.Model):
     left = database_cluster.Column(database_cluster.Integer, default=0)
     total_stars = database_cluster.Column(database_cluster.Integer, default=0)
     which_grade = database_cluster.Column(database_cluster.Integer, nullable=False)
+    note_saved = database_cluster.Column(database_cluster.Text)
 
 
 class StudyMaterials(database_cluster.Model):
