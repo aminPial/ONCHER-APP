@@ -12,6 +12,7 @@ cef_cache
 static/files
 static/u_data
 static/cache
+static/screenshots
 
 # Distribution / packaging
 .Python
