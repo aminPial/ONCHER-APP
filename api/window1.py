@@ -76,14 +76,10 @@ def add_student():
 @oncher_app.route('/student_note_save', methods=['POST'])
 def student_note_save():
     form = request.form
-    if form:
-        # print(form.to_dict())
-        q = StudentsData.query.filter_by(id=int(form['id'])).first()
-        q: StudentsData
-        q.note_saved = form['note']
-        database_cluster.session.commit()
-        return jsonify(status=1)
-    return jsonify(status=0)
+    q = StudentsData.query.filter_by(id=int(form['id'])).first()
+    q.note_saved = form['note']
+    database_cluster.session.commit()
+    return ''
 
 
 # @socket_io.on('my event')
