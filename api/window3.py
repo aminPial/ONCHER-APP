@@ -1,9 +1,13 @@
 import pickle
+import sys
 
 from server import oncher_app, socket_io
 from flask import jsonify, render_template
+from flask import request
 from flask_socketio import emit
 import os
+import pyscreenshot as ImageGrab
+from datetime import datetime
 from app import BASE_URL
 
 
@@ -90,3 +94,23 @@ def k_or_a_receive_signal(data):
 @socket_io.on('switch_to_games_receive')
 def switch_to_games(data):
     emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
+
+
+@socket_io.on('take_screenshot')
+def take_screenshot(data):
+    form = data['full_student_object_in_dict_format']
+    selected_lesson = data['selected_lesson']
+    print(form)
+    if form:
+        # Student Name - Class number - Grade - Lesson - Date - Time
+        # # part of the screen
+        # im = ImageGrab.grab(bbox=(10, 10, 510, 510))  # X1,Y1,X2,Y2
+        filename = f"{form['name']}-{form['classes']}-{form['which_grade']}-{selected_lesson}-{datetime.now().strftime('%d %B%Y %I.%M')}.png"
+        ImageGrab.grab().save(os.path.join(sys.path[0],
+                                           'static',
+                                           'screenshots',
+                                           filename))
+        # emit to window 2 to show a dialog that screenshot has been taken
+        # or show a notification from OS itself
+        # from form.to_dict() we will get the necessary info in window 2
+        emit('screen_shots_taken', {'filename': filename}, namespace='/', broadcast=True)

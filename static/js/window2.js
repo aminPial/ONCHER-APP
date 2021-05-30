@@ -344,6 +344,19 @@ $(document).ready(function () {
     //     }
     //
     // });
+
+
+    // show notifications and related triggers
+    function show_notifications(message) {
+        //for now just alert
+        alert(message.toString());
+    }
+
+    socket.on('screen_shots_taken', function (data) {
+        show_notifications(`Screenshot saved as ${data['filename']}`);
+    });
+
+
     socket.on('configure_signal_receive', function (data) {
         // on get the show config page signal
 //        $('#intro_screen').hide();

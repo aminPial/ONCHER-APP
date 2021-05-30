@@ -114,9 +114,35 @@ $(document).ready(function () {
 
     // last game => game4 special function
     socket.on('game_4_init_emit_signal', function (data) {
-         // this will be used for "SAY CAT" and etc.
+        // this will be used for "SAY CAT" and etc.
         $('#image_name').text(data['image_name']); // has to be ALL CAPS
         $('#game_4_special').show();
+    });
+
+    // screenshot related triggers
+    let student_object_data = null;
+    let selected_lesson = null;
+    // student object update on student-select trigger
+    socket.on('select_student_signal_receive', function (data) {
+        student_object_data = data['full_student_object_in_dict_format'];
+    });
+    socket.on('lesson_update_trigger', function (data) {
+        selected_lesson = data['lesson'];
+    });
+
+    $('#take_screenshot').click(function () {
+        socket.emit('take_screenshot', {
+            'full_student_object_in_dict_format': student_object_data,
+            'selected_lesson': selected_lesson
+        });
+    });
+
+    $('#switch_off').click(function () {
+
+    });
+
+    $('#timer-settings').click(function () {
+
     });
 
 

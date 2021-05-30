@@ -96,12 +96,15 @@ def student_select_signal_receive(data):
     student_object = StudentsData.query.filter_by(id=data['id']).first()
     # print(student_object.__dict__)
     assert student_object is not None, "student object is None after selection"
-    student_object: StudentsData
+    student_object = student_object.__dict__
+    student_object.pop('_sa_instance_state')
     payload = {
-        "id": student_object.id,
-        "name": student_object.name,
-        "star": student_object.total_stars,
-        "diamond": student_object.total_stars // 10
+        "id": student_object['id'],
+        "name": student_object['name'],
+        "star": student_object['total_stars'],
+        "diamond": student_object['total_stars'] // 10,
+        # this is needed for window 3 screenshot purpose
+        "full_student_object_in_dict_format": student_object
     }
     emit('select_student_signal_receive', payload, namespace='/', broadcast=True)
 
@@ -189,6 +192,9 @@ def grade_lesson_select_signal_receive(data):
         emit('study_doc_update', payload, namespace='/', broadcast=True)
     else:
         print("No docs available under this grade and lesson")
+
+    # this is for the window 3 screen shot purpose, that we need lesson
+    emit('lesson_update_trigger', {'lesson': data['lesson']}, namespace='/', broadcast=True)
 
 # @oncher_app.route('/test')
 # def test():
