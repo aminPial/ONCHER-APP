@@ -133,16 +133,66 @@ $(document).ready(function () {
     $('#take_screenshot').click(function () {
         socket.emit('take_screenshot', {
             'full_student_object_in_dict_format': student_object_data,
-            'selected_lesson': selected_lesson
+            'selected_lesson': selected_lesson,
+            'is_continuous': false
         });
     });
 
-    $('#switch_off').click(function () {
+    let is_on_now = false;
+    let default_interval_for_ss = 5; // 5 seconds as default
+    // we need a signal to update interval
+    // normal on load & dynamic - on update (on fly) [both same, one is from W3.py and another is W2.py]
+    socket.on('updated_ss_interval_time', function (data) {
+        default_interval_for_ss = data['seconds'];
+    });
+    let interval_var = null;
+    let send_data_interval = null;
 
+    function openfolder() {
+        let a = $('#switch_on_off');
+        a.attr({'class': 'fal fa-pause'});
+        setTimeout(function () {
+            a.attr({'class': 'fa fa-pause'});
+        }, 550);
+    }
+
+    $('#switch_on_off').click(function () {
+
+        if (is_on_now) {
+            //   alert("OFF");
+            // then make it off
+            clearInterval(interval_var);
+            clearInterval(send_data_interval);
+            interval_var = null;
+            send_data_interval = null;
+            $('#switch_on_off').attr({'class': 'fal fa-play'});
+        } else {
+            // alert("ON")
+            if (default_interval_for_ss !== null && student_object_data !== null && selected_lesson !== null) {
+                // execute the screenshot caller
+                send_data_interval = setInterval(function () {
+                    socket.emit('take_screenshot', {
+                        'full_student_object_in_dict_format': student_object_data,
+                        'selected_lesson': selected_lesson,
+                        'is_continuous': true
+                    });
+                }, default_interval_for_ss * 1000); // sec => milli-sec
+
+                openfolder();
+                interval_var = setInterval(openfolder, 1100);
+
+            } else {
+                // todo: show this in the window 2
+                alert("Missing lesson/student. Please select before taking ss");
+            }
+        }
+        is_on_now = !is_on_now;
     });
 
     $('#timer-settings').click(function () {
-
+        // this will be received in window 2 to show a pop up to change settings
+        // that "What will be the interval?" of taking ss
+        socket.emit('screenshot_timer_settings', {});
     });
 
 

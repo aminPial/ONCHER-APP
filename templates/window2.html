@@ -101,6 +101,16 @@
 
     </div>
 
+
+    {# after a class ends the student report will pop up here #}
+    <div class="box" id="student-report-input"
+         style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 0;">
+
+
+    </div>
+
+
     {# settings page #}
     <div class="box" id="settings_box" style="margin: 8px 8px 0;
          padding: 16px;border: none;border-radius: 8px;height: 500px;display: none;overflow: auto">
@@ -1266,7 +1276,7 @@
     </script>
 
 
-    {# modal to change timer time #}
+    {# modal to change timer time for class #}
     <div class="modal" id="timer_modal">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -1361,6 +1371,55 @@
     </div>
 
 
+    {# modal to change the screenshot timer settings #}]
+  <div class="modal" id="screenshot-timer-modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Set ScreenShot Time Interval</p>
+                <button class="delete" aria-label="close" onclick="close_modal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time-interval">5 seconds</h1>
+                <div class="columns">
+                    <div class="column">
+                        <label for="seconds">Seconds</label>
+                        <input class="input is-medium" type="number" placeholder="seconds" value="0" id="interval-seconds"
+                               onchange="update_interval_text()" onkeyup="update_interval_text()" onkeydown="update_interval_text()"
+                               oninput="update_interval_text()" onautocomplete="update_interval_text()"
+                        >
+                    </div>
+                    <script>
+                        function close_modal() {
+                            $('#screenshot-timer-modal').removeClass("modal is-active").addClass("modal");
+                        }
+
+                        function update_interval_text() {
+                            let save_interval_time = $('#save-interval-time');
+                            let interval = $('#interval-seconds');
+                            let si = parseInt(interval.val());
+
+                            if (si < 1 || si > 59) {
+                                save_interval_time.prop('disabled', true);
+                                interval.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                return;
+                            } else {
+                                save_interval_time.prop('disabled', false);
+                                interval.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                si = si + " seconds";
+                            }
+
+                            $('#time-interval').text(si);
+                        }
+                    </script>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="save-interval-time">Save Changes</button>
+                <button class="button" onclick="close_modal()">Cancel</button>
+            </footer>
+        </div>
+    </div>
 
 {% endblock %}
 

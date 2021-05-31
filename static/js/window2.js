@@ -345,7 +345,7 @@ $(document).ready(function () {
     //
     // });
 
-
+    // Toast notifications
     // show notifications and related triggers
     function show_notifications(message) {
         //for now just alert
@@ -579,7 +579,7 @@ $(document).ready(function () {
     // actual trigger functions
     socket.on('animation_trigger_emit_to_win2', function (data) {
         let animation_type = data['animation_type'];
-        console.log("animation type from window2.js is " + animation_type);
+        //   console.log("animation type from window2.js is " + animation_type);
         if (animation_type === "star") {
             document.getElementById('play_star_sound').click();
             confetti.start();
@@ -662,13 +662,17 @@ $(document).ready(function () {
     socket.on('timer_trigger_emit_to_win2', function (data) {
         let timer_data = data['timer_data'];
         // can be actually none or it can send to change the time (from settings of timer)
-        if (timer_data === "None")
+        if (timer_data === "None") {
+            alert("timer data is none");
             // pop up the modal to set up time
             $('#timer_modal').removeClass("modal").addClass("modal is-active");
-        else {
+        } else {
             console.log(data['start_or_end']);
-            if (data['start_or_end'].toLowerCase() === 'end')
+            if (data['start_or_end'].toLowerCase() === 'end'){
                 should_stop = true;
+                // todo: show the student report card
+            }
+
             else {
                 should_stop = false;
                 const countDownDate = new Date();
@@ -710,6 +714,8 @@ $(document).ready(function () {
                         console.log("here");
                         clearInterval(x);
                         document.getElementById("time_count").innerHTML = "00:00";
+                        // todo: show the student report card
+
                     }
                 }, 1000);
             }
@@ -731,6 +737,33 @@ $(document).ready(function () {
                 $('#timer_modal').removeClass("modal is-active").addClass("modal");
             } else {
                 // todo: show error something
+            }
+        });
+    });
+
+
+    // time trigger of screenshot
+    socket.on('open_screenshot_timer_settings', function (data) {
+        let timer_data = data['seconds'];
+        // update  the value in the show text and input field
+        $('#time-interval').text(timer_data + " seconds");
+        $('#interval-seconds').val(timer_data.toString());
+        $('#screenshot-timer-modal').removeClass("modal").addClass("modal is-active");
+    });
+
+    $('#save-interval-time').click(function () {
+        $.ajax({
+            url: "/save_time_interval_of_screenshot",
+            type: "POST",
+            data: {
+                "seconds": $('#interval-seconds').val()
+            }
+        }).done(function (data) {
+            if (data["status"] === 1) {
+                $('#screenshot-timer-modal').removeClass("modal is-active").addClass("modal");
+            } else {
+                // todo: show error something
+                alert("Error happened");
             }
         });
     });

@@ -37,14 +37,31 @@ def window_2():
                            )
 
 
+# this is class timer
 @oncher_app.route('/save_time_count', methods=['POST'])
 def save_time_count():
     f = request.form
     if f:
         a = {'hour': int(f['hour']), 'minutes': int(f['minutes']), 'seconds': int(f['seconds'])}
         # print(a)
-        with open('start_timer.pickle', 'wb') as handle:
+        with open(os.path.join(sys.path[0], 'static', 'pickles', 'start_timer.pickle'), 'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        return jsonify(status=1)
+    else:
+        return jsonify(status=0)
+
+
+# this is screenshot saving interval timer
+@oncher_app.route('/save_time_interval_of_screenshot', methods=['POST'])
+def save_time_interval_of_screenshot():
+    f = request.form
+    if f:
+        a = {'seconds': int(f['seconds'])}
+        # print(a)
+        with open(os.path.join(sys.path[0], 'static', 'pickles', 'screenshot_interval_time.pickle'), 'wb') as handle:
+            pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        # we need to emit this to window 3
+        emit('updated_ss_interval_time', a, namespace='/', broadcast=True)
         return jsonify(status=1)
     else:
         return jsonify(status=0)
@@ -170,7 +187,7 @@ def upload_ppt(full_file_path, retry_count_left=5):
         return {'status': 'failed'}
     print("Uploading {} to server...".format(full_file_path))
     # todo: here we need to upload the ppt.pptx to server then encode the server download url
-    files = {'doc': open(full_file_path, 'rb')} # todo: memory leak
+    files = {'doc': open(full_file_path, 'rb')}  # todo: memory leak
     values = {}  # {'key': value}
     # todo: we will need to change the server for long run
     url = "https://libwired.com/upload_ppt"

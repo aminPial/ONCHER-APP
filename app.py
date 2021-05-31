@@ -63,6 +63,7 @@ if __name__ == '__main__':
     # show_loading_screen()
 
     available_port = 5000
+    # todo: to keep port 5000 , we need to save the PID when we had 5000 port and detach if is occupied
     while True:
         if is_port_available(available_port):
             break
