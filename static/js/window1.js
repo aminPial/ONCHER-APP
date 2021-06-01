@@ -6,6 +6,10 @@ $('#configure').click(function () {
     socket.emit('configure_signal_emitter', {});
 });
 
+$('#view_ss_report').click(function () {
+    socket.emit('view_ss_report_open_signal',{});
+});
+
 
 // student list on select toggle (JS version)
 // let dropdown = document.querySelector('.dropdown');

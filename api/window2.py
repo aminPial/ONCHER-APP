@@ -138,9 +138,9 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
       page counts of PDF
     """
     # create folder to save the images of the pdf file
-    print("pdf file name: {}".format(pdf_file_name))
+    # print("pdf file name: {}".format(pdf_file_name))
     extract_directory = os.path.join(sys.path[0], 'static', 'cache', pdf_file_name)
-    print("page extract directory: {}".format(extract_directory))
+    # print("page extract directory: {}".format(extract_directory))
     # if os.path.exists(page_extract_directory):
     #     # shutil.rmtree(page_extract_directory)
     #     images = os.listdir(page_extract_directory)
@@ -152,7 +152,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     pdf_document_object = fitz.open(pdf_file_path)
     no_of_pages = pdf_document_object.pageCount
 
-    print("NO OF PAGES: {}".format(no_of_pages))
+    # print("NO OF PAGES: {}".format(no_of_pages))
 
     _divide_by_parts = 25
     pools = []
@@ -270,3 +270,16 @@ def upload_document():
 @socket_io.on('refresh_grades_as_per_docs')
 def refresh_grades_as_per_docs(data):
     emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
+
+
+@oncher_app.route('/student_report_submit')
+def student_report_submit():
+    f = request.form
+    print(f.items())
+    if f:
+        for report in f['report']:
+            database_cluster.session.add(StudentReports(student_id=report['student-id'],
+                                                        report_saved=report['report']))
+        database_cluster.session.commit()
+        return jsonify(status=1)
+    return jsonify(status=0)

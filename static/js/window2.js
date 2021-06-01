@@ -56,6 +56,7 @@ $(document).ready(function () {
             // todo: show loading anim and all
             initial_box.hide();
             doc_container.hide();
+            $('#student-report-input').hide();
             loading_container.show();
             $('#time_count_div').css('visibility', 'hidden');
         } else {
@@ -137,6 +138,7 @@ $(document).ready(function () {
 
             initial_box.hide();
             loading_container.hide();
+            $('#student-report-input').hide();
             doc_container.show();
             $('#time_count_div').css('visibility', 'visible');
         }
@@ -311,6 +313,16 @@ $(document).ready(function () {
         }
     }
 
+    // students report form
+    socket.on('students_list_update', function (data) {
+        let st = $('#student-report-forms');
+        st.empty();
+        let student_list = data['students'];
+        for (let k = 0; k < student_list.length; k++) {
+            st.append();
+        }
+    });
+
 
     // function click(x, y) {
     //     let ev = new MouseEvent('click', {
@@ -356,12 +368,19 @@ $(document).ready(function () {
         show_notifications(`Screenshot saved as ${data['filename']}`);
     });
 
+    // view ss report signal receiver
+    // signal received from window-1 to open ss report in window-2
+    socket.on('view_ss_report_open_signal_receive', function (data) {
+        // todo: ....
+    });
+
 
     socket.on('configure_signal_receive', function (data) {
         // on get the show config page signal
 //        $('#intro_screen').hide();
         $('#initial_box').hide();
         $('#choose_games').hide();
+        $('#student-report-input').hide();
         $('#settings_box').show();
     });
 
@@ -369,12 +388,14 @@ $(document).ready(function () {
         $('#initial_box').show();
         $('#choose_games').hide();
         $('#settings_box').hide();
+        $('#student-report-input').hide();
     });
 
     $('#upload_ppt_pdf').click(function () {
         $('#settings_cards').hide();
         $('#grade_lesson_list_section').hide();
         $('#add_ppt_pdf_div').show();
+        $('#student-report-input').hide();
     });
 
     // $('#flashcard_upload').click(function () {
@@ -383,13 +404,77 @@ $(document).ready(function () {
     //     $('#add_flashcard_div').show();
     // });
 
+    // report
+    let students_object = null;
+
+    socket.on('students_list_update', function (data) {
+        students_object = data['students'];
+        alert("length => " + students_object.length);
+        // now append to the section
+        let student_report_forms = $('#student-report-forms');
+        student_report_forms.empty();
+        for (let t = 0; t < students_object.length; t++) {
+            alert("t => " + t);
+            student_report_forms.append("<div class=\"box\">\n" +
+                "                                <div class=\"field\">\n" +
+                `                                    <label class=\"label\" style=\"font-family: 'HP Simplified',serif;font-size: 20px;\">${t + 1}. ${students_object[t]['name']}</label>\n` +
+                "                                    <div class=\"control\">\n" +
+                `                                        <textarea class=\"textarea\" placeholder=\"write student report of ${students_object[t]['name']} here\" id='report-${students_object[t]['id']}'></textarea>\n` +
+                "                                    </div>\n" +
+                "                                </div>\n" +
+                "                            </div>");
+        }
+    });
+
+    $('#report-save-submit').click(function () {
+        // todo: jhamela in here, something isn't working here
+        // prepare data
+        let report = [];
+        for (let h = 0; h < students_object.length; h++) {
+            let r = {};
+            r['student-id'] = students_object[h]['id'];
+            r['report'] = $(`report-${students_object[h]['id']}`); // e.g: id ="report-1"
+            report.push(r);
+        }
+        $.ajax({
+            url: "/student_report_submit",
+            type: "POST",
+            data: {
+                "report": report
+            }
+            // },
+            // processData: false,  // tell jQuery not to process the data
+            // contentType: false   // tell jQuery not to set contentType
+        }).done(function (data) {
+            if (data["status"] === 0) {
+                alert("Something is wrong while saving student report");
+            } else {
+                $('#student-report-input').hide();
+                $('#choose_games').hide();
+                $('#settings_box').hide();
+                $('#iframe-container').hide();
+                $('#loading_box').hide();
+                $('#initial_box').show(); // todo: shouldn't it be the initial box.. intro ?
+            }
+        });
+
+    });
+    $('#report-save-cancel').click(function () {
+        $('#student-report-input').hide();
+        $('#choose_games').hide();
+        $('#settings_box').hide();
+        $('#iframe-container').hide();
+        $('#loading_box').hide();
+        $('#initial_box').show(); // todo: shouldn't it be the initial box.. intro ?
+    });
+
 
     // GAMES <<<<
     socket.on('switch_to_games_emit', function (data) {
         // let initial = data['is_initial'];
         $('#intro_screen').hide(1000);
         $('#choose_games').show(1200);
-
+        $('#student-report-input').hide();
     });
 
     // on click games
@@ -668,12 +753,10 @@ $(document).ready(function () {
             $('#timer_modal').removeClass("modal").addClass("modal is-active");
         } else {
             console.log(data['start_or_end']);
-            if (data['start_or_end'].toLowerCase() === 'end'){
+            if (data['start_or_end'].toLowerCase() === 'end') {
                 should_stop = true;
                 // todo: show the student report card
-            }
-
-            else {
+            } else {
                 should_stop = false;
                 const countDownDate = new Date();
                 let hr = parseInt(data['timer_data']['hour']);
@@ -711,16 +794,21 @@ $(document).ready(function () {
 
                     // If the count down is over, write some text
                     if (distance <= 0 || should_stop) {
-                        console.log("here");
                         clearInterval(x);
                         document.getElementById("time_count").innerHTML = "00:00";
                         // todo: show the student report card
-
+                        $('#initial_box').hide();
+                        $('#choose_games').hide();
+                        $('#settings_box').hide();
+                        $('#iframe-container').hide();
+                        $('#loading_box').hide();
+                        $('#student-report-input').show();
                     }
                 }, 1000);
             }
         }
     });
+
 
     // save the time settings and others util regarding this
     $('#save_time').click(function () {

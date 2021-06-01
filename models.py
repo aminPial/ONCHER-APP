@@ -1,5 +1,5 @@
 from server import database_cluster
-
+from datetime import datetime
 
 # https://stackoverflow.com/questions/54820668/encrypting-data-into-postgres-and-decrypting-from-postgres-using-sqlalchemy-and
 # todo: can we encrypt & decrypt columns..
@@ -36,3 +36,8 @@ class StudyMaterials(database_cluster.Model):
     ppt_server_url = database_cluster.Column(database_cluster.Text)
 
 
+class StudentReports(database_cluster.Model):
+    id = database_cluster.Column(database_cluster.Integer, primary_key=True)
+    when = database_cluster.Column(database_cluster.DateTime, default=datetime.now())
+    student_id = database_cluster.Column(database_cluster.Integer, nullable=False) # student id (primary key)
+    report_saved = database_cluster.Column(database_cluster.Text)

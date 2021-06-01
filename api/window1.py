@@ -114,6 +114,11 @@ def configure_signal_emitter(data):
     emit('configure_signal_receive', {}, namespace='/', broadcast=True)
 
 
+@socket_io.on('view_ss_report_open_signal')
+def view_ss_report_open_signal(data):
+    emit('view_ss_report_open_signal_receive', {}, namespace='/', broadcast=True)
+
+
 # we need these vars
 current_grade = None
 current_lesson = None
@@ -132,7 +137,7 @@ def grade_lesson_select_signal_receive(data):
     # student version
     students = [s.__dict__ for s in StudentsData.query.filter_by(which_grade=int(data['grade'])).all()]
     [a.pop('_sa_instance_state') for a in students]
-    print("After grade select students are {}".format(students))
+    print("students after selecting grade and lesson is {}".format(students))
     emit('students_list_update', {'students': students}, namespace='/', broadcast=True)
 
     # flashcard version
@@ -167,11 +172,11 @@ def grade_lesson_select_signal_receive(data):
             parsed_pdf_dir_path = "/static/cache/{}".format(study_mat_query.folder_name)
             # we need to parse width and height from the doc
             path0 = os.path.join(sys.path[0], *parsed_pdf_dir_path.split("/"))
-            print("Pdf path is {}".format(path0))
+            # print("Pdf path is {}".format(path0))
             width, height = Image.open(os.path.join(path0, os.listdir(path0)[0])).size
-            print("Parsed Width {} and Height {}".format(width, height))
+            # print("Parsed Width {} and Height {}".format(width, height))
             from app import BASE_URL
-            print("BASE {}".format(BASE_URL))
+            # print("BASE {}".format(BASE_URL))
             if BASE_URL is None:
                 BASE_URL = "http://localhost:5000"
             payload = {
