@@ -409,12 +409,12 @@ $(document).ready(function () {
 
     socket.on('students_list_update', function (data) {
         students_object = data['students'];
-        alert("length => " + students_object.length);
+        // alert("length => " + students_object.length);
         // now append to the section
         let student_report_forms = $('#student-report-forms');
         student_report_forms.empty();
         for (let t = 0; t < students_object.length; t++) {
-            alert("t => " + t);
+            //  alert("t => " + t);
             student_report_forms.append("<div class=\"box\">\n" +
                 "                                <div class=\"field\">\n" +
                 `                                    <label class=\"label\" style=\"font-family: 'HP Simplified',serif;font-size: 20px;\">${t + 1}. ${students_object[t]['name']}</label>\n` +
@@ -426,29 +426,33 @@ $(document).ready(function () {
         }
     });
 
-    $('#report-save-submit').click(function () {
-        // todo: jhamela in here, something isn't working here
+    $('#report-save-submit').click(function (e) {
+        e.preventDefault(); // also add preventDefault() to restrict page refreshing
         // prepare data
+        //  alert("length from report save => " + students_object.length);
         let report = [];
         for (let h = 0; h < students_object.length; h++) {
-            let r = {};
-            r['student-id'] = students_object[h]['id'];
-            r['report'] = $(`report-${students_object[h]['id']}`); // e.g: id ="report-1"
-            report.push(r);
+            report.push({
+                'student-id': students_object[h]['id'],
+                'report': $(`#report-${students_object[h]['id']}`).val() // e.g: id ="report-1"
+            });
         }
+       // alert("Data here " + JSON.stringify(report));
+
         $.ajax({
             url: "/student_report_submit",
             type: "POST",
             data: {
-                "report": report
-            }
-            // },
+                "report": JSON.stringify(report)
+            },
             // processData: false,  // tell jQuery not to process the data
             // contentType: false   // tell jQuery not to set contentType
         }).done(function (data) {
+         //   alert("data " + data['status']);
             if (data["status"] === 0) {
                 alert("Something is wrong while saving student report");
             } else {
+                // todo: show a success notifications...
                 $('#student-report-input').hide();
                 $('#choose_games').hide();
                 $('#settings_box').hide();

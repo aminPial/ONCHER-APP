@@ -1,4 +1,5 @@
 # main screen
+import json
 import multiprocessing
 import os
 import pickle
@@ -14,6 +15,7 @@ from flask import request
 from flask_socketio import emit
 from werkzeug.utils import secure_filename
 from urllib.parse import quote
+from json import loads
 
 from app import BASE_URL
 from models import *
@@ -272,12 +274,13 @@ def refresh_grades_as_per_docs(data):
     emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
 
 
-@oncher_app.route('/student_report_submit')
+@oncher_app.route('/student_report_submit', methods=['POST'])
 def student_report_submit():
     f = request.form
-    print(f.items())
+    f = loads(f['report'])  # json.loads()
+    # print(f, type(f))
     if f:
-        for report in f['report']:
+        for report in f:
             database_cluster.session.add(StudentReports(student_id=report['student-id'],
                                                         report_saved=report['report']))
         database_cluster.session.commit()

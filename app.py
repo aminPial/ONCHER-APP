@@ -125,6 +125,10 @@ if __name__ == '__main__':
                                          frameless=True,
                                          resizable=False)
     # https://stackoverflow.com/questions/65279193/how-to-close-pywebview-window-from-javascript-using-pywebview-api
+    """
+        Useful Links:
+            1. https://www.programmersought.com/article/13205830225/ (nssm, service manager in windows)
+        """
     webview.start(gui='cef', debug=True)
     t.close()
     t.terminate()
