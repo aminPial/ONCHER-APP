@@ -372,6 +372,8 @@ $(document).ready(function () {
     // signal received from window-1 to open ss report in window-2
     socket.on('view_ss_report_open_signal_receive', function (data) {
         // todo: ....
+        alert("got signal to open SS report");
+
     });
 
 
@@ -396,13 +398,16 @@ $(document).ready(function () {
         $('#grade_lesson_list_section').hide();
         $('#add_ppt_pdf_div').show();
         $('#student-report-input').hide();
+        $('#add_flashcard').hide();
     });
 
-    // $('#flashcard_upload').click(function () {
-    //     $('#upload_ppt_pdf').hide();
-    //     $('#flashcard_upload').hide();
-    //     $('#add_flashcard_div').show();
-    // });
+    $('#flashcard_upload').click(function () {
+        $('#settings_cards').hide();
+        $('#grade_lesson_list_section').hide();
+        $('#add_ppt_pdf_div').hide();
+        $('#student-report-input').hide();
+        $('#add_flashcard').show();
+    });
 
     // report
     let students_object = null;

@@ -13,6 +13,7 @@ static/files
 static/u_data
 static/cache
 static/screenshots
+output
 
 # Distribution / packaging
 .Python

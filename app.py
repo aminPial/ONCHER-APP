@@ -6,6 +6,8 @@ import pyautogui as p
 import webview
 from webview.platforms.cef import settings  #
 from math import ceil
+# from engineio.async_drivers import gevent
+from server import socket_io, oncher_app  # can be deleted
 
 BASE_URL = None
 
@@ -17,7 +19,7 @@ BASE_URL = None
 
 
 def start_server(port: int):
-    from server import socket_io, oncher_app
+    # from server import socket_io, oncher_app
     socket_io.run(app=oncher_app, host='0.0.0.0', port=port)
     return
 
@@ -124,6 +126,12 @@ if __name__ == '__main__':
                                          height=w1h,
                                          frameless=True,
                                          resizable=False)
+    """
+    exclude: Django, PyQt5, opencv-python (cv2), gevent
+    """
+    """
+    pyinstaller --noconfirm --onedir --console --name "Oncher" --upx-dir "D:/raw/upx-3.96-win64/upx-3.96-win64" --log-level "ERROR" --add-data "I:/FivverProjects/ONCHER-APP/hook;hook/" --add-data "I:/FivverProjects/ONCHER-APP/templates;templates/" --add-data "I:/FivverProjects/ONCHER-APP/static;static/" --add-data "I:/FivverProjects/ONCHER-APP/database;database/" --add-data "I:/FivverProjects/ONCHER-APP/cef_cache;cef_cache/" --additional-hooks-dir "I:/FivverProjects/ONCHER-APP/hook"  "I:/FivverProjects/ONCHER-APP/app.py"
+    """
     # https://stackoverflow.com/questions/65279193/how-to-close-pywebview-window-from-javascript-using-pywebview-api
     """
         Useful Links:

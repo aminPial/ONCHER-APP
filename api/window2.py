@@ -1,5 +1,4 @@
 # main screen
-import json
 import multiprocessing
 import os
 import pickle

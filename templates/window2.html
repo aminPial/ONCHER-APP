@@ -137,7 +137,7 @@
         <div class="columns" style="margin-top:20px;margin-left: 4px;" id="settings_cards">
             <div class="column">
                 <div class="box" id="upload_ppt_pdf"
-                     style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));">
+                     style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));cursor: pointer;">
                     {#                    <img#}
                     {#                            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);#}
                     {#                            background: white;padding: 4px;"#}
@@ -149,7 +149,7 @@
             </div>
             <div class="column">
                 <div class="box" id="flashcard_upload" style="
-                background-image: linear-gradient(to left, rgba(215,12,181,0.91), rgb(198,31,232));">
+                background-image: linear-gradient(to left, rgba(215,12,181,0.91), rgb(198,31,232));cursor: pointer;">
                     {#                    <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"#}
                     {#                         src="https://api.macmillanenglish.com/fileadmin/user_upload/Blog_and_Resources/Resources/resources_3/Flashcards.jpg"#}
                     {#                         alt="add_flashcard" width="128px"#}
@@ -198,9 +198,8 @@
 
         {# add ppt, pdf #}
 
-
         <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
-            `<h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
+            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
             <div class="container" style="padding: 4px">
 
                 <div class="control has-icons-left" style="display: inline-block">
@@ -331,23 +330,76 @@
 
         </section>
 
+        {# add flashcard #}
+        <section style="display: none;margin-left: 24px" id="add_flashcard">
+            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
+            <div class="container" style="padding: 4px">
+
+                <div class="control has-icons-left" style="display: inline-block">
+                    <input class="input is-primary is-medium" type="number" id="grade_field_1" placeholder="INPUT GRADE"
+                           name="grade_field"> {# grade_field_1 is for the flashcard #}
+                    <span class="icon is-small is-left">
+      <i class="fas fa-graduation-cap"></i>
+    </span>
+                </div>
+                <div class="control has-icons-left" style="display: inline-block">
+                    <input class="input is-success is-medium" type="number" id="lesson_field_1"
+                           placeholder="INPUT LESSON"
+                           name="lesson_field"> {# lesson_field_1 is for the flashcard #}
+                    <span class="icon is-small is-left">
+      <i class="fas fa-book-open"></i>
+    </span>
+                </div>
+            </div>
+
+
+            <br>
+            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Flashcard</h5>
+            <div class="container" style="padding: 4px">
+                {% for i in range(3) %}
+                    <div class="columns is-gapless">
+                        {% for j in range(3) %}
+                            <div class="column is-gapless">
+                                <img style="background: #e312a8" src="https://icon-library.com/images/upload-icon/upload-icon-18.jpg" width="128px"
+                                     height="128px"
+                                     alt="{{ i }}__{{ j }}"/>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <hr>
+            <div style="margin-left: 4px">
+
+                <button style="font-weight: bolder;background: #e31266"
+                        type="button" class="button is-link field is-inline-block-mobile"
+                        id="add_flashcard" onclick="add_documents(1)"><i class="fa fa-plus"></i>&nbsp; ADD
+                </button>
+            </div>
+
+        </section>
+
+        {# upload ppt,pdf or Flashcard to server code in below <script> tag #}
         <script>
             // this will get incremented as we add docs
             let grade_lesson_load_count = {{ grade_lesson_load_count }};
 
             function add_documents(is_flashcard) {
                 // initiate loading
-                $('#add_ppt').empty().text('UPLOADING'
+
+                $(is_flashcard ? '#add_flashcard' : '#add_ppt').empty().text('UPLOADING'
                 ).attr({'class': 'button is-link is-loading'});
-                // is_flashcard = false means ppt,pdf
-                let fd = new FormData(document.getElementById("fileinfo"));
-                let grade = $('#grade_field').val();
-                let lesson = $('#lesson_field').val();
-                // alert("grade " + grade + " lesson " + lesson);
+
+                let grade = $(is_flashcard ? '#grade_field_1' : '#grade_field').val();
+                let lesson = $(is_flashcard ? '#lesson_field_1' : '#lesson_field').val();
+                alert("grade " + grade + " lesson " + lesson);
                 if (grade !== "" && lesson !== "") {
+                    // for the ppt,pdf
+                    let fd = new FormData(document.getElementById("fileinfo"));
                     fd.append("grade", grade);
                     fd.append("lesson", lesson);
                     fd.append("is_flashcard", is_flashcard);
+
                     $.ajax({
                         url: "/upload_document",
                         type: "POST",
@@ -391,13 +443,23 @@
         </script>
 
 
-        {# add flashcard #}
-        {#  todo: .............. #}
+    </div>
+
+    {# todo: view SS report and make report.. #}
+
+
+    <div class="box" id="view-ss-report-for-specific-student"
+         style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 0;display: none">
+
+        <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"></h3>
 
 
     </div>
 
-    {# todo: view SS report and make report.. #}
+
+
+
 
     {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
 
