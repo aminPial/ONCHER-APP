@@ -161,8 +161,75 @@
 
 
         {# grade lesson table #}
+
         <section class="section" id="grade_lesson_list_section">
-            <table class="table is-fullwidth">
+            {# tabs is-centered is-toggle is-fullwidth is-medium #}
+            <div class="tabs is-centered is-boxed is-medium">
+                <ul>
+                    <li class="is-active" id="pdf_ppt_tab">
+                        <a>
+                            <span class="icon is-small"><i class="fas fa-file-pdf" aria-hidden="true"></i></span>
+                            <span>Pdf & ppt</span>
+                        </a>
+                    </li>
+                    <li id="flashcard_tab">
+                        <a>
+                            <span class="icon is-small"><i class="fas fa-credit-card-blank"
+                                                           aria-hidden="true"></i></span>
+                            <span>Flashcard</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <script>
+                // script for toggle the table
+                $('#pdf_ppt_tab').click(function () {
+                    $('#flashcard_table').hide();
+                    $('#ppt_pdf_table').show();
+                    $('#pdf_ppt_tab').attr({'class': 'is-active'});
+                    $('#flashcard_tab').removeAttr('class');
+                });
+                $('#flashcard_tab').click(function () {
+                    $('#ppt_pdf_table').hide();
+                    $('#flashcard_table').show();
+                    $('#flashcard_tab').attr({'class': 'is-active'});
+                    $('#pdf_ppt_tab').removeAttr('class');
+                });
+            </script>
+            {# ppt,pdf list table #}
+            <table class="table is-fullwidth" id="ppt_pdf_table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Grade</th>
+                    <th>Lesson</th>
+                    <th>Study Materials</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="grade-lesson-doc-list-body">
+                {% for grade in grade_lessons %}
+                    {% for object in grade_lessons[grade] %}
+                        <tr id="study_materials_{{ loop.index }}_{{ grade }}" style="cursor: pointer">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ grade }}</td>
+                            <td>{{ object.lesson }}</td>
+                            <td>{{ object.folder_name }}</td>
+                            <td><i class="fa fa-edit" style="color: #f620d9"></i></td>
+                        </tr>
+                        <script>
+                            $('#study_materials_{{ loop.index }}_{{ grade }}').hover(function () {
+                                $('#study_materials_{{ loop.index }}_{{ grade }}').attr({'class': 'is-selected'});
+                            }).mouseleave(function () {
+                                $('#study_materials_{{ loop.index }}_{{ grade }}}').attr({'class': ''});
+                            });
+                        </script>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+            {# todo: flashcard table #}
+            <table class="table is-fullwidth" id="flashcard_table" style="display: none">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -356,24 +423,37 @@
             <br>
             <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Flashcard</h5>
             <div class="container" style="padding: 4px">
-                {% for i in range(3) %}
-                    <div class="columns is-gapless">
-                        {% for j in range(3) %}
-                            <div class="column is-gapless">
-                                <img style="background: #e312a8" src="https://icon-library.com/images/upload-icon/upload-icon-18.jpg" width="128px"
-                                     height="128px"
-                                     alt="{{ i }}__{{ j }}"/>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+                <form id="flashcard_add_form" method="post" name="flashcard_add_form">
+                    {% for i in range(3) %}
+                        <div class="columns">
+                            {% for j in range(3) %}
+                                <input type="file" id="flashcard_{{ i }}_{{ j }}_input"
+                                       name="flashcard_{{ i }}_{{ j }}_input"
+                                       accept="image/*"
+                                       style="display: none" onchange="on_input_flashcard({{ i }}, {{ j }})">
+                                <div class="column box" style="text-align: center;margin: 12px;cursor: pointer"
+                                     onclick="flashcard_image_upload({{ i }},{{ j }})">
+
+                                    <img style="margin-left: auto;margin-right: auto;"
+                                         id="flashcard_{{ i }}__{{ j }}_image"
+                                         src="https://icon-library.com/images/upload-icon/upload-icon-18.jpg"
+                                         width="100px"
+                                         height="100px"
+                                         alt="flashcard_{{ i }}__{{ j }}_image"/>
+                                    <h6 class="title is-6" id="click_to_select_{{ i }}_{{ j }}">Click to select</h6>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </form>
             </div>
             <hr>
             <div style="margin-left: 4px">
 
-                <button style="font-weight: bolder;background: #e31266"
+                <button style="font-weight: bolder;background: #2996f8;margin-bottom: 20px"
                         type="button" class="button is-link field is-inline-block-mobile"
-                        id="add_flashcard" onclick="add_documents(1)"><i class="fa fa-plus"></i>&nbsp; ADD
+                        id="add_flashcard" onclick="add_documents(1)"><i class="fal fa-cloud-upload"></i>&nbsp; Upload
+                    Flashcards
                 </button>
             </div>
 
@@ -381,25 +461,44 @@
 
         {# upload ppt,pdf or Flashcard to server code in below <script> tag #}
         <script>
+
+            // for flashcard image upload
+            function flashcard_image_upload(i, j) {
+                //  alert("i am here");
+                $(`#flashcard_${i}_${j}_input`).trigger('click');
+            }
+
+            function on_input_flashcard(i, j) {
+                var oFReader = new FileReader();
+                oFReader.readAsDataURL(document.getElementById(`flashcard_${i}_${j}_input`).files[0]);
+                oFReader.onload = function (oFREvent) {
+                    document.getElementById(`flashcard_${i}__${j}_image`).src = oFREvent.target.result;
+                    $(`#click_to_select_${i}_${j}`).text("Click to change");
+                };
+            }
+
             // this will get incremented as we add docs
             let grade_lesson_load_count = {{ grade_lesson_load_count }};
 
             function add_documents(is_flashcard) {
                 // initiate loading
+                let f = is_flashcard.toString() === "1";
 
-                $(is_flashcard ? '#add_flashcard' : '#add_ppt').empty().text('UPLOADING'
-                ).attr({'class': 'button is-link is-loading'});
-
-                let grade = $(is_flashcard ? '#grade_field_1' : '#grade_field').val();
-                let lesson = $(is_flashcard ? '#lesson_field_1' : '#lesson_field').val();
+                let grade = $(`${f ? '#grade_field_1' : '#grade_field'}`).val();
+                let lesson = $(`${f ? '#lesson_field_1' : '#lesson_field'}`).val();
                 alert("grade " + grade + " lesson " + lesson);
-                if (grade !== "" && lesson !== "") {
+
+                if (typeof grade !== "undefined" && typeof lesson !== "undefined"
+                    && grade !== null && lesson !== null && grade !== "" && lesson !== "") {
                     // for the ppt,pdf
-                    let fd = new FormData(document.getElementById("fileinfo"));
+                    let fd = new FormData(document.getElementById(f ? "flashcard_add_form" : "fileinfo"));
                     fd.append("grade", grade);
                     fd.append("lesson", lesson);
-                    fd.append("is_flashcard", is_flashcard);
+                    fd.append("is_flashcard", f.toString()); // "false", "true"
 
+
+                    $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().text('UPLOADING'
+                    ).attr({'class': 'button is-link is-loading'});
                     $.ajax({
                         url: "/upload_document",
                         type: "POST",
@@ -407,11 +506,15 @@
                         processData: false,  // tell jQuery not to process the data
                         contentType: false   // tell jQuery not to set contentType
                     }).done(function (data) {
-                        // alert('Done..');
+                        alert('Done..');
                         if (data['status']) {
                             $('#settings_cards').show();
                             $('#grade_lesson_list_section').show();
-                            $('#add_ppt_pdf_div').hide();
+                            if (f)
+                                $('#add_flashcard').hide();
+                            else
+                                $('#add_ppt_pdf_div').hide();
+                            // todo: fix this below code according to f==false or true
                             $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; ADD').attr(
                                 {'class': 'button is-link field is-inline-block-mobile'});
                             // add the new row
@@ -616,7 +719,7 @@
                 // on change grade and lesson, change the card images
                 let socket = io.connect('/');
                 socket.on('grade_and_lesson_change', function (data) {
-                    // data => [src of images.., '/static/u_data/...']
+                    // data => [src of images.., '/static/flashcards/...']
                     for (let k = 0; k < 9; k++) { // 9 images
                         let i = Math.floor(k / 3);
                         let j = k % 3;
@@ -1101,7 +1204,7 @@
             </div>
         </div>
         <script>
-            // url "/static/u_data/cat.PNG" => "CAT" parser func
+            // url "/static/flashcards/cat.PNG" => "CAT" parser func
             function url_to_name_parser(url) {
                 let x = url.split("/");
                 let y = x[x.length - 1].split(".");

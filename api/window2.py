@@ -209,63 +209,79 @@ def upload_document():
     # emit("ppt_or_ppt_upload_signal", {"is_loading": True},
     #      namespace='/',
     #      broadcast=True)
-
-    file = request.files["myfile"]
-    file: request.files
-    filename = secure_filename(file.filename).lstrip().rstrip()
-
-    full_file_path = os.path.join(sys.path[0], "static", "files", filename)
-    file.save(full_file_path)
-
     form = request.form
-    # print(request.form.to_dict())
+    if form['is_flashcard'] == "true":
+        for i in range(3):
+            for j in range(3):
+                file = request.files[f'flashcard_{i}_{j}_input']
+                file: request.files
+                filename = secure_filename(file.filename).lstrip().rstrip()
+                print("flashcard filename => {}".format(filename))
+                full_file_path = os.path.join(sys.path[0], "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
+                                                                                                     form['lesson']),
+                                              "{}.png".format(filename))  # png format
+                file.save(full_file_path)
+                # todo: check if same grade lesson exists
+                database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                            lesson=int(form['lesson']),
+                                                            is_flashcard=1,
+                                                            is_pdf=0
+                                                            ))
+                database_cluster.session.commit()
+                return jsonify(status=1, does_exist=False)
+    else:
+        # todo: check if same grade lesson exists
+        file = request.files['myfile']
+        file: request.files
+        filename = secure_filename(file.filename).lstrip().rstrip()
+        full_file_path = os.path.join(sys.path[0], "static", "files", filename)
+        file.save(full_file_path)
+        if filename.endswith(".pdf"):
+            # if already exists then we return
+            if StudyMaterials.query.filter_by(folder_name=filename).first():
+                return jsonify(status=0, does_exist=True)
 
-    if filename.endswith(".pdf"):
-        # if already exists then we return
-        if StudyMaterials.query.filter_by(folder_name=filename).first():
-            return jsonify(status=0, does_exist=True)
-
-        pdf_file_name, page_count = parse_pdf_file(full_file_path, filename)
-        database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
-                                                    lesson=int(form['lesson']),
-                                                    folder_name=filename,
-                                                    is_flashcard=0,
-                                                    page_count=page_count,
-                                                    is_pdf=1
-                                                    ))
-        database_cluster.session.commit()
-        # todo: emit to update the docs in the dropdown to grade & lesson
-        # print("After committing. {}".format(StudyMaterials.query.all()))
-        return jsonify(status=1, does_exist=False, folder_name=filename)
-
-    elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
-        st = time.time()
-        response = upload_ppt(full_file_path)
-        print("response from server is {} in {} seconds".format(response, time.time() - st))
-        if response and response['status'] == 'ok' and response['done_uploading']:
-            # https%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx
-            encoded_url = quote('https://libwired.com/static/{}'.format(filename), safe='')
-            print("Encoded Url is {}".format(encoded_url))
-            # https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
-            src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D{encoded_url}&access_token_ttl=0&wdModeSwitchTime=1612594467217""".format(
-                encoded_url=encoded_url
-            )
-            print("Full Url {}".format(src_to_load))
-
+            pdf_file_name, page_count = parse_pdf_file(full_file_path, filename)
             database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
                                                         lesson=int(form['lesson']),
                                                         folder_name=filename,
                                                         is_flashcard=0,
-                                                        is_pdf=0,
-                                                        ppt_server_url=src_to_load
+                                                        page_count=page_count,
+                                                        is_pdf=1
                                                         ))
             database_cluster.session.commit()
+            # todo: emit to update the docs in the dropdown to grade & lesson
+            # print("After committing. {}".format(StudyMaterials.query.all()))
             return jsonify(status=1, does_exist=False, folder_name=filename)
 
+        elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
+            st = time.time()
+            response = upload_ppt(full_file_path)
+            print("response from server is {} in {} seconds".format(response, time.time() - st))
+            if response and response['status'] == 'ok' and response['done_uploading']:
+                # https%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx
+                encoded_url = quote('https://libwired.com/static/{}'.format(filename), safe='')
+                print("Encoded Url is {}".format(encoded_url))
+                # https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
+                src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D{encoded_url}&access_token_ttl=0&wdModeSwitchTime=1612594467217""".format(
+                    encoded_url=encoded_url
+                )
+                print("Full Url {}".format(src_to_load))
+
+                database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                            lesson=int(form['lesson']),
+                                                            folder_name=filename,
+                                                            is_flashcard=0,
+                                                            is_pdf=0,
+                                                            ppt_server_url=src_to_load
+                                                            ))
+                database_cluster.session.commit()
+                return jsonify(status=1, does_exist=False, folder_name=filename)
+
+            else:
+                return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
         else:
-            return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
-    else:
-        return jsonify(status=0, does_exist=False, folder_name='invalid file extension')
+            return jsonify(status=0, does_exist=False, folder_name='invalid file extension')
 
 
 @socket_io.on('refresh_grades_as_per_docs')

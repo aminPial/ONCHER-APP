@@ -10,7 +10,7 @@ __pycache__/
 cef_cache
 .idea
 static/files
-static/u_data
+static/flashcards
 static/cache
 static/screenshots
 output

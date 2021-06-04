@@ -24,7 +24,7 @@ def window_1():
         grade_lessons_docs_version[study_material.grade].append(study_material.lesson)
 
     # flashcard version
-    grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'u_data'))
+    grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'flashcards'))
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons_flashcard_version = {}  # dummy for now => {grade: [lessons in list]}
     for folder_names in grade_lesson_folders:
@@ -143,12 +143,12 @@ def grade_lesson_select_signal_receive(data):
     # flashcard version
     folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
                                                          lesson=data['lesson'])  # what if one of them is null?
-    full_path = os.path.join(sys.path[0], 'static', 'u_data', folder_name)
+    full_path = os.path.join(sys.path[0], 'static', 'flashcards', folder_name)
     if os.path.exists(full_path):
         files_path = os.listdir(full_path)
         # print("files path {}".format(files_path))
         # a = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/lexa-tabby-cat-painting-dora-hathazi-mendes.jpg"
-        payload = ['/static/u_data/{}/{}'.format(folder_name, f) for f in files_path]  # todo: change it
+        payload = ['/static/flashcards/{}/{}'.format(folder_name, f) for f in files_path]  # todo: change it
         # this is for games
         emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
     else:
