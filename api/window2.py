@@ -308,7 +308,7 @@ def refresh_grades_as_per_docs(data):
 def student_report_submit():
     f = request.form
     f = loads(f['report'])  # json.loads()
-    # print(f, type(f))
+    print(f, type(f))
     if f:
         for report in f:
             database_cluster.session.add(StudentReports(student_id=report['student-id'],

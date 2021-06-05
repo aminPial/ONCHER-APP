@@ -116,7 +116,14 @@ def configure_signal_emitter(data):
 
 @socket_io.on('view_ss_report_open_signal')
 def view_ss_report_open_signal(data):
-    emit('view_ss_report_open_signal_receive', {}, namespace='/', broadcast=True)
+    student_data = data['current_student_object']
+    student_report_objects = [s.__dict__ for s in StudentReports.query.filter_by(student_id=student_data['id']).all()]
+    [a.pop('_sa_instance_state') for a in student_report_objects]
+    print("student_report_objects are {}".format(student_report_objects))
+    emit('view_ss_report_open_signal_receive',
+         {'student_report_objects': student_report_objects[::-1],  # in descending order of time
+          'name': student_data['name']},
+         namespace='/', broadcast=True)
 
 
 # we need these vars

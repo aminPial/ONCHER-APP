@@ -39,6 +39,6 @@ class StudyMaterials(database_cluster.Model):
 
 class StudentReports(database_cluster.Model):
     id = database_cluster.Column(database_cluster.Integer, primary_key=True)
-    when = database_cluster.Column(database_cluster.DateTime, default=datetime.now())
+    when = database_cluster.Column(database_cluster.Text, default=datetime.now().strftime("%I:%M:%S %p %d %B,%Y"))
     student_id = database_cluster.Column(database_cluster.Integer, nullable=False)  # student id (primary key)
     report_saved = database_cluster.Column(database_cluster.Text)

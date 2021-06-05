@@ -40,6 +40,7 @@
                     let is_note_section_enabled = false;
                     let current_student_object = null;
 
+
                     socket.on('students-list-dropdown', function (data) {
                         //   alert('yo here students');
                         let student_list_dropdown_elem = $('#students-list-dropdown');
@@ -73,7 +74,7 @@
                         socket.emit('student_select_signal_receive', {
                             'id': student_object['id']
                         });
-
+                        $('#view_ss_report').removeAttr('disabled');
                         // also update the "student notes" section
                     }
 
@@ -89,6 +90,10 @@
                             // processData: false,  // tell jQuery not to process the data
                             // contentType: false   // tell jQuery not to set contentType
                         });
+                    }
+
+                    function view_ss_report_trigger() {
+                        socket.emit('view_ss_report_open_signal', {'current_student_object': current_student_object});
                     }
 
                 </script>
@@ -342,8 +347,8 @@
         <button style="font-weight: bolder;background: #e312a8" type="button"
                 class="button is-link field is-inline-block-mobile" id="configure">Configure
         </button>
-        <button style="font-weight: bolder;background: #12e312" type="button"
-                class="button is-link field is-inline-block-mobile" id="view_ss_report">View SS Report
+        <button style="font-weight: bolder;background: #12e312" type="button" onclick="view_ss_report_trigger()"
+                class="button is-link field is-inline-block-mobile" id="view_ss_report" disabled>View SS Report
         </button>
         {#        <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">#}
         {#            <div class="file is-primary" style="font-weight: bolder;background: #b120e8">#}

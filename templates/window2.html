@@ -124,6 +124,23 @@
 
     </div>
 
+    {# view ss report for a particular student - will be triggered when a student is being selected in window 1 #}
+    <div class="box" id="view-student-report-div"
+         style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 0;display: none">
+        <h3 class="title is-3" style="margin:16px 16px 0;font-weight: bolder;font-family: 'HP Simplified',serif">
+            <u id="student_report_of"></u>
+        </h3>
+        <section class="section" id="reports_of_a_student">
+            {#            {% for i in range(10) %}#}
+            {#                <div class="box">#}
+            {#                    <h5 class="subtitle is-5" style="font-weight: bolder;"></h5>#}
+            {#                    <textarea class="textarea" placeholder="" disabled style="resize: none">#}
+            {#                </textarea>#}
+            {#                </div>#}
+            {#            {% endfor %}#}
+        </section>
+    </div>
 
     {# settings page #}
     <div class="box" id="settings_box" style="margin: 8px 8px 0;
@@ -218,7 +235,7 @@
                                 <td>{{ grade }}</td>
                                 <td>{{ object.lesson }}</td>
                                 <td>{{ object.folder_name }}</td>
-                                      {# implement the edit window for ppt.pdf #}
+                                {# implement the edit window for ppt.pdf #}
                                 <td><i class="fal fa-edit" style="color: #5AE71DFF"></i></td>
                             </tr>
                         {% endif %}
@@ -279,79 +296,8 @@
                            name="lesson_field">
                     <span class="icon is-small is-left">
       <i class="fas fa-book-open"></i>
-    </span>
+        </span>
                 </div>
-
-                {#                <div class="dropdown" id="grade_list" style="margin-left: 2px">#}
-                {#                    <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>#}
-                {#                    <div class="dropdown-trigger">#}
-                {#                        <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">#}
-                {#                            <span id="base_grade_text">--</span>#}
-                {#                            <span class="icon is-small">#}
-                {#        <i class="fas fa-angle-down" aria-hidden="true"></i>#}
-                {#      </span>#}
-                {#                        </button>#}
-                {#                    </div>#}
-                {#                    <div class="dropdown-menu" id="dropdown-menu3" role="menu">#}
-                {#                        <div class="dropdown-content">#}
-                {#                            {% for grade in grade_lessons %}#}
-                {#                                <a onclick="send_grade_select_signal({{ grade }})" class="dropdown-item">#}
-                {#                                    {{ grade }}#}
-                {#                                </a>#}
-                {#                            {% endfor %}#}
-                {##}
-                {#                            <script>#}
-                {#                                let grade_lessons_arr = {{ grade_lessons | tojson }}; // {grade: [lessons] }#}
-                {#                                // alert(" > " + grade_lessons_arr);#}
-                {#                                // current selected grade and lesson#}
-                {#                                let current_grade = null;#}
-                {#                                let current_lesson = null;#}
-                {##}
-                {#                                function send_grade_select_signal(grade) {#}
-                {#                                    current_grade = grade;#}
-                {#                                    current_lesson = grade_lessons_arr[current_grade][0]['lesson']; // as newly selected grade, lesson is not yet selected#}
-                {#                                    $('#base_grade_text').text(`${current_grade}`);#}
-                {#                                    $('#base_lesson_text').text(`${current_lesson}`);#}
-                {##}
-                {#                                    let l = $('#lessons_div');#}
-                {#                                    l.empty();#}
-                {#                                    for (let i = 0; i < grade_lessons_arr[current_grade].length; i++) {#}
-                {#                                        l.append("<a onclick=\"send_lesson_select_signal(" + `${grade_lessons_arr[current_grade][i]['lesson']}` + ")\" class=\"dropdown-item\">\n" +#}
-                {#                                            "                            \n" + `${grade_lessons_arr[current_grade][i]['lesson']}` +#}
-                {#                                            "                        </a>")#}
-                {#                                    }#}
-                {#                                }#}
-                {##}
-                {#                                // lesson select func#}
-                {#                                function send_lesson_select_signal(lesson) {#}
-                {#                                    current_lesson = lesson;#}
-                {#                                    $('#base_lesson_text').text(`${current_lesson}`);#}
-                {#                                }#}
-                {##}
-                {#                            </script>#}
-                {##}
-                {#                        </div>#}
-                {#                    </div>#}
-                {#                </div>#}
-                {##}
-                {#                <div class="dropdown" id="lesson_list" style="margin-left: 6px;margin-right: 2px">#}
-                {#                    <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>#}
-                {#                    <div class="dropdown-trigger">#}
-                {#                        <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">#}
-                {#                            <span id="base_lesson_text">--</span>#}
-                {#                            <span class="icon is-small">#}
-                {#        <i class="fas fa-angle-down" aria-hidden="true"></i>#}
-                {#      </span>#}
-                {#                        </button>#}
-                {#                    </div>#}
-                {#                    <div class="dropdown-menu" id="dropdown-menu5" role="menu">#}
-                {#                        <div class="dropdown-content" id="lessons_div">#}
-                {# empty... will be appended by JS on grade select.. #}
-                {##}
-                {#                        </div>#}
-                {##}
-                {#                    </div>#}
-                {#                </div>#}
             </div>
 
 
@@ -361,7 +307,8 @@
                 <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
                     <div class="file is-primary" style="font-weight: bolder;">
                         <label class="file-label">
-                            <input class="file-input" type="file" name="myfile" id="myfile">
+                            <input class="file-input" type="file" name="myfile" id="myfile"
+                                   > {# accept=".ppt, .pptx,.pptm,.pdf" #}
                             <script>
                                 $('input[type=file]').change(function () {
                                     var filename = $('input[type=file]').val().split('\\').pop();
@@ -569,11 +516,7 @@
     </div>
 
 
-
-
-
     {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
-
 
 
 

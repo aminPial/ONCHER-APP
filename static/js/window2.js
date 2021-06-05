@@ -139,6 +139,7 @@ $(document).ready(function () {
             initial_box.hide();
             loading_container.hide();
             $('#student-report-input').hide();
+            $('#view-student-report-div').hide();
             doc_container.show();
             $('#time_count_div').css('visibility', 'visible');
         }
@@ -371,8 +372,24 @@ $(document).ready(function () {
     // view ss report signal receiver
     // signal received from window-1 to open ss report in window-2
     socket.on('view_ss_report_open_signal_receive', function (data) {
-        // todo: ....
-        alert("got signal to open SS report");
+        // prepare the data
+        $('#student_report_of').text(`Student Report of ${data['name']}`)
+        let reports_of_a_student = $('#reports_of_a_student');
+        reports_of_a_student.empty();
+        let length_of_reports = data['student_report_objects'].length;
+        for (let u = 0; u < length_of_reports; u++) {
+            reports_of_a_student.append(" <div class=\"box\">\n" +
+`                    <h5 class=\"subtitle is-5\" style=\"font-weight: bolder;\">Report Time: ${data['student_report_objects'][u]['when']}</h5>\n` +
+`                    <textarea class=\"textarea\" disabled style=\"resize: none\">${data['student_report_objects'][u]['report_saved']}\n` +
+"                </textarea>\n" +
+"                </div>");
+        }
+        // arrange elem
+        $('#initial_box').hide();
+        $('#choose_games').hide();
+        $('#student-report-input').hide();
+        $('#settings_box').hide();
+        $('#view-student-report-div').show();
 
     });
 
@@ -380,6 +397,7 @@ $(document).ready(function () {
     socket.on('configure_signal_receive', function (data) {
         // on get the show config page signal
 //        $('#intro_screen').hide();
+        $('#view-student-report-div').hide();
         $('#initial_box').hide();
         $('#choose_games').hide();
         $('#student-report-input').hide();
@@ -387,6 +405,7 @@ $(document).ready(function () {
     });
 
     $('#configure-back').click(function () {
+        $('#view-student-report-div').hide();
         $('#initial_box').show();
         $('#choose_games').hide();
         $('#settings_box').hide();
@@ -394,6 +413,7 @@ $(document).ready(function () {
     });
 
     $('#upload_ppt_pdf').click(function () {
+        $('#view-student-report-div').hide();
         $('#settings_cards').hide();
         $('#grade_lesson_list_section').hide();
         $('#add_ppt_pdf_div').show();
@@ -402,6 +422,7 @@ $(document).ready(function () {
     });
 
     $('#flashcard_upload').click(function () {
+        $('#view-student-report-div').hide();
         $('#settings_cards').hide();
         $('#grade_lesson_list_section').hide();
         $('#add_ppt_pdf_div').hide();
@@ -442,7 +463,7 @@ $(document).ready(function () {
                 'report': $(`#report-${students_object[h]['id']}`).val() // e.g: id ="report-1"
             });
         }
-       // alert("Data here " + JSON.stringify(report));
+        // alert("Data here " + JSON.stringify(report));
 
         $.ajax({
             url: "/student_report_submit",
@@ -453,7 +474,7 @@ $(document).ready(function () {
             // processData: false,  // tell jQuery not to process the data
             // contentType: false   // tell jQuery not to set contentType
         }).done(function (data) {
-         //   alert("data " + data['status']);
+            //   alert("data " + data['status']);
             if (data["status"] === 0) {
                 alert("Something is wrong while saving student report");
             } else {
@@ -469,6 +490,7 @@ $(document).ready(function () {
 
     });
     $('#report-save-cancel').click(function () {
+        $('#view-student-report-div').hide();
         $('#student-report-input').hide();
         $('#choose_games').hide();
         $('#settings_box').hide();
@@ -484,6 +506,7 @@ $(document).ready(function () {
         $('#intro_screen').hide(1000);
         $('#choose_games').show(1200);
         $('#student-report-input').hide();
+        $('#view-student-report-div').hide();
     });
 
     // on click games
