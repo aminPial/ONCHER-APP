@@ -208,26 +208,25 @@
                 </tr>
                 </thead>
                 <tbody id="grade-lesson-doc-list-body">
+                {% set counter= namespace(value=0) %}
                 {% for grade in grade_lessons %}
                     {% for object in grade_lessons[grade] %}
-                        <tr id="study_materials_{{ loop.index }}_{{ grade }}" style="cursor: pointer">
-                            <td>{{ loop.index }}</td>
-                            <td>{{ grade }}</td>
-                            <td>{{ object.lesson }}</td>
-                            <td>{{ object.folder_name }}</td>
-                            <td><i class="fa fa-edit" style="color: #f620d9"></i></td>
-                        </tr>
-                        <script>
-                            $('#study_materials_{{ loop.index }}_{{ grade }}').hover(function () {
-                                $('#study_materials_{{ loop.index }}_{{ grade }}').attr({'class': 'is-selected'});
-                            }).mouseleave(function () {
-                                $('#study_materials_{{ loop.index }}_{{ grade }}}').attr({'class': ''});
-                            });
-                        </script>
+                        {% if object.is_flashcard == 0 %}
+                            {% set counter.value = counter.value + 1 %}
+                            <tr id="study_materials_{{ counter.value }}_{{ grade }}" style="cursor: pointer">
+                                <td>{{ counter.value }}</td>
+                                <td>{{ grade }}</td>
+                                <td>{{ object.lesson }}</td>
+                                <td>{{ object.folder_name }}</td>
+                                      {# implement the edit window for ppt.pdf #}
+                                <td><i class="fal fa-edit" style="color: #5AE71DFF"></i></td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 {% endfor %}
                 </tbody>
             </table>
+
             {# todo: flashcard table #}
             <table class="table is-fullwidth" id="flashcard_table" style="display: none">
                 <thead>
@@ -239,23 +238,22 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id="grade-lesson-doc-list-body">
+                <tbody id="flashcard-list-body">
+                {% set counter_1= namespace(value=0) %}
                 {% for grade in grade_lessons %}
                     {% for object in grade_lessons[grade] %}
-                        <tr id="study_materials_{{ loop.index }}_{{ grade }}" style="cursor: pointer">
-                            <td>{{ loop.index }}</td>
-                            <td>{{ grade }}</td>
-                            <td>{{ object.lesson }}</td>
-                            <td>{{ object.folder_name }}</td>
-                            <td><i class="fa fa-edit" style="color: #f620d9"></i></td>
-                        </tr>
-                        <script>
-                            $('#study_materials_{{ loop.index }}_{{ grade }}').hover(function () {
-                                $('#study_materials_{{ loop.index }}_{{ grade }}').attr({'class': 'is-selected'});
-                            }).mouseleave(function () {
-                                $('#study_materials_{{ loop.index }}_{{ grade }}}').attr({'class': ''});
-                            });
-                        </script>
+                        {% if object.is_flashcard == 1 %}
+                            {% set counter_1.value = counter_1.value + 1 %}
+                            <tr id="study_materials_f_{{ counter_1.value }}_{{ grade }}" style="cursor: pointer">
+                                <td>{{ counter_1.value }}</td>
+                                <td>{{ grade }}</td>
+                                <td>{{ object.lesson }}</td>
+                                <td>9 Flashcards</td>
+                                {# implement the edit window for flashcards #}
+                                <td><i class="fal fa-edit" style="color: #f620d9"></i></td>
+                            </tr>
+
+                        {% endif %}
                     {% endfor %}
                 {% endfor %}
                 </tbody>
@@ -469,7 +467,7 @@
             }
 
             function on_input_flashcard(i, j) {
-                var oFReader = new FileReader();
+                let oFReader = new FileReader();
                 oFReader.readAsDataURL(document.getElementById(`flashcard_${i}_${j}_input`).files[0]);
                 oFReader.onload = function (oFREvent) {
                     document.getElementById(`flashcard_${i}__${j}_image`).src = oFREvent.target.result;
@@ -478,7 +476,8 @@
             }
 
             // this will get incremented as we add docs
-            let grade_lesson_load_count = {{ grade_lesson_load_count }};
+            let grade_lesson_load_count_ppt_pdf = {{ grade_lesson_load_count_ppt_pdf }};
+            let grade_lesson_load_count_flashcard = {{ grade_lesson_load_count_flashcard }};
 
             function add_documents(is_flashcard) {
                 // initiate loading
@@ -486,7 +485,7 @@
 
                 let grade = $(`${f ? '#grade_field_1' : '#grade_field'}`).val();
                 let lesson = $(`${f ? '#lesson_field_1' : '#lesson_field'}`).val();
-                alert("grade " + grade + " lesson " + lesson);
+                //  alert("grade " + grade + " lesson " + lesson);
 
                 if (typeof grade !== "undefined" && typeof lesson !== "undefined"
                     && grade !== null && lesson !== null && grade !== "" && lesson !== "") {
@@ -508,33 +507,42 @@
                     }).done(function (data) {
                         alert('Done..');
                         if (data['status']) {
+                            // if flashcard
+                            if (f) {
+                                $('#add_flashcard').hide();
+                                grade_lesson_load_count_flashcard++;
+                                $('#flashcard-list-body').append("<tr id=\"study_materials_f_" + `${grade_lesson_load_count_flashcard}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
+                                    `    <td>${grade_lesson_load_count_flashcard}</td>\n` +
+                                    `    <td>${grade}</td>\n` +
+                                    `    <td>${lesson}</td>\n` +
+                                    `    <td>9 Flashcards</td>\n` +
+                                    `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
+                                    "</tr>\n");
+
+                            } else {
+                                $('#add_ppt_pdf_div').hide();
+                                grade_lesson_load_count_ppt_pdf++;
+                                $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count_ppt_pdf}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
+                                    `    <td>${grade_lesson_load_count_ppt_pdf}</td>\n` +
+                                    `    <td>${grade}</td>\n` +
+                                    `    <td>${lesson}</td>\n` +
+                                    `    <td>${data['folder_name']}</td>\n` +
+                                    `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
+                                    "</tr>\n");
+                            }
+
+                            // todo: fix this below code according to f==false or true
+                            $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
+                                '<i+ class="fa fa-plus"></i>&nbsp; ADD').attr(
+                                {'class': 'button is-link field is-inline-block-mobile'});
+
                             $('#settings_cards').show();
                             $('#grade_lesson_list_section').show();
-                            if (f)
-                                $('#add_flashcard').hide();
-                            else
-                                $('#add_ppt_pdf_div').hide();
-                            // todo: fix this below code according to f==false or true
-                            $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; ADD').attr(
-                                {'class': 'button is-link field is-inline-block-mobile'});
-                            // add the new row
-                            grade_lesson_load_count++;
-                            $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
-                                `    <td>${grade_lesson_load_count}</td>\n` +
-                                `    <td>${grade}</td>\n` +
-                                `    <td>${lesson}</td>\n` +
-                                `    <td>${data['folder_name']}</td>\n` +
-                                `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
-                                "</tr>\n");
 
-                            $(`#study_materials_${grade_lesson_load_count}_${grade}`).hover(function () {
-                                $(`#study_materials_${grade_lesson_load_count}_${grade}`).attr({'class': 'is-selected'});
-                            }).mouseleave(function () {
-                                $(`#study_materials_${grade_lesson_load_count}_${grade}`).attr({'class': ''});
-                            });
                         } else {
                             alert("Failed to upload");
-                            $('#add_ppt').empty().append('<i class="fa fa-plus"></i>&nbsp; Failed.Try Again').attr(
+                            $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
+                                '<i class="fa fa-plus"></i>&nbsp; Failed.Try Again').attr(
                                 {'class': 'button is-link field is-inline-block-mobile'});
                         }
                     });
@@ -1547,7 +1555,7 @@
     </div>
 
 
-    {# modal to change the screenshot timer settings #}]
+    {# modal to change the screenshot timer settings #}
     <div class="modal" id="screenshot-timer-modal">
         <div class="modal-background"></div>
         <div class="modal-card">

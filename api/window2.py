@@ -24,9 +24,13 @@ from server import oncher_app, socket_io, database_cluster
 @oncher_app.route('/window_2')
 def window_2():
     grade_lessons = {}  # dummy for now => {grade: Object itself]}
-    # study_material: StudyMaterials
+    ppt_pdf = 0
+    flashcard = 0
     for study_material in StudyMaterials.query.all():
-        # print(study_material.__dict__)
+        if study_material.is_flashcard:
+            flashcard += 1
+        else:
+            ppt_pdf += 1
         if study_material.grade not in grade_lessons.keys():
             grade_lessons['{}'.format(study_material.grade)] = []
         study_material = study_material.__dict__
@@ -34,7 +38,8 @@ def window_2():
         grade_lessons['{}'.format(study_material['grade'])].append(study_material)
     # print("grade lessons: {}".format(grade_lessons))
     return render_template('window2.html', BASE_URL=BASE_URL, grade_lessons=grade_lessons,
-                           grade_lesson_load_count=len(grade_lessons)
+                           grade_lesson_load_count_ppt_pdf=ppt_pdf,
+                           grade_lesson_load_count_flashcard=flashcard
                            )
 
 
@@ -198,6 +203,7 @@ def upload_ppt(full_file_path, retry_count_left=5):
         response['status'] = 'ok'
         return response
     except Exception as e:
+        print("Error happened while uploading ppt {}".format(e))
         # print('Failed to Upload. Retrying {} time'.format(retry_count_left))
         # upload_ppt(full_file_path, retry_count_left - 1)
         return {'status': 'failed'}
@@ -211,24 +217,33 @@ def upload_document():
     #      broadcast=True)
     form = request.form
     if form['is_flashcard'] == "true":
+        folder_name = os.path.join(sys.path[0], "static", "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
+                                                                                                    form['lesson']))
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+        else:
+            # todo: if exists, should we show some crappy alert that it exists
+            print("Folder Already Exists")
+            return jsonify(status=0, does_exist=True, reason="Grade and Lesson folder already exists")
+
         for i in range(3):
             for j in range(3):
                 file = request.files[f'flashcard_{i}_{j}_input']
                 file: request.files
                 filename = secure_filename(file.filename).lstrip().rstrip()
                 print("flashcard filename => {}".format(filename))
-                full_file_path = os.path.join(sys.path[0], "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
-                                                                                                     form['lesson']),
-                                              "{}.png".format(filename))  # png format
+
+                full_file_path = os.path.join(folder_name, "{}".format(filename))
                 file.save(full_file_path)
-                # todo: check if same grade lesson exists
-                database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
-                                                            lesson=int(form['lesson']),
-                                                            is_flashcard=1,
-                                                            is_pdf=0
-                                                            ))
-                database_cluster.session.commit()
-                return jsonify(status=1, does_exist=False)
+
+        # todo: check if same grade lesson exists
+        database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                    lesson=int(form['lesson']),
+                                                    is_flashcard=1,
+                                                    is_pdf=0
+                                                    ))
+        database_cluster.session.commit()
+        return jsonify(status=1, does_exist=False)
     else:
         # todo: check if same grade lesson exists
         file = request.files['myfile']

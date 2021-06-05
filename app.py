@@ -6,7 +6,7 @@ import pyautogui as p
 import webview
 from webview.platforms.cef import settings  #
 from math import ceil
-# from engineio.async_drivers import gevent
+# from engineio.async_drivers import gevent # this is needed for the error we got after freezing
 from server import socket_io, oncher_app  # can be deleted
 
 BASE_URL = None
@@ -37,7 +37,7 @@ def is_port_available(port: int):
 
 
 def destroy_window(window):
-    time.sleep(5)
+    time.sleep(6)
     window.destroy()
     return
 
@@ -52,7 +52,9 @@ def show_loading_screen():
                                                         width=square_size,
                                                         height=square_size,
                                                         frameless=True,
-                                                        resizable=False))
+                                                        resizable=False,
+                                                        # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
+                                                        on_top=True))
 
 
 if __name__ == '__main__':
@@ -61,8 +63,6 @@ if __name__ == '__main__':
     if sys.platform.startswith('win'):
         # On Windows calling this function is necessary.
         multiprocessing.freeze_support()
-
-    # show_loading_screen()
 
     available_port = 5000
     # todo: to keep port 5000 , we need to save the PID when we had 5000 port and detach if is occupied
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # t.join()
 
     # this is URL loading time before the window creation
-    time.sleep(6)  # todo: we will show a simple loading screen in this time
+   # show_loading_screen()
 
     w, h = p.size()
     # w, h = w_a, h_a - int(h_a * 0.10)
