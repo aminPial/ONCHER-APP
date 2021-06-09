@@ -11,6 +11,14 @@
 
 
 {% block body %}
+    <div class="block is-grouped-right" style="margin: 8px;text-align: right">
+        <i id="minimize_window" style="font-size: 20px;color: white" class="fal fa-minus-circle"></i>
+        <i id="restore_window" style="font-size: 20px;margin-left: 14px;color: white"
+           class="fal fa-window-restore"></i>
+        <i id="close_window"
+           style="font-size: 24px;margin-left: 14px;margin-right: 12px;color: white"
+           class="fal fa-times"></i>
+    </div>
 
     <div class="box" style="margin: 8px;">
         <div class="columns">
@@ -308,7 +316,7 @@
                     <div class="file is-primary" style="font-weight: bolder;">
                         <label class="file-label">
                             <input class="file-input" type="file" name="myfile" id="myfile"
-                                   > {# accept=".ppt, .pptx,.pptm,.pdf" #}
+                            > {# accept=".ppt, .pptx,.pptm,.pdf" #}
                             <script>
                                 $('input[type=file]').change(function () {
                                     var filename = $('input[type=file]').val().split('\\').pop();

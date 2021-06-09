@@ -15,10 +15,27 @@
     <script src="{{ url_for('static', filename='js/libraries/socket.io.js') }}"></script>
 
     <style>
-        /* width */
-        ::-webkit-scrollbar {
-            display: none;
+
+        {#//Chrome, Safari, Opera#}
+        body ::-webkit-scrollbar {
+            width: 0 !important
         }
+
+        {#//Firefox#}
+        body {
+            overflow: -moz-scrollbars-none;
+        }
+
+        {#//Internet Explorer, Edge... we need this#}
+        body {
+            -ms-overflow-style: none;
+        }
+
+
+        /* width */
+        {#::-webkit-scrollbar {#}
+        {#    display: none;#}
+
 
         {#/* Track */#}
         {#::-webkit-scrollbar-track {#}

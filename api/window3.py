@@ -1,14 +1,14 @@
+import os
 import pickle
 import sys
-
-from server import oncher_app, socket_io
-from flask import jsonify, render_template
-from flask import request
-from flask_socketio import emit
-import os
-import pyscreenshot as ImageGrab
 from datetime import datetime
+
+import pyscreenshot as ImageGrab
+from flask import render_template
+from flask_socketio import emit
+
 from app import BASE_URL
+from server import oncher_app, socket_io
 
 
 @oncher_app.route('/window_3')
@@ -25,7 +25,7 @@ def window_3():
         'teal'
     ]
     seconds = 5
-    pickle_path = os.path.join(sys.path[0], 'static', 'pickles', 'screenshot_interval_time.pickle')
+    pickle_path = os.path.abspath(os.path.join('static', 'pickles', 'screenshot_interval_time.pickle'))
     if os.path.exists(pickle_path):
         with open(pickle_path, 'rb') as handle:
             seconds = pickle.load(handle)['seconds']
@@ -59,7 +59,7 @@ def animation_trigger_receive(data):
 @socket_io.on('screenshot_timer_settings')
 def screenshot_timer_settings(data):
     payload = {'seconds': 5}
-    pickle_path = os.path.join(sys.path[0], 'static', 'pickles', 'screenshot_interval_time.pickle')
+    pickle_path = os.path.abspath(os.path.join('static', 'pickles', 'screenshot_interval_time.pickle'))
     if os.path.exists(pickle_path):
         with open(pickle_path, 'rb') as handle:
             payload['seconds'] = pickle.load(handle)['seconds']
@@ -74,16 +74,19 @@ def screenshot_timer_settings(data):
 
 @socket_io.on('timer_trigger')
 def timer_trigger(data):
-    start_or_end = data['start_or_end']
+    start_or_end = data['start_or_end'].lstrip().rstrip()
+    print("time triggered: {}".format(start_or_end))
     t = {"start_or_end": start_or_end}
     if start_or_end == "start":
-        pickle_path = os.path.join(sys.path[0], 'static', 'pickles', 'start_timer.pickle')
+        print("here x")
+        pickle_path = os.path.abspath(os.path.join('static', 'pickles', 'start_timer.pickle'))
         if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as handle:
                 t['timer_data'] = pickle.load(handle)
                 print(t['timer_data'])
         else:
             t['timer_data'] = "None"
+    print("t => {}".format(t))
     emit('timer_trigger_emit_to_win2', t, namespace='/', broadcast=True)
 
 
@@ -129,14 +132,13 @@ def take_screenshot(data):
         # # part of the screen
         # im = ImageGrab.grab(bbox=(10, 10, 510, 510))  # X1,Y1,X2,Y2
         filename = f"{form['name']}-{form['classes']}-{form['which_grade']}-{selected_lesson}-{datetime.now().strftime('%d %B%Y %I.%M.%S')}.png"
-        ImageGrab.grab().save(os.path.join(sys.path[0],
-                                           'static',
-                                           'screenshots',
-                                           filename))
+        ImageGrab.grab().save(os.path.abspath(os.path.join(
+            'static',
+            'screenshots',
+            filename)))
         # emit to window 2 to show a dialog that screenshot has been taken
         # or show a notification from OS itself
         # from form.to_dict() we will get the necessary info in window 2
         # if only one time then we emit to window 2 for showing notifications
         if not data['is_continuous']:
             emit('screen_shots_taken', {'filename': filename}, namespace='/', broadcast=True)
-

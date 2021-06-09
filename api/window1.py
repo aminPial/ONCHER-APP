@@ -24,7 +24,7 @@ def window_1():
         grade_lessons_docs_version[study_material.grade].append(study_material.lesson)
 
     # flashcard version
-    grade_lesson_folders = os.listdir(os.path.join(sys.path[0], 'static', 'flashcards'))
+    grade_lesson_folders = os.listdir(os.path.abspath(os.path.join('static', 'flashcards')))
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons_flashcard_version = {}  # dummy for now => {grade: [lessons in list]}
     for folder_names in grade_lesson_folders:
@@ -150,7 +150,7 @@ def grade_lesson_select_signal_receive(data):
     # flashcard version
     folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
                                                          lesson=data['lesson'])  # what if one of them is null?
-    full_path = os.path.join(sys.path[0], 'static', 'flashcards', folder_name)
+    full_path = os.path.abspath(os.path.join('static', 'flashcards', folder_name))
     if os.path.exists(full_path):
         files_path = os.listdir(full_path)
         # print("files path {}".format(files_path))
@@ -178,14 +178,14 @@ def grade_lesson_select_signal_receive(data):
         if study_mat_query.is_pdf:
             parsed_pdf_dir_path = "/static/cache/{}".format(study_mat_query.folder_name)
             # we need to parse width and height from the doc
-            path0 = os.path.join(sys.path[0], *parsed_pdf_dir_path.split("/"))
+            path0 = os.path.abspath(os.path.join(*parsed_pdf_dir_path.split("/")))
             # print("Pdf path is {}".format(path0))
             width, height = Image.open(os.path.join(path0, os.listdir(path0)[0])).size
             # print("Parsed Width {} and Height {}".format(width, height))
             from app import BASE_URL
             # print("BASE {}".format(BASE_URL))
             if BASE_URL is None:
-                BASE_URL = "http://localhost:5000"
+                BASE_URL = "http://localhost:5000" # todo: fix this
             payload = {
                 'is_pdf': True,  # todo: for now it is true but we need to work for the ppt and others related files
                 'parsed_pdf_dir_path': parsed_pdf_dir_path,

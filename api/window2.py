@@ -50,7 +50,7 @@ def save_time_count():
     if f:
         a = {'hour': int(f['hour']), 'minutes': int(f['minutes']), 'seconds': int(f['seconds'])}
         # print(a)
-        with open(os.path.join(sys.path[0], 'static', 'pickles', 'start_timer.pickle'), 'wb') as handle:
+        with open(os.path.abspath(os.path.join( 'static', 'pickles', 'start_timer.pickle')), 'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
         return jsonify(status=1)
     else:
@@ -64,7 +64,7 @@ def save_time_interval_of_screenshot():
     if f:
         a = {'seconds': int(f['seconds'])}
         # print(a)
-        with open(os.path.join(sys.path[0], 'static', 'pickles', 'screenshot_interval_time.pickle'), 'wb') as handle:
+        with open(os.path.abspath(os.path.join( 'static', 'pickles', 'screenshot_interval_time.pickle')), 'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
         # we need to emit this to window 3
         emit('updated_ss_interval_time', a, namespace='/', broadcast=True)
@@ -145,7 +145,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     """
     # create folder to save the images of the pdf file
     # print("pdf file name: {}".format(pdf_file_name))
-    extract_directory = os.path.join(sys.path[0], 'static', 'cache', pdf_file_name)
+    extract_directory = os.path.abspath(os.path.join('static', 'cache', pdf_file_name))
     # print("page extract directory: {}".format(extract_directory))
     # if os.path.exists(page_extract_directory):
     #     # shutil.rmtree(page_extract_directory)
@@ -217,8 +217,8 @@ def upload_document():
     #      broadcast=True)
     form = request.form
     if form['is_flashcard'] == "true":
-        folder_name = os.path.join(sys.path[0], "static", "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
-                                                                                                    form['lesson']))
+        folder_name = os.path.abspath(os.path.join( "static", "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
+                                                                                                    form['lesson'])))
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         else:
@@ -249,7 +249,7 @@ def upload_document():
         file = request.files['myfile']
         file: request.files
         filename = secure_filename(file.filename).lstrip().rstrip()
-        full_file_path = os.path.join(sys.path[0], "static", "files", filename)
+        full_file_path = os.path.abspath(os.path.join("static", "files", filename))
         file.save(full_file_path)
         if filename.endswith(".pdf"):
             # if already exists then we return
