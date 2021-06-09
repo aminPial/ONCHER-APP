@@ -1,5 +1,16 @@
 $(document).ready(function () {
 
+    // close_window
+    $('#close_window').click(function () {
+        socket.emit('close_window', {});
+    });
+    $('#maximize_window').click(function () {
+        socket.emit('maximize_window', {});
+    });
+    $('#minimize_window').click(function () {
+        socket.emit('minimize_window', {});
+    });
+
 
     // Get all dropdowns on the page that aren't hoverable.
     const dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
@@ -379,10 +390,10 @@ $(document).ready(function () {
         let length_of_reports = data['student_report_objects'].length;
         for (let u = 0; u < length_of_reports; u++) {
             reports_of_a_student.append(" <div class=\"box\">\n" +
-`                    <h5 class=\"subtitle is-5\" style=\"font-weight: bolder;\">Report Time: ${data['student_report_objects'][u]['when']}</h5>\n` +
-`                    <textarea class=\"textarea\" disabled style=\"resize: none\">${data['student_report_objects'][u]['report_saved']}\n` +
-"                </textarea>\n" +
-"                </div>");
+                `                    <h5 class=\"subtitle is-5\" style=\"font-weight: bolder;\">Report Time: ${data['student_report_objects'][u]['when']}</h5>\n` +
+                `                    <textarea class=\"textarea\" disabled style=\"resize: none\">${data['student_report_objects'][u]['report_saved']}\n` +
+                "                </textarea>\n" +
+                "                </div>");
         }
         // arrange elem
         $('#initial_box').hide();
