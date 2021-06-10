@@ -11,9 +11,13 @@
 
 
 {% block body %}
+
     <div class="block is-grouped-right" style="margin: 8px;text-align: right">
-        <i id="minimize_window" style="font-size: 20px;color: white;cursor: pointer" class="fal fa-minus"></i>
-        <i id="maximize_window" style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer;margin-top: 8px;"
+        <i id="settings_window" style="font-size: 20px;color: white;cursor: pointer;" class="fal fa-cog"></i>
+        <i id="minimize_window" style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer"
+           class="fal fa-minus"></i>
+        <i id="maximize_window"
+           style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer;margin-top: 8px;"
            class="fal fa-presentation"></i>
         <i id="close_window"
            style="font-size: 24px;margin-left: 18px;margin-right: 12px;color: white;cursor: pointer;margin-top: 8px;"
@@ -78,15 +82,18 @@
                      style="pointer-events: none">
             </div>
             <div class="column is-half-desktop">
-                <h1 class="title is-1" style="font-family: 'HP Simplified',serif;padding: 16px;margin-left: 32px">Teach
+                <h1 class="title is-1" style="font-family: 'HP Simplified',serif;padding: 16px;margin-left: 32px">
+                    Teach
                     with ONCHER</h1>
                 <section class="section" id="drag_and_drop_section" style="margin: 16px">
-                    <img style="margin: 16px" src="{{ url_for('static', filename='images/pdf_pic.jpg') }}" alt="pdf_pic"
+                    <img style="margin: 16px" src="{{ url_for('static', filename='images/pdf_pic.jpg') }}"
+                         alt="pdf_pic"
                          width="128px"
                          height="128px">
                     <h5 class="title is-5" style="font-family: 'HP Simplified',serif;
                             margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>
-                    <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt, .pptm,
+                    <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt,
+                        .pptm,
                         .pptx</h6>
                 </section>
             </div>
@@ -293,14 +300,16 @@
             <div class="container" style="padding: 4px">
 
                 <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-primary is-medium" type="number" id="grade_field" placeholder="INPUT GRADE"
+                    <input class="input is-primary is-medium" type="number" id="grade_field"
+                           placeholder="INPUT GRADE"
                            name="grade_field">
                     <span class="icon is-small is-left">
       <i class="fas fa-graduation-cap"></i>
     </span>
                 </div>
                 <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-success is-medium" type="number" id="lesson_field" placeholder="INPUT LESSON"
+                    <input class="input is-success is-medium" type="number" id="lesson_field"
+                           placeholder="INPUT LESSON"
                            name="lesson_field">
                     <span class="icon is-small is-left">
       <i class="fas fa-book-open"></i>
@@ -310,7 +319,8 @@
 
 
             <br>
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Document (ppt, pptm, pptx, pdf)</h5>
+            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Document (ppt, pptm, pptx,
+                pdf)</h5>
             <div class="container" style="padding: 4px">
                 <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
                     <div class="file is-primary" style="font-weight: bolder;">
@@ -356,7 +366,8 @@
             <div class="container" style="padding: 4px">
 
                 <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-primary is-medium" type="number" id="grade_field_1" placeholder="INPUT GRADE"
+                    <input class="input is-primary is-medium" type="number" id="grade_field_1"
+                           placeholder="INPUT GRADE"
                            name="grade_field"> {# grade_field_1 is for the flashcard #}
                     <span class="icon is-small is-left">
       <i class="fas fa-graduation-cap"></i>
@@ -405,7 +416,8 @@
 
                 <button style="font-weight: bolder;background: #2996f8;margin-bottom: 20px"
                         type="button" class="button is-link field is-inline-block-mobile"
-                        id="add_flashcard" onclick="add_documents(1)"><i class="fal fa-cloud-upload"></i>&nbsp; Upload
+                        id="add_flashcard" onclick="add_documents(1)"><i class="fal fa-cloud-upload"></i>&nbsp;
+                    Upload
                     Flashcards
                 </button>
             </div>
@@ -525,7 +537,6 @@
 
 
     {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
-
 
 
     <script>
@@ -820,7 +831,10 @@
 
                         document.getElementById('play_star_sound').click();
                         $(`#match_2_${j}_${i}`).hide(1500);
-                        $(`#number_${last_selected[0]}_${last_selected[1]}`).css({'font-size': '18px', 'color': 'green'}
+                        $(`#number_${last_selected[0]}_${last_selected[1]}`).css({
+                                'font-size': '18px',
+                                'color': 'green'
+                            }
                         ).hide().show(1500).text(text_of_second_grid_card);
                         $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css({'pointer-events': 'none'}
                         ).css({'box-shadow': '10px 10px 5px green'});// make the 1st grid elem un-click-able
@@ -877,7 +891,8 @@
                                  id="match_2_{{ i }}_{{ j }}" onclick="chosen_second_grid({{ i }},{{ j }})">
                                 <h2 class="title is-2" id="letter_{{ i }}_{{ j }}"
                                     style="font-weight: bolder;color: black">{{ grid_letter[j][i] }}</h2>
-                                <h5 class="title is-5 has-text-centered" style="color: blue" id="name_{{ i }}_{{ j }}">
+                                <h5 class="title is-5 has-text-centered" style="color: blue"
+                                    id="name_{{ i }}_{{ j }}">
                                     Elephant</h5>
                             </div>
                         {% endfor %}
@@ -899,7 +914,6 @@
     </div>
 
     {# end => match game screen #}
-
 
 
     {# start => find game screen #}
@@ -1157,8 +1171,9 @@
             </div>
             <div class="column">
                 <h3 class="title is-3"
-                    style="margin-right: 64px"><span style="color: #fa0a62">Points:</span> <span id="listen_game_points"
-                                                                                                 style="color: gold">0</span>
+                    style="margin-right: 64px"><span style="color: #fa0a62">Points:</span> <span
+                        id="listen_game_points"
+                        style="color: gold">0</span>
                 </h3>
             </div>
         </div>

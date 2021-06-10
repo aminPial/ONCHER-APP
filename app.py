@@ -12,17 +12,12 @@ from os import _exit
 BASE_URL = None
 
 
-# auto-py-to-exe
-
-# command_line_switches.update({
-#     'disable-web-security': 'True'
-# })
-# web_security_disabled
-
+# todo: add sentry logs
 
 def start_server(port: int):
     # from server import socket_io, oncher_app
-    socket_io.run(app=oncher_app, host='127.0.0.1', port=port)
+    socket_io.run(app=oncher_app, host='127.0.0.1',
+                  port=port)  # , debug=True) => ValueError: signal only works in main thread
     return
 
 
@@ -46,7 +41,8 @@ def destroy_window(window):
 
 def show_loading_screen():
     s_w, s_h = p.size()  # screen width and height
-    square_size = 300
+    # min(p.size()) // 2.5 = for my screen 307px
+    square_size = 300  # todo: should it be hard coded or percentage of a screen
     start(destroy_window, create_window('',
                                         html=open('templates/loading.html').read(),
                                         x=(s_w // 2) - ceil(square_size // 2),
@@ -93,7 +89,7 @@ if __name__ == '__main__':
     # t.join()
 
     # this is URL loading time before the window creation
-    show_loading_screen()
+    # show_loading_screen()
 
     w, h = p.size()
     # w, h = w_a, h_a - int(h_a * 0.10)

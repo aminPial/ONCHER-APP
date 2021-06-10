@@ -10,19 +10,21 @@
 
 
 {% block body %}
-
-    <div class="block" style="margin-top: 16px;margin-left: 8px" id="student_manage_section">
+    {# todo: make it responsive #}
+    <div class="block is-grouped-centered" style="margin-top: 16px;margin-left: 8px" id="student_manage_section">
         {#        <h5 class="title is-5">Student: </h5>#}
-        <div class="dropdown" id="student_list">
-            <div class="dropdown-trigger">
-                <button class="button is-danger is-outlined is-light" aria-haspopup="true"
-                        aria-controls="dropdown-menu3">
-                    <span id="base_student_text">Pick Student&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <span class="icon is-small">
+        <div class="dropdown" id="student_list" style="float: left;width: 78%">
+            <button class="dropdown-trigger button is-link is-light"
+                    aria-haspopup="true"
+                    aria-controls="dropdown-menu3"
+                    style="box-shadow: 0 0 11px rgba(236,220,220,0.45);
+                        display: flex;
+  justify-content: space-between;width: 100%">
+                <span id="base_student_text">Pick Student</span>
+                <span class="icon is-small">
         <i class="fas fa-angle-down" aria-hidden="true"></i>
       </span>
-                </button>
-            </div>
+            </button>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content" id="students-list-dropdown">
 
@@ -99,83 +101,90 @@
                 </script>
             </div>
         </div>
-        <button class="button is-danger is-light" id="add_button">
+        <div class="customized_gap">
+            &nbsp;
+        </div>
+        <button class="button is-link is-light" id="add_button"
+                style="box-shadow: 0 0 11px rgba(236,220,220,0.45);
+                float: left;width: 18%">
             <i class="fas fa-plus"></i>
         </button>
     </div>
 
 
-    {# todo: make a table to support this.... #}
-    {#    <table class="table is-full" style="background: transparent">#}
-    {#        <thead id="student_info_section_1">#}
-    {#        <tr>#}
-    {#            <th>Age</th>#}
-    {#            <th>Gender</th>#}
-    {#            <th>Recent</th>#}
-    {#            <th>Classes</th>#}
-    {#            <th>Left</th>#}
-    {#        </tr>#}
-    {#        </thead>#}
-    {#        <tbody id="student_info_section_2">#}
-    {#            <tr>#}
-    {#                <td id="age">11</td>#}
-    {#                <td id="gender">F</td>#}
-    {#                <td id="recent">G6L19</td>#}
-    {#                <td id="classes">11</td>#}
-    {#                <td id="left">6</td>#}
-    {#            </tr>#}
-    {#        </tbody>#}
-    {#    </table>#}
+    <br>
+    <div class="block" style="margin-top: 32px;margin-left: 0;padding-left: 0;" id="student_info_section_1">
+        <div class="is-inline-block-mobile"
+             style="float: left;width:20%;text-align: center">
+            <h5 class="title is-6" style="font-weight: bolder">Age</h5></div>
 
-    <div class="container" style="margin-top: 8px;margin-left: 12px" id="student_info_section_1">
-        <div class="is-inline-block-mobile"><h6 class="title is-6">Age</h6></div>
-        &nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="title is-6">Gender</h6></div>
-        &nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="title is-6">Recent</h6></div>
-        &nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="title is-6">Classes</h6></div>
-        &nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="title is-6">Left</h6></div>
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h5 class="title is-6" style="font-weight: bolder">Gender</h5></div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h5 class="title is-6" style="font-weight: bolder">Recent</h5></div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h5 class="title is-6" style="font-weight: bolder">Classes</h5></div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h5 class="title is-6" style="font-weight: bolder">Left</h5></div>
+    </div>
+<br>
+    <div class="block" style=""
+         id="student_info_section_2">
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h6 class="subtitle is-6"  id="age">-</h6>
+        </div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h6  class="subtitle is-6" id="gender">-</h6>
+        </div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h6  class="subtitle is-6" id="recent">-</h6></div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h6  class="subtitle is-6" id="classes">-</h6>
+        </div>
+
+        <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
+            <h6 class="subtitle is-6" id="left">-</h6>
+        </div>
     </div>
 
-    <div class="container " style="margin-top: 8px;margin-left: 8px" id="student_info_section_2">
-        &nbsp;
-        <div class="is-inline-block-mobile"><h6 class="subtitle is-6" id="age">11</h6></div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="subtitle is-6" id="gender">F</h6></div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="subtitle is-6" id="recent">G6L19</h6></div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="subtitle is-6" id="classes">11</h6></div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="is-inline-block-mobile"><h6 class="subtitle is-6" id="left">6</h6></div>
-    </div>
-
-
-
-
-    <div class="block" style="margin-left: 8px;margin-right: 8px;margin-top: 12px" id="lesson_plan_section">
-        <h6 class="title is-6">Lesson Plan: Slide 1</h6>
-        <div class="field">
+    {# todo: don't know what is this? LOL #}
+    <div class="field block" style="margin-left: 10px;margin-right: 8px;margin-top: 32px"
+         id="lesson_plan_section">
+        <h4 class="title is-4" style="margin-bottom:8px;padding-bottom:0;
+        margin-left: 4px;">
+            <span style="color: #1d72aa;font-weight: bolder;">Lesson Plan:</span>
+            <span style=""><b>NONE</b></span></h4>
+        <div class="field" style="padding-top: 2px">
             <div class="control">
-                <textarea class="textarea" rows="7" placeholder="Lesson Plan" style="resize: none"></textarea>
+                <textarea class="textarea" rows="7" placeholder="Lesson Plan"
+                          style="resize: none;box-shadow: 0 0 11px rgba(236,220,220,0.45);border: none"></textarea>
             </div>
         </div>
     </div>
 
-    <section style="margin-left: 8px" id="grade_section">
-        `
-        <div class="dropdown" id="grade_list" style="margin-left: 2px">
-            <span class="title is-5" style="margin-top: 6px">Grade:&nbsp;&nbsp;</span>
-            <div class="dropdown-trigger">
-                <button class="button is-link is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
-                    <span id="base_grade_text">--</span>
-                    <span class="icon is-small">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
-      </span>
-                </button>
-            </div>
+    <section id="grade_section" class="is-grouped-centered"
+             style="margin-left: 10px;margin-right: 2px;">
+        {# GRADE #}
+        <div class="dropdown" id="grade_list" style="float: left;width: 48%">
+
+            <button class="dropdown-trigger button is-success"
+                    aria-haspopup="true" aria-controls="dropdown-menu3"
+                    style="box-shadow: 0 0 11px rgba(236,220,220,0.45);
+                    float: left;width: 100%;display: flex;
+  justify-content: space-between;">
+                <span id="base_grade_text" style="font-weight: bolder">Select Grade</span>
+                <span class="icon is-small">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                 </span>
+            </button>
+
             <div class="dropdown-menu" id="dropdown-menu3" role="menu">
                 <div class="dropdown-content" id="grade-list-in-dropdown">
                     {# initially we will have grade_lessons_docs_version #}
@@ -185,97 +194,26 @@
                         </a>
                     {% endfor %}
                 </div>
-                <script>
-                    // todo: what about students under a grade ?
-                    let grade_lessons_docs_version = {{ grade_lessons_docs_version | tojson }}; // {grade: [lessons] }
-                    let grade_lessons_flashcard_version = {{ grade_lessons_flashcard_version | tojson }};
-                    let which_one = 'docs_version'; // 'flashcard_version'
 
-                    function refresh_grade() {
-                        // update the grade list in grade div and clear lesson div
-                        let g_elem = $('#grade-list-in-dropdown');
-                        g_elem.empty();
-                        $('#lessons_div').empty();
-
-                        for (let g = 0; g < (which_one === 'docs_version' ?
-                            grade_lessons_docs_version[current_grade].length :
-                            grade_lessons_flashcard_version[current_grade].length); g++) {
-                            let _grade = which_one === 'docs_version' ?
-                                grade_lessons_docs_version[current_grade][g] :
-                                grade_lessons_flashcard_version[current_grade][g];
-                            g_elem.append(`<a onClick=\"send_grade_select_signal(${_grade})\" class=\"dropdown-item\">\n` +
-                                `    ${_grade}\n` +
-                                "</a>");
-                        }
-                    }
-
-                    let socket = io.connect('/');
-
-                    socket.on('refresh_grade_on_docs', function (data) {
-                        which_one = 'docs_version';
-                        refresh_grade();
-                    });
-
-                    socket.on('switch_to_games_emit', function (data) {
-                        which_one = 'flashcard_version';
-                        refresh_grade();
-                    });
-
-
-                    // current selected grade and lesson
-                    let current_grade = null;
-                    let current_lesson = null;
-
-                    function send_grade_select_signal(grade) {
-                        current_grade = grade;
-                        current_lesson = which_one === 'docs_version' ?
-                            grade_lessons_docs_version[current_grade][0] : grade_lessons_flashcard_version[current_grade][0]; // as newly selected grade, lesson is not yet selected
-                        $('#base_grade_text').text(`${current_grade}`);
-                        $('#base_lesson_text').text(`${current_lesson}`);
-
-                        let l = $('#lessons_div');
-                        l.empty();
-                        for (let i = 0; i < (which_one === 'docs_version' ?
-                            grade_lessons_docs_version[current_grade].length :
-                            grade_lessons_flashcard_version[current_grade].length); i++) {
-                            l.append("<a onclick=\"send_lesson_select_signal(" + `${which_one === 'docs_version' ?
-                                grade_lessons_docs_version[current_grade][i] :
-                                grade_lessons_flashcard_version[current_grade][i]}` + ")\" class=\"dropdown-item\">\n" +
-                                "                            \n" + `${which_one === 'docs_version' ?
-                                    grade_lessons_docs_version[current_grade][i] :
-                                    grade_lessons_flashcard_version[current_grade][i]}` +
-                                "                        </a>")
-                        }
-                        // also change the lessons (that are mapped with grade) in lesson dropdown option
-                        socket.emit('grade_lesson_select_signal_receive', {
-                            'grade': current_grade, 'lesson': current_lesson
-                        });
-                    }
-
-                    // lesson select func
-                    function send_lesson_select_signal(lesson) {
-                        current_lesson = lesson;
-                        $('#base_lesson_text').text(`${current_lesson}`);
-                        // also change the lessons (that are mapped with grade) in lesson dropdown option
-                        socket.emit('grade_lesson_select_signal_receive', {
-                            'grade': current_grade, 'lesson': current_lesson // if null then send first lesson
-                        });
-                    }
-
-                </script>
             </div>
         </div>
+        <div class="customized_gap">
+            &nbsp;
+        </div>
+        {# LESSON #}
+        <div class="dropdown" id="lesson_list" style="float: left;width: 48%;">
+            <button class="button is-link" aria-haspopup="true"
+                    aria-controls="dropdown-menu3"
+                    style="box-shadow: 0 0 11px rgba(236,220,220,0.45);
+                        float: left;width: 100%;display: flex;
+  justify-content: space-between">
+                <span id="base_lesson_text" style="font-weight: bolder">Select Lesson</span>
+                <span class="icon is-small">
+                           <i class="fas fa-angle-down" aria-hidden="true" style="float: right"></i>
+                         </span>
+            </button>
 
-        <div class="dropdown" id="lesson_list" style="margin-left: 6px;margin-right: 2px">
-            <span class="title is-5" style="margin-top: 6px">Lesson:&nbsp;&nbsp;</span>
-            <div class="dropdown-trigger">
-                <button class="button is-danger is-light" aria-haspopup="true" aria-controls="dropdown-menu3">
-                    <span id="base_lesson_text">--</span>
-                    <span class="icon is-small">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
-      </span>
-                </button>
-            </div>
+
             <div class="dropdown-menu" id="dropdown-menu5" role="menu">
                 <div class="dropdown-content" id="lessons_div">
                     {# empty... will be appended by JS on grade select.. #}
@@ -285,14 +223,117 @@
 
             </div>
         </div>
-    </section>
 
-    <div class="field" style="margin:8px;" id="student_notes_text">
+        {# scrripts for dropdown #}
+        <script>
+            // todo: what about students under a grade ?
+            let grade_lessons_docs_version = {{ grade_lessons_docs_version | tojson }}; // {grade: [lessons] }
+            let grade_lessons_flashcard_version = {{ grade_lessons_flashcard_version | tojson }};
+            let which_one = 'docs_version'; // 'flashcard_version'
+
+            function refresh_grade() {
+                // update the grade list in grade div and clear lesson div
+                let g_elem = $('#grade-list-in-dropdown');
+                g_elem.empty();
+                $('#lessons_div').empty();
+
+                for (let g = 0; g < (which_one === 'docs_version' ?
+                    grade_lessons_docs_version[current_grade].length :
+                    grade_lessons_flashcard_version[current_grade].length); g++) {
+                    let _grade = which_one === 'docs_version' ?
+                        grade_lessons_docs_version[current_grade][g] :
+                        grade_lessons_flashcard_version[current_grade][g];
+                    g_elem.append(`<a onClick=\"send_grade_select_signal(${_grade})\" class=\"dropdown-item\">\n` +
+                        `    ${_grade}\n` +
+                        "</a>");
+                }
+            }
+
+            let socket = io.connect('/');
+
+            socket.on('refresh_grade_on_docs', function (data) {
+                which_one = 'docs_version';
+                refresh_grade();
+            });
+
+            socket.on('switch_to_games_emit', function (data) {
+                which_one = 'flashcard_version';
+                refresh_grade();
+            });
+
+
+            // current selected grade and lesson
+            let current_grade = null;
+            let current_lesson = null;
+
+            function send_grade_select_signal(grade) {
+                current_grade = grade;
+                current_lesson = which_one === 'docs_version' ?
+                    grade_lessons_docs_version[current_grade][0] : grade_lessons_flashcard_version[current_grade][0]; // as newly selected grade, lesson is not yet selected
+                $('#base_grade_text').text(`${current_grade}`);
+                $('#base_lesson_text').text(`${current_lesson}`);
+
+                let l = $('#lessons_div');
+                l.empty();
+                for (let i = 0; i < (which_one === 'docs_version' ?
+                    grade_lessons_docs_version[current_grade].length :
+                    grade_lessons_flashcard_version[current_grade].length); i++) {
+                    l.append("<a onclick=\"send_lesson_select_signal(" + `${which_one === 'docs_version' ?
+                        grade_lessons_docs_version[current_grade][i] :
+                        grade_lessons_flashcard_version[current_grade][i]}` + ")\" class=\"dropdown-item\">\n" +
+                        "                            \n" + `${which_one === 'docs_version' ?
+                            grade_lessons_docs_version[current_grade][i] :
+                            grade_lessons_flashcard_version[current_grade][i]}` +
+                        "                        </a>")
+                }
+                // also change the lessons (that are mapped with grade) in lesson dropdown option
+                socket.emit('grade_lesson_select_signal_receive', {
+                    'grade': current_grade, 'lesson': current_lesson
+                });
+            }
+
+            // lesson select func
+            function send_lesson_select_signal(lesson) {
+                current_lesson = lesson;
+                $('#base_lesson_text').text(`${current_lesson}`);
+                // also change the lessons (that are mapped with grade) in lesson dropdown option
+                socket.emit('grade_lesson_select_signal_receive', {
+                    'grade': current_grade, 'lesson': current_lesson // if null then send first lesson
+                });
+            }
+
+        </script>
+    </section>
+    <br>
+    <br>
+    <div class="field" style="margin-left: 8px;margin-right: 8px;margin-top: 4px;"
+         id="student_notes_text">
         <div class="control">
-            <textarea style="resize: none;" class="textarea" rows="7" placeholder="Student Notes:" id="student_notes"
-                      onkeyup="update_student_note()" disabled
+            <textarea
+                    style="resize: none;
+                    box-shadow: 0 0 11px rgba(236,220,220,0.45);border: none"
+                    class="textarea"
+                    rows="7" placeholder="Student Notes:" id="student_notes"
+                    onkeyup="update_student_note()" disabled
             ></textarea>
         </div>
+    </div>
+
+    <div class="field-body is-grouped-centered" style="margin-left: 8px;"
+         id="file_upload_section">
+
+        <button style="font-weight: bolder;background: #e312a8;border-radius: 12px" type="button"
+                class="customized_column button is-link field is-inline-block-mobile" id="configure">Configure
+        </button>
+        <div class="customized_gap">
+            &nbsp;
+        </div>
+
+        <button style="border-radius: 12px;font-weight: bolder;background: #12e312;margin-right: 4px;" type="button"
+                onclick="view_ss_report_trigger()"
+                class="customized_column button is-link field is-inline-block-mobile" id="view_ss_report" disabled>View
+            SS Report
+        </button>
     </div>
 
     {#    <div class="notification is-success is-light" style="z-index: 2;position: absolute;margin: 8px">#}
@@ -342,34 +383,7 @@
 
     </section>
 
-    <div class="field-body" style="margin-left: 8px;"
-         id="file_upload_section">
-        <button style="font-weight: bolder;background: #e312a8" type="button"
-                class="button is-link field is-inline-block-mobile" id="configure">Configure
-        </button>
-        <button style="font-weight: bolder;background: #12e312" type="button" onclick="view_ss_report_trigger()"
-                class="button is-link field is-inline-block-mobile" id="view_ss_report" disabled>View SS Report
-        </button>
-        {#        <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">#}
-        {#            <div class="file is-primary" style="font-weight: bolder;background: #b120e8">#}
-        {#                <label class="file-label">#}
-        {#                    <input class="file-input" type="file" name="myfile" id="myfile">#}
-        {#                    <span class="file-cta">#}
-        {#            <span class="file-icon">#}
-        {#              <i class="fas fa-upload"></i>#}
-        {#            </span>#}
-        {#            <span class="file-label">#}
-        {#              Upload PPT/PDF#}
-        {#                Configure#}
-        {#            </span>#}
-        {#                </span>#}
-        {#                </label>#}
-        {##}
-        {#            </div>#}
-        {##}
-        {#        </form>#}
 
-    </div>
 
 
 {% endblock %}

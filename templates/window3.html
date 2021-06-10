@@ -74,27 +74,31 @@ font-weight: bolder;"
 
         <!-- Drawing tools -->
         <div class="column">
-            <i class="fa fa-pencil-alt" style="color: cyan;font-size: 36px;cursor: pointer" id="draw_tool"></i>
+            <img src="{{ url_for('static', filename='images/window3/draw.png') }}"
+                 style="cursor: pointer" id="draw_tool" alt="draw-tool"/>
         </div>
         <div class="column">
-            <i class="fa fa-eraser" style="color: cyan;font-size: 36px;cursor: pointer" id="erase_tool"></i>
+            <img src="{{ url_for('static', filename='images/window3/eraser.png') }}"
+                 style="cursor: pointer" id="erase_tool" alt="eraser-tool"/>
         </div>
         <div class="column">
             <i class="fa fa-broom" style="color: cyan;font-size: 36px;cursor: pointer" id="clear_tool"></i>
         </div>
         <div class="column">
-            <i class="fa fa-pencil-ruler" style="color: cyan;font-size: 36px;cursor: pointer" id="thickness_tool"></i>
+            <img src="{{ url_for('static', filename='images/window3/thickness_tool.png') }}"
+                 style="cursor: pointer" id="thickness_tool" alt="thickness-tool"/>
         </div>
         <div class="column">
-            <i class="fa fa-palette" style="color: cyan;font-size: 36px;cursor: pointer" id="color_pick_tool"></i>
-
+            <img src="{{ url_for('static', filename='images/window3/color_pallet.png') }}"
+                 style="cursor: pointer" id="color_pick_tool" alt="color_pick_tool"/>
         </div>
         <div class="column">
             <i class="fa fa-font" style="color: cyan;font-size: 36px;cursor: pointer" id="text_tool"></i>
         </div>
 
         <div class="column">
-            <i class="fa fa-camera" style="color: #c673e7;font-size: 36px;cursor: pointer" id="take_screenshot"></i>
+            <img src="{{ url_for('static', filename='images/window3/camera.png') }}"
+                 style="cursor: pointer" id="take_screenshot" alt="camera"/>
         </div>
 
 

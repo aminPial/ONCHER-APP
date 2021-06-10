@@ -10,6 +10,10 @@ $(document).ready(function () {
     $('#minimize_window').click(function () {
         socket.emit('minimize_window', {});
     });
+    $('#settings_window').click(function () {
+        // todo: show settings window here...
+        // color scheme is the main one..
+    });
 
 
     // Get all dropdowns on the page that aren't hoverable.

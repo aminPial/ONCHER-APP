@@ -1,5 +1,17 @@
 html {
     /*background-image: linear-gradient(to bottom right, #FFD600, #fcab2a);*/
     background-image: linear-gradient(to right, rgb(255, 183, 0), rgb(255, 214, 0));
+    padding: 0;
+    margin: 0;
 }
 
+.customized_column {
+    float: left;
+    width: 48%;
+    /*height: 300px; !* Should be removed. Only for demonstration *!*/
+}
+
+.customized_gap {
+    float: left;
+    width: 2%;
+}
