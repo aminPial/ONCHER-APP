@@ -24,15 +24,16 @@ def window_1():
         grade_lessons_docs_version[study_material.grade].append(study_material.lesson)
 
     # flashcard version
-    grade_lesson_folders = os.listdir(os.path.abspath(os.path.join('static', 'flashcards')))
+    flashcard_folders = os.listdir(os.path.abspath(os.path.join('static', 'flashcards')))
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons_flashcard_version = {}  # dummy for now => {grade: [lessons in list]}
-    for folder_names in grade_lesson_folders:
+    for folder_names in flashcard_folders:
         # print(folder_names)
         split = folder_names.split("_")  # [1] is grade name and [-1] is lesson
         if split[1] not in grade_lessons_flashcard_version.keys():
             grade_lessons_flashcard_version[split[1]] = []
         grade_lessons_flashcard_version[split[1]].append(split[-1])  # todo: should we append the src to load or plain
+    print("Flashcard Folders {} {}".format(flashcard_folders, grade_lessons_flashcard_version))
 
     students = [s.__dict__ for s in StudentsData.query.all()]
     [a.pop('_sa_instance_state') for a in students]
@@ -185,7 +186,7 @@ def grade_lesson_select_signal_receive(data):
             from app import BASE_URL
             # print("BASE {}".format(BASE_URL))
             if BASE_URL is None:
-                BASE_URL = "http://localhost:5000" # todo: fix this
+                BASE_URL = "http://localhost:5000"  # todo: fix this
             payload = {
                 'is_pdf': True,  # todo: for now it is true but we need to work for the ppt and others related files
                 'parsed_pdf_dir_path': parsed_pdf_dir_path,

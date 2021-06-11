@@ -4,12 +4,12 @@ $(document).ready(function () {
     //     socket.emit('my event', {data: 'Connected from windows3.html'});
     // });
     // todo: let window3 know what has been loaded => ppt or pdf, according that we will emit signal
-    $('#previous_page').click(function () {
-        socket.emit('navigation_signal_emit', {"data": "previous_page"});
-    });
-    $('#next_page').click(function () {
-        socket.emit('navigation_signal_emit', {"data": "next_page"});
-    });
+    // $('#previous_page').click(function () {
+    //     socket.emit('navigation_signal_emit', {"data": "previous_page"});
+    // });
+    // $('#next_page').click(function () {
+    //     socket.emit('navigation_signal_emit', {"data": "next_page"});
+    // });
 
 
     // animation trigger
@@ -72,9 +72,38 @@ $(document).ready(function () {
         socket.emit('k_a_switch', {'k_or_a': k_or_a});
     });
 
+    // all related icon of docs..
+    function doc_icon_enable_disable(will_be_enabled) {
+        let elem = [
+            $('#draw_tool'),
+            $('#erase_tool'),
+            $('#clear_tool'),
+            $('#thickness_tool'),
+            $('#timer-settings'),
+            $('#star_animation_trigger'),
+            $('#toss_animation_trigger'),
+            $('#dice_animation_trigger'),
+            $('#start_end_timer_button'),
+            // screen shot $('#timer-settings')
+        ]
+        for (let x = 0; x < elem.length; x++) {
+            if (will_be_enabled)
+                elem[x].removeAttr();
+            else
+                elem[x].attr({'disabled': 'disabled'});
+        }
+
+    }
+    // will be trigger by 'back to lesson' from window2.js -> window2.py then here
+    socket.on('enable_doc_related_icon', function (data) {
+        doc_icon_enable_disable(true); // true means will be enabled
+    });
+
     // games
     $('#games_start_trigger').click(function () {
-        socket.emit('switch_to_games_receive', {'': 'games korte hbe'});
+        // todo: on games click disable all the docs related
+        doc_icon_enable_disable(false); // false means will be disabled
+        socket.emit('switch_to_games_receive', {});
     });
 
 
@@ -189,6 +218,7 @@ $(document).ready(function () {
         is_on_now = !is_on_now;
     });
 
+    // screenshot timer id "timer-settings" but class => "timer_settings"
     $('#timer-settings').click(function () {
         // this will be received in window 2 to show a pop up to change settings
         // that "What will be the interval?" of taking ss

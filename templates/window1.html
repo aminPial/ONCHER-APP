@@ -130,23 +130,23 @@
         <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
             <h5 class="title is-6" style="font-weight: bolder">Left</h5></div>
     </div>
-<br>
+    <br>
     <div class="block" style=""
          id="student_info_section_2">
 
         <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
-            <h6 class="subtitle is-6"  id="age">-</h6>
+            <h6 class="subtitle is-6" id="age">-</h6>
         </div>
 
         <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
-            <h6  class="subtitle is-6" id="gender">-</h6>
+            <h6 class="subtitle is-6" id="gender">-</h6>
         </div>
 
         <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
-            <h6  class="subtitle is-6" id="recent">-</h6></div>
+            <h6 class="subtitle is-6" id="recent">-</h6></div>
 
         <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
-            <h6  class="subtitle is-6" id="classes">-</h6>
+            <h6 class="subtitle is-6" id="classes">-</h6>
         </div>
 
         <div class="is-inline-block-mobile" style="float: left;width:20%;text-align: center">
@@ -229,7 +229,12 @@
             // todo: what about students under a grade ?
             let grade_lessons_docs_version = {{ grade_lessons_docs_version | tojson }}; // {grade: [lessons] }
             let grade_lessons_flashcard_version = {{ grade_lessons_flashcard_version | tojson }};
+            alert("F " + JSON.stringify(grade_lessons_flashcard_version));
             let which_one = 'docs_version'; // 'flashcard_version'
+
+            // current selected grade and lesson
+            let current_grade = null;
+            let current_lesson = null;
 
             function refresh_grade() {
                 // update the grade list in grade div and clear lesson div
@@ -237,14 +242,12 @@
                 g_elem.empty();
                 $('#lessons_div').empty();
 
-                for (let g = 0; g < (which_one === 'docs_version' ?
-                    grade_lessons_docs_version[current_grade].length :
-                    grade_lessons_flashcard_version[current_grade].length); g++) {
-                    let _grade = which_one === 'docs_version' ?
-                        grade_lessons_docs_version[current_grade][g] :
-                        grade_lessons_flashcard_version[current_grade][g];
-                    g_elem.append(`<a onClick=\"send_grade_select_signal(${_grade})\" class=\"dropdown-item\">\n` +
-                        `    ${_grade}\n` +
+                for (const [__grade, __lesson] of Object.entries(
+                    which_one === 'docs_version' ? grade_lessons_docs_version : grade_lessons_flashcard_version
+                )) {
+                   // alert(`${__grade}: ${__lesson}`);
+                    g_elem.append(`<a onClick=\"send_grade_select_signal(${__grade})\" class=\"dropdown-item\">\n` +
+                        `    ${__grade}\n` +
                         "</a>");
                 }
             }
@@ -257,14 +260,11 @@
             });
 
             socket.on('switch_to_games_emit', function (data) {
+             //   alert("Switching to games"); // data is already there when loaded
                 which_one = 'flashcard_version';
                 refresh_grade();
             });
 
-
-            // current selected grade and lesson
-            let current_grade = null;
-            let current_lesson = null;
 
             function send_grade_select_signal(grade) {
                 current_grade = grade;

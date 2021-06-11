@@ -50,7 +50,7 @@ def save_time_count():
     if f:
         a = {'hour': int(f['hour']), 'minutes': int(f['minutes']), 'seconds': int(f['seconds'])}
         # print(a)
-        with open(os.path.abspath(os.path.join( 'static', 'pickles', 'start_timer.pickle')), 'wb') as handle:
+        with open(os.path.abspath(os.path.join('static', 'pickles', 'start_timer.pickle')), 'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
         return jsonify(status=1)
     else:
@@ -64,7 +64,8 @@ def save_time_interval_of_screenshot():
     if f:
         a = {'seconds': int(f['seconds'])}
         # print(a)
-        with open(os.path.abspath(os.path.join( 'static', 'pickles', 'screenshot_interval_time.pickle')), 'wb') as handle:
+        with open(os.path.abspath(os.path.join('static', 'pickles', 'screenshot_interval_time.pickle')),
+                  'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
         # we need to emit this to window 3
         emit('updated_ss_interval_time', a, namespace='/', broadcast=True)
@@ -217,8 +218,8 @@ def upload_document():
     #      broadcast=True)
     form = request.form
     if form['is_flashcard'] == "true":
-        folder_name = os.path.abspath(os.path.join( "static", "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
-                                                                                                    form['lesson'])))
+        folder_name = os.path.abspath(os.path.join("static", "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
+                                                                                                       form['lesson'])))
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
         else:
@@ -302,6 +303,7 @@ def upload_document():
 @socket_io.on('refresh_grades_as_per_docs')
 def refresh_grades_as_per_docs(data):
     emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
+    emit('enable_doc_related_icon', {}, namespace='/', broadcast=True)  # back from games (back-to-lesson)
 
 
 @oncher_app.route('/student_report_submit', methods=['POST'])

@@ -247,39 +247,39 @@ html {
 
 
 /* gradient css style for 4 games*/
-@keyframes game_gradient {
-    0% {
-        background-position: 0 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0 50%;
-    }
-}
+/*@keyframes game_gradient {*/
+/*    0% {*/
+/*        background-position: 0 50%;*/
+/*    }*/
+/*    50% {*/
+/*        background-position: 100% 50%;*/
+/*    }*/
+/*    100% {*/
+/*        background-position: 0 50%;*/
+/*    }*/
+/*}*/
 
 #game_1 {
-    background: linear-gradient(-45deg, rgb(87, 243, 2), rgb(113, 217, 101), rgb(136, 217, 128), rgb(201, 255, 196));
+    background: linear-gradient(-45deg, rgb(87, 243, 2), rgb(113, 217, 101));
     background-size: 400% 400%;
-    animation: game_gradient 1s ease infinite;
+    /*!*animation: game_gradient 1s ease infinite;*!*/
 }
 
 #game_2 {
-    background: linear-gradient(-45deg, rgb(255, 0, 183), rgb(241, 68, 185), rgb(224, 108, 186), rgb(255, 150, 221));
+    background: linear-gradient(-45deg, rgb(255, 0, 183), rgb(241, 68, 185));
     background-size: 400% 400%;
-    animation: game_gradient 1s ease infinite;
+    /*animation: game_gradient 1s ease infinite;*/
 }
 
 #game_3 {
-    background: linear-gradient(-45deg, rgb(0, 136, 255), rgb(59, 157, 250), rgb(105, 159, 224), rgb(162, 207, 255));
+    background: linear-gradient(-45deg, rgb(0, 136, 255), rgb(59, 157, 250));
     background-size: 400% 400%;
-    animation: game_gradient 1s ease infinite;
+    /*animation: game_gradient 1s ease infinite;*/
 }
 
 #game_4 {
-    background: linear-gradient(-45deg, rgb(0, 255, 174), rgb(74, 245, 184), rgb(100, 214, 171), rgb(180, 255, 224));
+    background: linear-gradient(-45deg, rgb(0, 255, 174), rgb(74, 245, 184));
     background-size: 400% 400%;
-    animation: game_gradient 1s ease infinite;
+    /*animation: game_gradient 1s ease infinite;*/
 }
 

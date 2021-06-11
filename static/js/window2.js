@@ -15,7 +15,6 @@ $(document).ready(function () {
         // color scheme is the main one..
     });
 
-
     // Get all dropdowns on the page that aren't hoverable.
     const dropdowns = document.querySelectorAll('.dropdown:not(.is-hoverable)');
 
@@ -576,6 +575,7 @@ $(document).ready(function () {
         $('#initial_box').show(1200);
     });
     $('#back_to_lesson_from_game_1').click(function () {
+        // todo: enable all drawing related buttons and all in window and in other windows....
         $('#tik_tak_toe').hide(1000);
         $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').hide();

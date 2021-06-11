@@ -119,6 +119,7 @@ def k_or_a_receive_signal(data):
 
 @socket_io.on('switch_to_games_receive')
 def switch_to_games(data):
+
     emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
 
 
