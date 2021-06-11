@@ -523,45 +523,48 @@ $(document).ready(function () {
         $('#view-student-report-div').hide();
     });
 
+    let current_grade = null; // if null even after clicked the games, then show error to select grade
+    socket.on('grade_lesson_update_trigger', function (data) {
+        current_grade = `${data['grade']}`; // string type
+    });
     // on click games
+    // todo: on click games => we need to check if the lesson and grade for flashcards are selected or not.
     $('#game_1').click(function () {
-        $('#initial_box').hide(1000);
-        $('#tik_tak_toe').show(1200);
+        if (current_grade === null || current_grade.length === 0)
+            show_notifications("Please Select Grade and Lesson for Flashcard");
+        else {
+            $('#initial_box').hide(1000);
+            $('#tik_tak_toe').show(1200);
+        }
     });
 
 
     $('#game_2').click(function () {
-        $('#initial_box').hide(1000);
-        $('#match_game').show(1200);
+        if (current_grade === null || current_grade.length === 0)
+            show_notifications("Please Select Grade and Lesson for Flashcard");
+        else {
+            $('#initial_box').hide(1000);
+            $('#match_game').show(1200);
+        }
+
     });
-
-
-    // logics of match game
-    // let grid_data = {};
-    // socket.on('grade_lesson_change', function (data) {
-    //     grid_data = data['grid_data']; // {'CAT.jpg':A, 'DOG.png':B..}
-    //     let grid_itself = data['grid_itself']; // [['cat.jpg',...],[],[]]
-    //     // update the images
-    //     for (let m = 0; m < 3; m++) {
-    //         for (let n = 0; n < 3; n++) {
-    //             $(`#match_1_${m}_${n}`).empty().append('<img style="height: 96px;width: 96px;z-index: 0" id="match_card_1_' + `${m}_${n}"\n` +
-    //                 '                \n' +
-    //                 '                                    src=' + `"/static/saved/${grid_itself[m][n]}"` + ` alt="${grid_itself[m][n]}">`);
-    //
-    //         }
-    //     }
-    // });
-
 
     $('#game_3').click(function () {
-        $('#initial_box').hide(1000);
-        $('#find_game').show(1200);
-
+        if (current_grade === null || current_grade.length === 0)
+            show_notifications("Please Select Grade and Lesson for Flashcard");
+        else {
+            $('#initial_box').hide(1000);
+            $('#find_game').show(1200);
+        }
     });
     $('#game_4').click(function () {
-        $('#initial_box').hide(1000);
-        $('#listen_game').show(1200);
-        socket.emit('game_4_initialize', {'': ''});
+        if (current_grade === null || current_grade.length === 0)
+            show_notifications("Please Select Grade and Lesson for Flashcard");
+        else {
+            $('#initial_box').hide(1000);
+            $('#listen_game').show(1200);
+            socket.emit('game_4_initialize', {'': ''}); // special
+        }
     });
 
 

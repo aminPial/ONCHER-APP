@@ -706,41 +706,53 @@
                 {% for j in range(3) %}
                     <div class="columns">
                         {% for i in range(3) %}
-                            <div class="column box" style="position:relative;margin: 8px"
+                            <div class="column box"
+                                 style="text-align:center;position:relative;margin: 8px;width: 150px;height: 150px;"
                                  id="tik_tak_toe_{{ i }}_{{ j }}"
                                  onclick="change_tik_tak_toe_result({{ i }},{{ j }})">
 
-                                <img style="height: 96px;width: 96px;z-index: 1;position: absolute"
+                                <img style="top: 50%;left: 50%;transform: translate(-50%, -50%);width: 50%;height:50%;z-index: 1;position: absolute"
                                      id="card_{{ i }}_{{ j }}"
                                      src="https://i2.wp.com/files.123freevectors.com/wp-content/uploads/new/animals/370-cartoon-dog-vector-image.png?w=800&q=95"
                                      alt="{{ i }}">
 
                                 {# draw circle #}
-                                <canvas id="canvas_circle_{{ i }}__{{ j }}" width="110" height="110"
+                                <canvas id="canvas_circle_{{ i }}__{{ j }}" width="150" height="150"
                                         style="z-index: 2;position: relative;visibility: hidden"></canvas>
                                 <script>
                                     var ctx = document.getElementById("canvas_circle_{{ i }}__{{ j }}").getContext("2d");
                                     ctx.lineWidth = 7;
                                     ctx.strokeStyle = 'cornflowerblue';
                                     ctx.beginPath();
-                                    ctx.arc(55, 55, 50, 0, 2 * Math.PI);
+                                    var w = $(`#tik_tak_toe_{{ i }}_{{ j }}`).width();
+                                    var h = $(`#tik_tak_toe_{{ i }}_{{ j }}`).height();
+                                    //   alert("w " + "h " + h);
+                                    var x = Math.ceil(w / 2);
+                                    var y = Math.ceil(h / 2);
+                                    ctx.arc(x + 10, y, 50, 0, 2 * Math.PI);
                                     ctx.stroke();
                                 </script>
 
                                 {# draw cross #}
-                                <canvas id="canvas_cross_{{ i }}__{{ j }}" width="110" height="100"
-                                        style="z-index: 3;position: relative;margin-top: -110px;visibility: hidden"></canvas>
+                                <canvas id="canvas_cross_{{ i }}__{{ j }}" width="150" height="150"
+                                        style="z-index: 3;position: relative;margin-top: -150px;visibility: hidden"></canvas>
                                 <script>
                                     var ctx2 = document.getElementById("canvas_cross_{{ i }}__{{ j }}").getContext("2d");
                                     ctx2.lineWidth = 7;
                                     ctx2.strokeStyle = 'hotpink';
                                     ctx2.beginPath();
-                                    var x = 40;
-                                    var y = 15;
-                                    ctx2.moveTo(x - 20, y - 20);
-                                    ctx2.lineTo(x + 40, y + 40);
-                                    ctx2.moveTo(x + 40, y - 20);
-                                    ctx2.lineTo(x - 20, y + 40);
+                                    var w = $(`#tik_tak_toe_{{ i }}_{{ j }}`).width();
+                                    var h = $(`#tik_tak_toe_{{ i }}_{{ j }}`).height();
+                                    var x = Math.ceil(w / 2) + 10;
+                                    var y = Math.ceil(h / 2) - 20;
+                                    var x1 = Math.ceil(x / 2);
+                                    var y1 = Math.ceil(y / 2) + 20;
+
+                                    ctx2.moveTo(x - x1, y - y1);
+                                    ctx2.lineTo(x + x1, y + y1);
+                                    ctx2.stroke();
+                                    ctx2.moveTo(x + x1, y - y1);
+                                    ctx2.lineTo(x - x1, y + y1);
                                     ctx2.stroke();
                                 </script>
 
@@ -754,11 +766,11 @@
 
             <div class="column is-one-quarter" id="others_area">
                 <button class="button is-success" id="new_game_from_game_1"
-                        style="background: #08ce08;color: black;font-weight: bolder">New Game
+                        style="background: #08ce08;color: white;border-radius: 12px;font-weight: bolder">New Game
                 </button>
                 <br>
                 <button class="button is-danger" id="back_to_lesson_from_game_1"
-                        style="margin-left: 12px;background: #ec2323;color: black;font-weight: bolder">Back To
+                        style="background: #ec2323;color: white;border-radius: 12px;font-weight: bolder">Back To
                     Lesson
                 </button>
             </div>

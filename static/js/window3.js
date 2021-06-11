@@ -79,21 +79,26 @@ $(document).ready(function () {
             $('#erase_tool'),
             $('#clear_tool'),
             $('#thickness_tool'),
-            $('#timer-settings'),
+            $('#color_pick_tool'),
+            $('#text_tool'),
+            $('#timer_settings'),
             $('#star_animation_trigger'),
             $('#toss_animation_trigger'),
             $('#dice_animation_trigger'),
             $('#start_end_timer_button'),
+            $('#games_start_trigger'),
+
             // screen shot $('#timer-settings')
         ]
         for (let x = 0; x < elem.length; x++) {
             if (will_be_enabled)
-                elem[x].removeAttr();
+                elem[x].css('pointer-events','');
             else
-                elem[x].attr({'disabled': 'disabled'});
+                elem[x].css('pointer-events','none');
         }
 
     }
+
     // will be trigger by 'back to lesson' from window2.js -> window2.py then here
     socket.on('enable_doc_related_icon', function (data) {
         doc_icon_enable_disable(true); // true means will be enabled
@@ -155,7 +160,7 @@ $(document).ready(function () {
     socket.on('select_student_signal_receive', function (data) {
         student_object_data = data['full_student_object_in_dict_format'];
     });
-    socket.on('lesson_update_trigger', function (data) {
+    socket.on('grade_lesson_update_trigger', function (data) {
         selected_lesson = data['lesson'];
     });
 

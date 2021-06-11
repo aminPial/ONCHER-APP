@@ -130,6 +130,7 @@ def view_ss_report_open_signal(data):
 # we need these vars
 current_grade = None
 current_lesson = None
+current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, flashcard & ppt/pdf # todo: use it
 
 
 @socket_io.on('grade_lesson_select_signal_receive')
@@ -145,7 +146,7 @@ def grade_lesson_select_signal_receive(data):
     # student version
     students = [s.__dict__ for s in StudentsData.query.filter_by(which_grade=int(data['grade'])).all()]
     [a.pop('_sa_instance_state') for a in students]
-    print("students after selecting grade and lesson is {}".format(students))
+    # print("students after selecting grade and lesson is {}".format(students))
     emit('students_list_update', {'students': students}, namespace='/', broadcast=True)
 
     # flashcard version
@@ -156,7 +157,7 @@ def grade_lesson_select_signal_receive(data):
         files_path = os.listdir(full_path)
         # print("files path {}".format(files_path))
         # a = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/lexa-tabby-cat-painting-dora-hathazi-mendes.jpg"
-        payload = ['/static/flashcards/{}/{}'.format(folder_name, f) for f in files_path]  # todo: change it
+        payload = ['/static/flashcards/{}/{}'.format(folder_name, f) for f in files_path]
         # this is for games
         emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
     else:
@@ -206,8 +207,8 @@ def grade_lesson_select_signal_receive(data):
     else:
         print("No docs available under this grade and lesson")
 
-    # this is for the window 3 screen shot purpose, that we need lesson
-    emit('lesson_update_trigger', {'lesson': data['lesson']}, namespace='/', broadcast=True)
+    # this is for the window 3 screen shot purpose, that we need lesson and window-2 error check for un-selected GL for flshcards
+    emit('grade_lesson_update_trigger', {'lesson': data['lesson'], 'grade': data['grade']}, namespace='/', broadcast=True)
 
 # @oncher_app.route('/test')
 # def test():
