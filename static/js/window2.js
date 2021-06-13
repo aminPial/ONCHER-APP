@@ -557,15 +557,16 @@ $(document).ready(function () {
             $('#find_game').show(1200);
         }
     });
-    $('#game_4').click(function () {
-        if (current_grade === null || current_grade.length === 0)
-            show_notifications("Please Select Grade and Lesson for Flashcard");
-        else {
-            $('#initial_box').hide(1000);
-            $('#listen_game').show(1200);
-            socket.emit('game_4_initialize', {'': ''}); // special
-        }
-    });
+    // this click function is inlined in window2.html
+    // $('#game_4').click(function () {
+    //     if (current_grade === null || current_grade.length === 0)
+    //         show_notifications("Please Select Grade and Lesson for Flashcard");
+    //     else {
+    //         $('#initial_box').hide(1000);
+    //         $('#listen_game').show(1200);
+    //         socket.emit('game_4_initialize', {'': ''}); // special
+    //     }
+    // });
 
 
     // back funcs
@@ -584,6 +585,8 @@ $(document).ready(function () {
         $('#choose_games').hide();
         $('#initial_box').show(1200);
         socket.emit('refresh_grades_as_per_docs', {});
+        // we need to clear the game instance ...
+        reset_game("none");
     });
 
     // second game
@@ -607,6 +610,8 @@ $(document).ready(function () {
         $('#intro_screen').hide();
         $('#choose_games').show();
         $('#initial_box').show(1200);
+        // we have to clear the timer and put it in initial position
+        reset_the_game(false);
     });
     $('#back_to_lesson_from_game_3').click(function () {
         $('#find_game').hide(1000);
@@ -614,6 +619,9 @@ $(document).ready(function () {
         $('#choose_games').hide();
         $('#initial_box').show(1200);
         socket.emit('refresh_grades_as_per_docs', {});
+        // we have to clear the timer
+        // we have to clear the timer and put it in initial position
+        reset_the_game(false);
     });
 
     // fourth game
@@ -622,6 +630,7 @@ $(document).ready(function () {
         $('#intro_screen').hide();
         $('#choose_games').show();
         $('#initial_box').show(1200);
+
     });
     $('#back_to_lesson_from_game_4').click(function () {
         $('#listen_game').hide(1000);

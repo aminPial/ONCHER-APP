@@ -60,6 +60,11 @@ def start_process(port):
     t.start()
 
 
+def on_closed():
+    # close the app if a single window is closed
+    _exit(0)
+
+
 if __name__ == '__main__':
     # special code-blocks for win platform
     # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
@@ -150,6 +155,8 @@ if __name__ == '__main__':
 
     # app window closing, minimizing, maximizing, codes (for now we are getting signals from window 2)
     windows = [second_window, first_window, third_window]
+    for window in windows:
+        window.closed += on_closed
 
 
     @socket_io.on('close_window')

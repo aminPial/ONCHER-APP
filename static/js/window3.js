@@ -92,9 +92,9 @@ $(document).ready(function () {
         ]
         for (let x = 0; x < elem.length; x++) {
             if (will_be_enabled)
-                elem[x].css('pointer-events','');
+                elem[x].css('pointer-events', '');
             else
-                elem[x].css('pointer-events','none');
+                elem[x].css('pointer-events', 'none');
         }
 
     }
@@ -149,8 +149,10 @@ $(document).ready(function () {
     // last game => game4 special function
     socket.on('game_4_init_emit_signal', function (data) {
         // this will be used for "SAY CAT" and etc.
-        $('#image_name').text(data['image_name']); // has to be ALL CAPS
-        $('#game_4_special').show();
+      //  if (data['image_name'] !== "NULL") {
+            $('#image_name').text(data['image_name']); // has to be ALL CAPS
+            $('#game_4_special').show();
+      //  }
     });
 
     // screenshot related triggers

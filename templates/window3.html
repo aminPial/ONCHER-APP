@@ -121,7 +121,6 @@ font-weight: bolder;border-radius: 20px"
                               display: inline-block"></span>
                 <script>
                     $('#{{ color_name }}_color').click(function () {
-
                         let socket = io.connect('/');
                         socket.emit('drawing_tools_signal_receive', {
                             'type_of_action': 'color_change',

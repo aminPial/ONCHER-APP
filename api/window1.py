@@ -135,6 +135,7 @@ current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, 
 
 @socket_io.on('grade_lesson_select_signal_receive')
 def grade_lesson_select_signal_receive(data):
+    print("grade lesson select signal {}".format(data))
     """
     todo: there will be 3 types: => students, flashcard & ppt/pdf
     """
@@ -158,10 +159,12 @@ def grade_lesson_select_signal_receive(data):
         # print("files path {}".format(files_path))
         # a = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/lexa-tabby-cat-painting-dora-hathazi-mendes.jpg"
         payload = ['/static/flashcards/{}/{}'.format(folder_name, f) for f in files_path]
+        print("flashcard payload {}".format(payload))
         # this is for games
         emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
     else:
-        print("Path {} doesn't exist for Flashcard".format(full_path))
+        # print("Path {} doesn't exist for Flashcard".format(full_path))
+        pass
 
     # this is for ppt and pdf (docs)
 
