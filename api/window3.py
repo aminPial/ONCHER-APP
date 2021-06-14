@@ -100,6 +100,7 @@ def open_time_settings(data):
 # drawing tools triggers
 @socket_io.on('drawing_tools_signal_receive')
 def drawing_tools_signal_receive(data):
+    print("Drawing Tools Payload: {}".format(data))
     payload = {
         "type_of_action": data['type_of_action']
     }

@@ -59,9 +59,13 @@ $(document).ready(function () {
     let ctx_es = [];
     let current_canvas = null;
     let current_doc_type = null; // 'pdf', 'ppt'
+    let data = null;
+    // is_drawing <type: boolean>
+    let is_drawing = null; // is_drawing = false means 'erasing' , null means other than draw and erase
 
-    socket.on('study_doc_update', function (data) {
-
+    // todo: initially before even clicking the pen the shit is drawing,, fix this
+    socket.on('study_doc_update', function (da) {
+        data = da;
         let doc_container = $('#iframe-container');
         let loading_container = $('#loading_box');
         let initial_box = $('#initial_box');
@@ -106,22 +110,17 @@ $(document).ready(function () {
                         'background': `url("${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png")`,
                         'background-position': 'center',
                         'background-size': '100% 100%'
-                    }).hover(function (event) {
-                      //  alert("event: " + event.pageY + " " + event.pageX);
-                        revise_canvas_on_click(j,event.pageX, event.pageY);
+                    }).hover(function () {
+                        //alert("hover: " + event.clientY + " " + event.clientX);
+                        revise_canvas_on_click(j);
+                    }).click(function () {
+                        // alert("click: " + event.clientY + " " + event.clientX);
+                        revise_canvas_on_click(j);
                     });
 
                     const myCanvas = document.getElementById(`pdf_canvas_${j}`);
                     canvases.push(myCanvas);
                     ctx_es.push(myCanvas.getContext('2d'));
-
-                    // context.beginPath();
-                    // context.rect(188, 50, 200, 100);
-                    // context.fillStyle = 'yellow';
-                    // context.fill();
-                    // context.lineWidth = 7;
-                    // context.strokeStyle = 'black';
-                    // context.stroke();
                 }
             } else {
                 current_doc_type = 'ppt';
@@ -135,12 +134,9 @@ $(document).ready(function () {
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
 
-
                 $('#responsive-iframe').on('load', function () {
                     // code will run after iframe has finished loading
                     // alert("Loaded");
-
-
                     // context1.beginPath();
                     // context1.rect(188, 50, 200, 100);
                     // context1.fillStyle = 'yellow';
@@ -159,14 +155,92 @@ $(document).ready(function () {
             $('#time_count_div').css('visibility', 'visible');
         }
 
-
     });
 
 
-    socket.on('drawing_tools_trigger', function (data) {
-        // draw, erase, color, thickness, text, full_clear
-        let type_of_action = data['type_of_action'];
+    function revise_canvas_on_click(index) {
+        //     alert("Index: " + index);
+        let canvas_to_render = canvases[index];
+        //  console.log(" => " + $('#drawing-div').scrollTop());
+        let current_ctx = ctx_es[index];
 
+        if (current_canvas !== canvas_to_render) {
+            //   let BB = canvas_to_render.getBoundingClientRect();
+            // let offsetX = BB.left;
+            // let offsetY = BB.top;
+
+            let lastX, lastY;
+            let isDown = false;
+            // start
+            canvas_to_render.onmousedown = handleMousedown;
+            //  canvas_to_render.touchstart = handleMousedown;
+            // draw
+            canvas_to_render.onmousemove = handleMousemove;
+            // canvas_to_render.touchmove = handleMousemove;
+            // other
+            canvas_to_render.onmouseup = handleMouseup;
+
+
+            function handleMousedown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                lastX = e.pageX - $(document).scrollLeft() - $(`#pdf_canvas_${index}`).offset().left;
+                lastY = e.pageY - $(document).scrollTop() - $(`#pdf_canvas_${index}`).offset().top;
+                isDown = true;
+            }
+
+            function handleMouseup(e) {
+                e.preventDefault();
+                //  e.stopPropagation();
+                isDown = false;
+            }
+
+            function handleMousemove(e) {
+                //  console.log("X: " + scrollX + " Y" + scrollY);
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (!isDown) {
+                    return;
+                }
+
+                let mouseX = e.pageX - $(document).scrollLeft() - $(`#pdf_canvas_${index}`).offset().left;
+                let mouseY = e.pageY - $(document).scrollTop() - $(`#pdf_canvas_${index}`).offset().top;
+                //  console.log("X: " + lastX + " Y: " + lastY);
+                //  console.log("X1: " + mouseX + " Y1: " + mouseY);
+
+                if (is_drawing !== null) {
+
+                    if (is_drawing) {
+                        // draw
+                        current_ctx.beginPath();
+                        current_ctx.moveTo(lastX, lastY);
+                        current_ctx.lineTo(mouseX, mouseY);
+                        current_ctx.lineCap = "round";
+                        current_ctx.lineJoin = "round";
+                        current_ctx.stroke();
+                    } else {
+                        // erase
+                       // alert("hi");
+                        // todo: this worked but show a circle ...
+                        current_ctx.arc(lastX, lastY, 8, 0, Math.PI * 2, false);
+                        current_ctx.fill();
+                    }
+
+                }
+                lastX = mouseX;
+                lastY = mouseY;
+            }
+        }
+    }
+
+    // drawing tools trigger from window -3
+    socket.on('drawing_tools_trigger', function (payload) {
+        // draw, erase, color, thickness, text, full_clear
+        let type_of_action = payload['type_of_action'];
+
+        // todo: ? for ppt
         if (type_of_action === 'draw' || type_of_action === "full_clear") {
             if (current_doc_type === 'ppt') {
                 //   alert("here");
@@ -174,22 +248,26 @@ $(document).ready(function () {
             }
         }
 
+        if (type_of_action === 'draw')
+            is_drawing = true;
+        else if (type_of_action === "erase")
+            is_drawing = false;
+        else
+            is_drawing = null;
+
         let canvas_count = canvases.length;
         for (let c = 0; c < canvas_count; c++) {
             let ctx = ctx_es[c];
             let current_canvas = canvases[c];
-            if (type_of_action === 'draw' || type_of_action === "full_clear") {
-
+            if (type_of_action === 'draw') {
                 ctx.lineWidth = "3";
                 ctx.strokeStyle = "red"; // Green path
                 ctx.globalCompositeOperation = "source-over";
-
-
+            } else if (type_of_action === "full_clear") {
+                // https://stackoverflow.com/questions/6893939/how-to-erase-on-canvas-without-erasing-background
+                ctx.clearRect(0, 0, current_canvas.width, current_canvas.height);
             } else if (type_of_action === "erase") {
-                // ctx.strokeStyle = 'green';
                 ctx.globalCompositeOperation = "destination-out";
-                ctx.arc(95, 50, 50, 0, 2 * Math.PI);
-                ctx.fill();
             } else if (type_of_action === "thickness_size") {
                 ctx.lineWidth = data["thickness_size"];
                 ctx.globalCompositeOperation = "source-over";
@@ -200,56 +278,6 @@ $(document).ready(function () {
             }
 
             ctx_es[c] = ctx;
-
-
-            // re initialize the draw board functions
-            // is_draw = False means erase action
-            let BB = current_canvas.getBoundingClientRect();
-            let offsetX = BB.left;
-            let offsetY = BB.top;
-
-            let lastX, lastY;
-            let isDown = false;
-
-            current_canvas.onmousedown = handleMousedown;
-            current_canvas.onmousemove = handleMousemove;
-            current_canvas.onmouseup = handleMouseup;
-
-
-            function handleMousedown(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                lastX = e.clientX - offsetX;
-                lastY = e.clientY - offsetY;
-                isDown = true;
-            }
-
-            function handleMouseup(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                isDown = false;
-            }
-
-            function handleMousemove(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (!isDown) {
-                    return;
-                }
-
-                let mouseX = e.clientX - offsetX;
-                let mouseY = e.clientY - offsetY;
-
-                ctx.beginPath();
-
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(mouseX, mouseY);
-                ctx.stroke();
-
-                lastX = mouseX;
-                lastY = mouseY;
-            }
         }
 
     });
@@ -274,60 +302,6 @@ $(document).ready(function () {
         ctx_es.push(context1);
     }
 
-    function revise_canvas_on_click(index, lastX, lastY) {
-    //     alert("Index: " + index);
-        let canvas_to_render = canvases[index];
-        let current_ctx = ctx_es[index];
-
-        if (current_canvas !== canvas_to_render) {
-            let BB = canvas_to_render.getBoundingClientRect();
-            let offsetX = BB.left;
-            let offsetY = BB.top;
-
-            // let lastX, lastY;
-            let isDown = false;
-
-            canvas_to_render.onmousedown = handleMousedown;
-            canvas_to_render.onmousemove = handleMousemove;
-            canvas_to_render.onmouseup = handleMouseup;
-
-
-            function handleMousedown(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                lastX = e.clientX - offsetX;
-                lastY = e.clientY - offsetY;
-                isDown = true;
-            }
-
-            function handleMouseup(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                isDown = false;
-            }
-
-            function handleMousemove(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (!isDown) {
-                    return;
-                }
-
-                let mouseX = e.clientX - offsetX;
-                let mouseY = e.clientY - offsetY;
-
-                current_ctx.beginPath();
-
-                current_ctx.moveTo(lastX, lastY);
-                current_ctx.lineTo(mouseX, mouseY);
-                current_ctx.stroke();
-
-                lastX = mouseX;
-                lastY = mouseY;
-            }
-        }
-    }
 
     // students report form
     socket.on('students_list_update', function (data) {
