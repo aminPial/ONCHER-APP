@@ -88,7 +88,7 @@ def add_star_to_student_record(data):
 @socket_io.on('game_4_initialize')
 def game_4_initialize(data):
     # todo: from where the fuck this shit is coming?
-    print("Game 4 initializer {}".format(data))
+    # print("Game 4 initializer {}".format(data))
     emit('game_4_init_emit_signal', {'image_name': 'NULL' if 'image_name' not in data.keys() else data['image_name']},
          namespace='/', broadcast=True)
 

@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+
+    let socket = io.connect('/');
+
     // close_window
     $('#close_window').click(function () {
         socket.emit('close_window', {});
@@ -50,8 +53,6 @@ $(document).ready(function () {
         }
     });
 
-
-    let socket = io.connect('/');
 
     // canvases and ctx-es | size will be equal
     let canvases = [];
@@ -105,14 +106,14 @@ $(document).ready(function () {
                         'background': `url("${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png")`,
                         'background-position': 'center',
                         'background-size': '100% 100%'
-                    }).hover(function () {
-                        revise_canvas_on_click(j);
+                    }).hover(function (event) {
+                      //  alert("event: " + event.pageY + " " + event.pageX);
+                        revise_canvas_on_click(j,event.pageX, event.pageY);
                     });
 
                     const myCanvas = document.getElementById(`pdf_canvas_${j}`);
-                    const context = myCanvas.getContext('2d');
                     canvases.push(myCanvas);
-                    ctx_es.push(context);
+                    ctx_es.push(myCanvas.getContext('2d'));
 
                     // context.beginPath();
                     // context.rect(188, 50, 200, 100);
@@ -273,8 +274,8 @@ $(document).ready(function () {
         ctx_es.push(context1);
     }
 
-    function revise_canvas_on_click(index) {
-        // alert("Index: " + index);
+    function revise_canvas_on_click(index, lastX, lastY) {
+    //     alert("Index: " + index);
         let canvas_to_render = canvases[index];
         let current_ctx = ctx_es[index];
 
@@ -283,7 +284,7 @@ $(document).ready(function () {
             let offsetX = BB.left;
             let offsetY = BB.top;
 
-            let lastX, lastY;
+            // let lastX, lastY;
             let isDown = false;
 
             canvas_to_render.onmousedown = handleMousedown;
@@ -755,6 +756,8 @@ $(document).ready(function () {
 
         } else if (animation_type === "dice") {
             // dice animation code
+
+
             $('#dice_animation_div').show(1).delay(2000).hide(1);
             // e.preventDefault();
             rnd = Math.floor(Math.random() * 6 + 1);
@@ -776,16 +779,19 @@ $(document).ready(function () {
                 "transform",
                 "translateZ(-100px) rotateY(" + x + "deg) rotateX(" + y + "deg)"
             );
+            document.getElementById('play_dice_sound').click();
         } else if (animation_type === "toss") {
-            $('#toss_animation_div').show(1).delay(2500).hide(1);
-            let coin = $('#coin');
-            // x == 0 is head
-            if (Math.floor(Math.random() * 2) === 0)
-                coin.empty().append(
-                    '<img class="heads animate-coin" src="https://upload.wikimedia.org/wikipedia/en/5/52/British_fifty_pence_coin_2015_obverse.png"/>');
-            else
-                coin.empty().append(
-                    '<img class="tails animate-coin" src="https://upload.wikimedia.org/wikipedia/en/d/d8/British_fifty_pence_coin_2015_reverse.png"/>');
+            $('#toss_animation_div').show(1).delay(5000).hide(1);
+
+            var flipResult = Math.random();
+            $('#coin').removeClass();
+            setTimeout(function () {
+                if (flipResult <= 0.5) {
+                    $('#coin').addClass('heads');
+                } else {
+                    $('#coin').addClass('tails');
+                }
+            }, 100);
 
         }
 

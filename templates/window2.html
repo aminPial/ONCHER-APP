@@ -861,7 +861,7 @@
                     card_image_name_map[image_name_1[0].toUpperCase()] = [i, j]; // {'ELEPHANT': [0,1]}
                 }
                 // shuffling for second card..
-                let shuffled_card_array = shuffle(card_array);
+                let shuffled_card_array = shuffle(data.slice());
                 for (let m = 0; m < 9; m++) {
                     let i = Math.floor(m / 3);
                     let j = m % 3;
@@ -1057,7 +1057,7 @@
 
 
                 the_find_game_array = data; // {'find': [.....]} 9 elements and a singular array
-                shuffled_test_arr = shuffle(the_find_game_array);
+                shuffled_test_arr = shuffle(data.slice());
                 // we create a map, to match the random elem with the index while TESTING
                 for (let i = 0; i < the_find_game_array.length; i++) {
                     index_elem_map[the_find_game_array[i]] = i;
@@ -1131,15 +1131,9 @@
 
             // shuffle an array - util code
             function shuffle(assh) {
-                let j, x, i;
-                for (i = assh.length - 1; i > 0; i--) {
-                    j = Math.floor(Math.random() * (i + 1));
-                    x = assh[i];
-                    assh[i] = assh[j];
-                    assh[j] = x;
-                }
-                //  alert("F " + assh)
-                return assh;
+                return assh.sort(function () {
+                    return Math.random() - Math.random()
+                });
             }
 
 
@@ -1238,9 +1232,16 @@
             </div>
             <div class="column">
                 <h3 class="title is-3"
-                    style="margin-right: 64px"><span style="color: #fa0a62">Points:</span> <span
+                ><span style="color: #fa0a62">Points:&nbsp;</span> <span
                         id="listen_game_points"
-                        style="color: gold">0</span>
+                        style="color: gold;font-weight: bolder">0</span>
+                </h3>
+            </div>
+            <div class="column">
+                <h3 class="title is-3"><span style="color: #0a7efa">Found:</span> <span
+                        id="listen_game_found_how_many"
+                        style="color: #4cff00;font-weight: bolder">0</span>
+                    {#                    <span style="co">&nbsp;Cards</span>#}
                 </h3>
             </div>
         </div>
@@ -1301,11 +1302,20 @@
             // tracker variable
             let current_test_image_index = -1; // null
             let current_test_pos = 0;
+            let listen_game_found_how_many = 0; // if found 9(== Flashcard) cards then game over
+            let number_of_guesses = 0; // how many times the student guessed for a potential match (will be shown in final res.)
+
 
             socket.on('grade_and_lesson_change', function (data) {
-                //  alert("data " + JSON.stringify(data));
+                //   alert("data " + JSON.stringify(data));
                 the_listen_game_array = data;
-                the_listen_shuffled_arr = shuffle(data);
+                the_listen_shuffled_arr = shuffle(data.slice());
+                // if (JSON.stringify(the_listen_game_array) === JSON.stringify(the_listen_shuffled_arr)) {
+                //     alert("Fuck! they matched");
+                //     // the_listen_shuffled_arr = [...the_listen_game_array].sort();
+                // }
+                // else
+                //     alert("ok now")
                 // alert("\nshuff " + the_listen_shuffled_arr);
                 // now assign the src to img and create the map
                 for (let x = 0; x < the_listen_game_array.length; x++) {
@@ -1330,38 +1340,44 @@
                 if (current_grade === null || current_grade.length === 0)
                     alert("Please Select Grade and Lesson for Flashcard"); // todo: show_notifications()
                 else {
-                    alert("here");
                     $('#initial_box').hide(1000);
                     $('#listen_game').show(1200);
                     socket.emit('game_4_initialize', {
                         'image_name':
-                            url_to_name_parser(the_listen_shuffled_arr[current_test_pos]),
-                        'what': '2'
+                            url_to_name_parser(the_listen_shuffled_arr[current_test_pos])
                     });
+                    current_test_pos++;
                 }
             });
 
             // todo: FIX: there are some problems with 9th card's click and all...
 
             function check_if_correct(k) {
+                number_of_guesses++; // increment the guess counter
+
                 //  alert("K => " + k + " current_test_image_index " + current_test_image_index);
-                // todo: implement if else
                 if (k === current_test_image_index) {
                     //  todo: remove comment => document.getElementById('play_star_sound').click();
                     // hide that card
                     // $(`#number_listen_${k}`).css({'visibility': 'hidden'});
-                    alert("here 2");
-                    socket.emit('game_4_initialize', {
-                        'image_name':
-                            url_to_name_parser(the_listen_shuffled_arr[current_test_pos]),
-                        'what': '3'
-                    });
-                    current_test_image_index = the_listen_elem_map[
-                        the_listen_shuffled_arr[current_test_pos]];
-                    current_test_pos++;
-
                     let points = $('#listen_game_points');
                     points.hide().show(1100).text(`${parseInt(points.text()) + 1}`);
+                    listen_game_found_how_many++;
+                    $('#listen_game_found_how_many').text(`${listen_game_found_how_many}`); // update the text
+
+                    if (listen_game_found_how_many === 9) {
+                        socket.emit('game_4_initialize', {}); // this will send a signal to window3 "SAY NULL"..
+                        // todo: reset the game ... write the reset_game_function()
+                        alert(`Congratulations! You have found all cards in ${number_of_guesses} guesses. Points: ${points.text()}.\nACCURACY: ${Math.floor(9 / number_of_guesses) * 100}%`);
+                    } else {
+                        socket.emit('game_4_initialize', {
+                            'image_name':
+                                url_to_name_parser(the_listen_shuffled_arr[current_test_pos])
+                        });
+                        current_test_image_index = the_listen_elem_map[
+                            the_listen_shuffled_arr[current_test_pos]];
+                        current_test_pos++;
+                    }
                 } else {
                     // in-correct
                     let points = $('#listen_game_points');
@@ -1381,11 +1397,11 @@
     {#             width="196px"#}
     {#             height="196px" id="star_animation">#}
     {#    </div>#}
-
+    {# todo: when a student is not selectedin window 1 then this will be disabled, when selected enable #}
     {# star animation #}
     <div class="content" style="display:none;" id="star_animation_div">
         <div class="trophy">
-            <img src="https://i.ibb.co/kVZ3CN6/trophy.png" alt="trophy" id="trophy_img">
+            <img src="{{ url_for('static', filename='images/trophy.png') }}" alt="trophy" id="trophy_img">
         </div>
     </div>
 
@@ -1447,10 +1463,10 @@
 
     {# toss animation #}
     <div id="toss_animation_div" style="display: none">
-        {#        <img id="featureCoin"#}
-        {#             src="https://upload.wikimedia.org/wikipedia/en/5/52/British_fifty_pence_coin_2015_obverse.png"/>#}
-        <div id='coin'>
 
+        <div id="coin">
+            <div class="side-a"></div>
+            <div class="side-b"></div>
         </div>
     </div>
 
@@ -1509,10 +1525,17 @@
 </audio>#}
 
     <audio id="audiotag1" src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" preload="auto"></audio>
+    <audio id="audiotag2" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}" preload="auto"></audio>
     <a href="javascript:play_star_sound();" style="display: none" id="play_star_sound"></a>
+    <a href="javascript:play_dice_sound(event);" style="display: none" id="play_dice_sound"></a>
     <script type="text/javascript">
         function play_star_sound() {
             document.getElementById('audiotag1').play();
+        }
+
+        function play_dice_sound(e) {
+            e.preventDefault();
+            document.getElementById('audiotag2').play();
         }
 
     </script>

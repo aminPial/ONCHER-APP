@@ -149,10 +149,12 @@ $(document).ready(function () {
     // last game => game4 special function
     socket.on('game_4_init_emit_signal', function (data) {
         // this will be used for "SAY CAT" and etc.
-      //  if (data['image_name'] !== "NULL") {
+       if (data['image_name'] !== "NULL") {
             $('#image_name').text(data['image_name']); // has to be ALL CAPS
             $('#game_4_special').show();
-      //  }
+        }
+       else
+           $('#game_4_special').hide();
     });
 
     // screenshot related triggers
