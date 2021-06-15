@@ -61,7 +61,9 @@ $(document).ready(function () {
     let current_doc_type = null; // 'pdf', 'ppt'
     let data = null;
     // is_drawing <type: boolean>
+    // todo: make is_drawing null when moved to somewhere other than docs, e.g: games
     let is_drawing = null; // is_drawing = false means 'erasing' , null means other than draw and erase
+    // let eraser_canvas = document.getElementById('eraser-circle');
 
     // todo: initially before even clicking the pen the shit is drawing,, fix this
     socket.on('study_doc_update', function (da) {
@@ -159,44 +161,46 @@ $(document).ready(function () {
 
 
     function revise_canvas_on_click(index) {
-        //     alert("Index: " + index);
+        // todo: make this function efficient
         let canvas_to_render = canvases[index];
-        //  console.log(" => " + $('#drawing-div').scrollTop());
         let current_ctx = ctx_es[index];
+        let pdf_canvas = $(`#pdf_canvas_${index}`);
 
-        if (current_canvas !== canvas_to_render) {
-            //   let BB = canvas_to_render.getBoundingClientRect();
-            // let offsetX = BB.left;
-            // let offsetY = BB.top;
+        let lastX, lastY;
+        let isDown = false;
 
-            let lastX, lastY;
-            let isDown = false;
-            // start
-            canvas_to_render.onmousedown = handleMousedown;
-            //  canvas_to_render.touchstart = handleMousedown;
-            // draw
-            canvas_to_render.onmousemove = handleMousemove;
-            // canvas_to_render.touchmove = handleMousemove;
-            // other
-            canvas_to_render.onmouseup = handleMouseup;
+        // start
+        canvas_to_render.onmousedown = handleMousedown;
+        //  canvas_to_render.touchstart = handleMousedown;
+        // draw
+        canvas_to_render.onmousemove = handleMousemove;
+        // canvas_to_render.touchmove = handleMousemove;
+        // other
+        canvas_to_render.onmouseup = handleMouseup;
 
 
-            function handleMousedown(e) {
+        function handleMousedown(e) {
+            if (is_drawing != null) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                lastX = e.pageX - $(document).scrollLeft() - $(`#pdf_canvas_${index}`).offset().left;
-                lastY = e.pageY - $(document).scrollTop() - $(`#pdf_canvas_${index}`).offset().top;
+                lastX = e.pageX - $(document).scrollLeft() - pdf_canvas.offset().left;
+                lastY = e.pageY - $(document).scrollTop() - pdf_canvas.offset().top;
                 isDown = true;
             }
+        }
 
-            function handleMouseup(e) {
+        function handleMouseup(e) {
+            if (is_drawing != null) {
                 e.preventDefault();
                 //  e.stopPropagation();
                 isDown = false;
-            }
 
-            function handleMousemove(e) {
+            }
+        }
+
+        function handleMousemove(e) {
+            if (is_drawing !== null) {
                 //  console.log("X: " + scrollX + " Y" + scrollY);
                 e.preventDefault();
                 e.stopPropagation();
@@ -205,33 +209,35 @@ $(document).ready(function () {
                     return;
                 }
 
-                let mouseX = e.pageX - $(document).scrollLeft() - $(`#pdf_canvas_${index}`).offset().left;
-                let mouseY = e.pageY - $(document).scrollTop() - $(`#pdf_canvas_${index}`).offset().top;
+                let mouseX = e.pageX - $(document).scrollLeft() - pdf_canvas.offset().left;
+                let mouseY = e.pageY - $(document).scrollTop() - pdf_canvas.offset().top;
                 //  console.log("X: " + lastX + " Y: " + lastY);
                 //  console.log("X1: " + mouseX + " Y1: " + mouseY);
 
-                if (is_drawing !== null) {
-
-                    if (is_drawing) {
-                        // draw
-                        current_ctx.beginPath();
-                        current_ctx.moveTo(lastX, lastY);
-                        current_ctx.lineTo(mouseX, mouseY);
-                        current_ctx.lineCap = "round";
-                        current_ctx.lineJoin = "round";
-                        current_ctx.stroke();
-                    } else {
-                        // erase
-                       // alert("hi");
-                        // todo: this worked but show a circle ...
-                        current_ctx.arc(lastX, lastY, 8, 0, Math.PI * 2, false);
-                        current_ctx.fill();
-                    }
-
+                if (is_drawing) {
+                    // draw
+                    current_ctx.beginPath();
+                    current_ctx.moveTo(lastX, lastY);
+                    current_ctx.lineTo(mouseX, mouseY);
+                    current_ctx.lineCap = "round";
+                    current_ctx.lineJoin = "round";
+                    current_ctx.stroke();
+                } else {
+                    // eraser_canvas.width = 200;
+                    // eraser_canvas.height = 200;
+                    // eraser_canvas.style.left = `${lastX}px`;
+                    // eraser_canvas.style.top = `${lastY}px`;
+                    // erase
+                    // alert("hi");
+                    // todo: this worked but show a circle ...
+                    current_ctx.arc(lastX, lastY, 8, 0, Math.PI * 2, false);
+                    current_ctx.fill();
                 }
+                // update
                 lastX = mouseX;
                 lastY = mouseY;
             }
+            // else { do nothing... }
         }
     }
 
@@ -248,12 +254,8 @@ $(document).ready(function () {
             }
         }
 
-        if (type_of_action === 'draw')
-            is_drawing = true;
-        else if (type_of_action === "erase")
-            is_drawing = false;
-        else
-            is_drawing = null;
+        // let erase_circle = $('#eraser-circle');
+        is_drawing = type_of_action !== "erase" && type_of_action !== "full_clear";
 
         let canvas_count = canvases.length;
         for (let c = 0; c < canvas_count; c++) {
@@ -261,22 +263,27 @@ $(document).ready(function () {
             let current_canvas = canvases[c];
             if (type_of_action === 'draw') {
                 ctx.lineWidth = "3";
-                ctx.strokeStyle = "red"; // Green path
-                ctx.globalCompositeOperation = "source-over";
-            } else if (type_of_action === "full_clear") {
-                // https://stackoverflow.com/questions/6893939/how-to-erase-on-canvas-without-erasing-background
-                ctx.clearRect(0, 0, current_canvas.width, current_canvas.height);
-            } else if (type_of_action === "erase") {
-                ctx.globalCompositeOperation = "destination-out";
-            } else if (type_of_action === "thickness_size") {
-                ctx.lineWidth = data["thickness_size"];
-                ctx.globalCompositeOperation = "source-over";
-            } else if (type_of_action === "color_change") {
-                //  alert(type_of_action);
-                ctx.strokeStyle = data["color"];
+                ctx.strokeStyle = "red";
                 ctx.globalCompositeOperation = "source-over";
             }
-
+            else if (type_of_action === "full_clear") {
+                // https://stackoverflow.com/questions/6893939/how-to-erase-on-canvas-without-erasing-background
+                ctx.clearRect(0, 0, current_canvas.width, current_canvas.height);
+            }
+            else if (type_of_action === "erase") {
+                ctx.globalCompositeOperation = "destination-out";
+            }
+            else if (type_of_action === "thickness_size") {
+                ctx.lineWidth = payload["thickness_size"];
+            }
+            else if (type_of_action === "color_change") {
+                ctx.strokeStyle = payload["color"];
+            }
+            // todo: draw text dynamically
+            // https://www.youtube.com/watch?v=pRYF07gI8gk
+            else {
+                alert("No Action matched in draw tools");
+            }
             ctx_es[c] = ctx;
         }
 
@@ -288,7 +295,7 @@ $(document).ready(function () {
             "        </canvas>\n");
         $(`#ppt_canvas`).attr({
             'width': `${$(document).width() - 0}px`,
-            'height': `${550}px`
+            'height': `${550}px` // todo: fix this based on height of window
         });
         // .hover(function () {
         //                         revise_canvas_on_click(j);

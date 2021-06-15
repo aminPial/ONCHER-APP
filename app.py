@@ -8,6 +8,15 @@ from math import ceil
 from engineio.async_drivers import gevent  # this is needed for the error we got after freezing
 from server import socket_io, oncher_app  # can be deleted
 from os import _exit
+import sentry_sdk
+
+sentry_sdk.init(
+    "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
 
 BASE_URL = None
 
@@ -109,6 +118,8 @@ if __name__ == '__main__':
     w3x, w3y = w1w, w2h - 30  # window three start y-co-ordinate looks like wrong!
     w3w, w3h = w2w, int(h * 0.15)
 
+    _should_on_top = False
+
     second_window = create_window('',
                                   url=f"{BASE_URL}/window_2",
                                   x=w2x,
@@ -117,7 +128,7 @@ if __name__ == '__main__':
                                   frameless=True,
                                   height=w2h,
                                   resizable=False,
-                                  on_top=True)
+                                  on_top=_should_on_top)
     third_window = create_window('',
                                  url=f'{BASE_URL}/window_3',
                                  x=w3x,
@@ -126,7 +137,7 @@ if __name__ == '__main__':
                                  height=w3h,
                                  resizable=False,
                                  frameless=True,
-                                 on_top=True)
+                                 on_top=_should_on_top)
     first_window = create_window('',
                                  url=f'{BASE_URL}/window_1',
                                  x=w1x,
@@ -135,7 +146,7 @@ if __name__ == '__main__':
                                  height=w1h,
                                  frameless=True,
                                  resizable=False,
-                                 on_top=True)
+                                 on_top=_should_on_top)
 
     # https://stackoverflow.com/questions/65279193/how-to-close-pywebview-window-from-javascript-using-pywebview-api
     """

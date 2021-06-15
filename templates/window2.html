@@ -2,7 +2,7 @@
 
 {% block script_link %}
     <script src="{{ url_for('static', filename='js/window2.js') }}"></script>
-{#    <script src="{{ url_for('static', filename='js/white_board.js') }}"></script>#}
+    {#    <script src="{{ url_for('static', filename='js/white_board.js') }}"></script>#}
 {% endblock %}
 
 {% block css_link %}
@@ -1506,14 +1506,21 @@
     <div id="drawing-div" style="position: absolute;margin-top: -570px;z-index: 2">
 
     </div>
-    <script>
-     //  document.querySelector('#drawing-div').addEventListener('keyup', function (e) {
-     //      alert("+++" + e);
-     //  })
-    </script>
-
-
     {# end canvas code #}
+
+    {# eraser canvas circle #}
+{#    <canvas  id="eraser-circle" width="120" height="120"#}
+{#             style="border:1px solid #d3d3d3;z-index: 4;display: none">#}
+{#        Your browser does not support the HTML5 canvas tag.#}
+{#    </canvas>#}
+{#    <script>#}
+{#        var c = document.getElementById("eraser-circle");#}
+{#        var ctx = c.getContext("2d");#}
+{#        ctx.beginPath();#}
+{#        ctx.arc(60, 60, 40, 0, 2 * Math.PI);#}
+{#        ctx.stroke();#}
+{#    </script>#}
+
 
     {# hidden sound block for animations #}
     {#
