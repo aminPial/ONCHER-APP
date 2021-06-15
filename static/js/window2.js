@@ -162,9 +162,14 @@ $(document).ready(function () {
 
     function revise_canvas_on_click(index) {
         // todo: make this function efficient
-        let canvas_to_render = canvases[index];
+        let canvas_to_render = canvases[index]; // this has js version
         let current_ctx = ctx_es[index];
-        let pdf_canvas = $(`#pdf_canvas_${index}`);
+
+        let doc_canvas = null;
+        if (current_doc_type === 'ppt')
+            doc_canvas = $(`#ppt_canvas`); // jquery version
+        else
+            doc_canvas = $(`#pdf_canvas_${index}`);
 
         let lastX, lastY;
         let isDown = false;
@@ -184,8 +189,8 @@ $(document).ready(function () {
                 e.preventDefault();
                 e.stopPropagation();
 
-                lastX = e.pageX - $(document).scrollLeft() - pdf_canvas.offset().left;
-                lastY = e.pageY - $(document).scrollTop() - pdf_canvas.offset().top;
+                lastX = e.pageX - $(document).scrollLeft() - doc_canvas.offset().left;
+                lastY = e.pageY - $(document).scrollTop() - doc_canvas.offset().top;
                 isDown = true;
             }
         }
@@ -209,8 +214,8 @@ $(document).ready(function () {
                     return;
                 }
 
-                let mouseX = e.pageX - $(document).scrollLeft() - pdf_canvas.offset().left;
-                let mouseY = e.pageY - $(document).scrollTop() - pdf_canvas.offset().top;
+                let mouseX = e.pageX - $(document).scrollLeft() - doc_canvas.offset().left;
+                let mouseY = e.pageY - $(document).scrollTop() - doc_canvas.offset().top;
                 //  console.log("X: " + lastX + " Y: " + lastY);
                 //  console.log("X1: " + mouseX + " Y1: " + mouseY);
 
@@ -248,8 +253,8 @@ $(document).ready(function () {
 
         // todo: ? for ppt
         if (type_of_action === 'draw' || type_of_action === "full_clear") {
-            if (current_doc_type === 'ppt') {
-                //   alert("here");
+            if (current_doc_type === 'ppt' && document.getElementById(`ppt_canvas`) === null) {
+                alert("here");
                 init_drawing_board_for_ppt();
             }
         }
@@ -265,21 +270,17 @@ $(document).ready(function () {
                 ctx.lineWidth = "3";
                 ctx.strokeStyle = "red";
                 ctx.globalCompositeOperation = "source-over";
-            }
-            else if (type_of_action === "full_clear") {
+            } else if (type_of_action === "full_clear") {
                 // https://stackoverflow.com/questions/6893939/how-to-erase-on-canvas-without-erasing-background
                 ctx.clearRect(0, 0, current_canvas.width, current_canvas.height);
-            }
-            else if (type_of_action === "erase") {
+            } else if (type_of_action === "erase") {
                 ctx.globalCompositeOperation = "destination-out";
-            }
-            else if (type_of_action === "thickness_size") {
+            } else if (type_of_action === "thickness_size") {
                 ctx.lineWidth = payload["thickness_size"];
-            }
-            else if (type_of_action === "color_change") {
+            } else if (type_of_action === "color_change") {
                 ctx.strokeStyle = payload["color"];
             }
-            // todo: draw text dynamically
+                // todo: draw text dynamically
             // https://www.youtube.com/watch?v=pRYF07gI8gk
             else {
                 alert("No Action matched in draw tools");
@@ -296,17 +297,19 @@ $(document).ready(function () {
         $(`#ppt_canvas`).attr({
             'width': `${$(document).width() - 0}px`,
             'height': `${550}px` // todo: fix this based on height of window
+        }).hover(function () {
+            //alert("hover: " + event.clientY + " " + event.clientX);
+            revise_canvas_on_click(0);
+        }).click(function () {
+            // alert("click: " + event.clientY + " " + event.clientX);
+            revise_canvas_on_click(0);
         });
-        // .hover(function () {
-        //                         revise_canvas_on_click(j);
-        //                     });
 
         const myCanvas1 = document.getElementById(`ppt_canvas`);
-        const context1 = myCanvas1.getContext('2d');
         // first we will clear all the canvas and context from the array
         // and push only them at [0] index
         canvases.push(myCanvas1);
-        ctx_es.push(context1);
+        ctx_es.push(myCanvas1.getContext('2d'));
     }
 
 
