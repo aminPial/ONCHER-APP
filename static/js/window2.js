@@ -392,6 +392,10 @@ $(document).ready(function () {
 
     });
 
+    // one is 'choose ppt.pdf or flashcard page' and another is 'actual adding'
+    // when in 1st one we go back to main initial box
+    // and in 2nd we go back to 1st one
+    let on_which_config_page_now = null;
 
     socket.on('configure_signal_receive', function (data) {
         // on get the show config page signal
@@ -401,14 +405,26 @@ $(document).ready(function () {
         $('#choose_games').hide();
         $('#student-report-input').hide();
         $('#settings_box').show();
+        on_which_config_page_now = '1'; // as we now go to 1st page of config
     });
 
     $('#configure-back').click(function () {
         $('#view-student-report-div').hide();
-        $('#initial_box').show();
         $('#choose_games').hide();
-        $('#settings_box').hide();
         $('#student-report-input').hide();
+        // when encounter 1st page
+        if (on_which_config_page_now === '1') {
+            $('#initial_box').show();
+            $('#settings_box').hide();
+            on_which_config_page_now = null;
+        } else {
+            // 2nd page
+            $('#settings_cards').show();
+            $('#grade_lesson_list_section').show();
+            $('#add_ppt_pdf_div').hide();
+            $('#add_flashcard').hide();
+            on_which_config_page_now = '1';
+        }
     });
 
     $('#upload_ppt_pdf').click(function () {
@@ -418,6 +434,7 @@ $(document).ready(function () {
         $('#add_ppt_pdf_div').show();
         $('#student-report-input').hide();
         $('#add_flashcard').hide();
+        on_which_config_page_now = '2'; // we go 2nd page now
     });
 
     $('#flashcard_upload').click(function () {
@@ -427,6 +444,7 @@ $(document).ready(function () {
         $('#add_ppt_pdf_div').hide();
         $('#student-report-input').hide();
         $('#add_flashcard').show();
+        on_which_config_page_now = '2'; // we go to 2nd page now
     });
 
     // report
