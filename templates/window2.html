@@ -24,425 +24,518 @@
            class="fal fa-times"></i>
     </div>
 
-    {# todo: fix this using css float & width percentage #}
-    <div class="box" id="top-bar" style="margin: 8px;">
-        <div class="columns">
-            <div class="column" id="app_logo_section">
-                <img src="{{ url_for('static',filename='images/app_logo.png') }}"
-                     alt="Oncher App">
+    <div style="overflow-y: auto">
+        {# todo: fix this using css float & width percentage #}
+        <div class="box" id="top-bar" style="margin: 8px;">
+            <div class="columns">
+                <div class="column" id="app_logo_section">
+                    <img src="{{ url_for('static',filename='images/app_logo.png') }}"
+                         alt="Oncher App">
+
+                </div>
+                <div class="column is-narrow-desktop" style="margin-top: 10px;visibility: hidden" id="student_name_div">
+
+                </div>
+                {#  #}
+                <div class="column is-narrow-desktop" style="margin-top: 4px;visibility: hidden" id="stars_bar">
+                    {% for i in range(10) %}
+                        <i class="fa fa-star" style="font-size: 36px" id="star_count_{{ i }}"></i>
+                    {% endfor %}
+                </div>
+
+                <div class="column is-1" id="stars_count_div" style="visibility: hidden">
+                    <button class="button is-medium title is-light is-warning box"><i class="fal fa-star"
+                                                                                      style="font-size: 24px;color: gold"
+                                                                                      id="star_icon"></i>
+                        <span style="margin-left: 8px;" id="star_count">0</span>
+                    </button>
+                </div>
+
+                <div class="column" style="margin-left: 8px;visibility: hidden" id="diamond_count_div">
+                    <button class="button is-medium title is-light is-primary box"><i class="fal fa-diamond"
+                                                                                      style="font-size: 24px;color: cyan"></i>
+                        <span style="margin-left: 8px;" id="diamond_count">0</span>
+                    </button>
+                </div>
+
+                <div class="column" style="padding-right: 8px;visibility: hidden" id="time_count_div">
+                    <button class="button is-medium title is-success is-light is-outlined box" id="time_count">00:00
+                    </button>
+                </div>
 
             </div>
-            <div class="column is-narrow-desktop" style="margin-top: 10px;visibility: hidden" id="student_name_div">
-
-            </div>
-            {#  #}
-            <div class="column is-narrow-desktop" style="margin-top: 4px;visibility: hidden" id="stars_bar">
-                {% for i in range(10) %}
-                    <i class="fa fa-star" style="font-size: 36px" id="star_count_{{ i }}"></i>
-                {% endfor %}
-            </div>
-
-            <div class="column is-1" id="stars_count_div" style="visibility: hidden">
-                <button class="button is-medium title is-light is-warning box"><i class="fal fa-star"
-                                                                                  style="font-size: 24px;color: gold"
-                                                                                  id="star_icon"></i>
-                    <span style="margin-left: 8px;" id="star_count">0</span>
-                </button>
-            </div>
-
-            <div class="column" style="margin-left: 8px;visibility: hidden" id="diamond_count_div">
-                <button class="button is-medium title is-light is-primary box"><i class="fal fa-diamond"
-                                                                                  style="font-size: 24px;color: cyan"></i>
-                    <span style="margin-left: 8px;" id="diamond_count">0</span>
-                </button>
-            </div>
-
-            <div class="column" style="padding-right: 8px;visibility: hidden" id="time_count_div">
-                <button class="button is-medium title is-success is-light is-outlined box" id="time_count">00:00
-                </button>
-            </div>
-
         </div>
-    </div>
 
-    <div class="box" id="loading_box"
-         style="margin: 8px 8px 0;
+        <div class="box" id="loading_box"
+             style="margin: 8px 8px 0;
          padding: 16px;border: none;border-radius: 0;height: 500px;display: none;">
-        <img src="{{ url_for('static',filename='images/loading.gif') }}"
-             alt="gif" width="250px" height="250px"
-             style="pointer-events: none;margin-left: 350px;margin-top: 100px;">
-    </div>
-
-    <div class="box" id="initial_box"
-         style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 0;">
-
-        {#        <div class="columns" id="intro_screen">#}
-        {##}
-        {# 16:9 ratio slide show #}
-        {##}
-        {#        <div id="feature-slideshow" style="margin: 0;padding: 0">#}
-        {#            <img src="https://phlearn.com/wp-content/uploads/2019/03/Aspect-Ratios-Explained-no-text.jpg"#}
-        {#                 style="width:100%;height: 300px"#}
-        {#                 alt="slide-1"/>#}
-        {#        </div>#}
-        {# slideshow script #}
-        {#        <script>#}
-        {#            var slideIndex = 0;#}
-        {#            showSlides();#}
-        {##}
-        {#            function showSlides() {#}
-        {#                var i;#}
-        {#                var slides = document.getElementsByClassName("mySlides");#}
-        {#                var dots = document.getElementsByClassName("dot");#}
-        {#                for (i = 0; i < slides.length; i++) {#}
-        {#                    slides[i].style.display = "none";#}
-        {#                }#}
-        {#                slideIndex++;#}
-        {#                if (slideIndex > slides.length) {#}
-        {#                    slideIndex = 1#}
-        {#                }#}
-        {#                for (i = 0; i < dots.length; i++) {#}
-        {#                    dots[i].className = dots[i].className.replace(" active", "");#}
-        {#                }#}
-        {#                slides[slideIndex - 1].style.display = "block";#}
-        {#                dots[slideIndex - 1].className += " active";#}
-        {#                setTimeout(showSlides, 2000); // Change image every 2 seconds#}
-        {#            }#}
-        {#        </script>#}
-        {##}
-        {##}
-        {# Quick Access #}
-        {#        <div style="padding: 16px">#}
-        {#            <h3 class="subtitle is-3" style="font-weight: bolder" id="quick-access-text">Quick Access</h3>#}
-        {##}
-        {#            <div class="block" id="quick-access" style="padding: 16px">#}
-        {#                <div class="columns">#}
-        {##}
-        {#                    <div class="column box">#}
-        {#                        <div class="columns">#}
-        {#                            <div class="column is-one-quarter">#}
-        {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-        {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                        </div>#}
-        {#                    </div>#}
-        {##}
-        {#                    <div class="column box">#}
-        {#                        <div class="columns">#}
-        {#                            <div class="column is-one-quarter">#}
-        {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-        {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                        </div>#}
-        {#                    </div>#}
-        {#                </div>#}
-        {#                <div class="columns">#}
-        {#                    <div class="column box">#}
-        {#                        <div class="columns">#}
-        {#                            <div class="column is-one-quarter">#}
-        {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-        {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                        </div>#}
-        {#                    </div>#}
-        {#                    <div class="column box">#}
-        {#                        <div class="columns">#}
-        {#                            <div class="column is-one-quarter">#}
-        {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-        {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                            <div class="column">#}
-        {##}
-        {#                            </div>#}
-        {#                        </div>#}
-        {#                    </div>#}
-        {#                </div>#}
-        {#            </div>#}
-        {##}
-        {##}
-        {#        </div>#}
-
-        <div class="columns" id="intro_screen">
-            <div class="column">
-                <img src="{{ url_for('static',filename='images/init.gif') }}" alt="gif" width="500px" height="350px"
-                     style="pointer-events: none">
-            </div>
-            <div class="column is-half-desktop">
-                <h1 class="title is-1" style="font-family: 'HP Simplified',serif;padding: 16px;margin-left: 32px">
-                    Teach
-                    with ONCHER</h1>
-                <section class="section" id="drag_and_drop_section" style="margin: 16px">
-                    <img style="margin: 16px" src="{{ url_for('static', filename='images/pdf_pic.jpg') }}"
-                         alt="pdf_pic"
-                         width="128px"
-                         height="128px">
-                    <h5 class="title is-5" style="font-family: 'HP Simplified',serif;
-                                        margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>
-                    <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt,
-                        .pptm,
-                        .pptx</h6>
-                </section>
-            </div>
+            <img src="{{ url_for('static',filename='images/loading.gif') }}"
+                 alt="gif" width="250px" height="250px"
+                 style="pointer-events: none;margin-left: 350px;margin-top: 100px;">
         </div>
 
-        <div class="columns" id="choose_games" style="display: none;">
-            <div class="column box" id="game_1" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">TikTakToe</h2>
-            </div>
-            <div class="column box" id="game_2" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">MATCH</h2>
-            </div>
-            <div class="column box" id="game_3" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">FIND</h2>
-            </div>
-            <div class="column box" id="game_4" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">LISTEN</h2>
-            </div>
-        </div>
-    </div>
+        <div class="box" id="initial_box"
+             style="margin: 8px 8px 0;
+         padding: 16px;border: 8px;border-radius: 0;">
 
-
-    {# after a class ends the student report will pop up here #}
-    <div class="box" id="student-report-input"
-         style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 0;display: none">
-
-        <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"><u>Students Report Form</u></h3>
-
-        <section class="section" id="student-report-forms">
-
-
-        </section>
-
-        <div class="field is-grouped" style="margin: 12px">
-            <div class="control">
-                <button class="button is-link" id="report-save-submit">Save Report</button>
-            </div>
-            <div class="control">
-                <button class="button is-link is-light" id="report-save-cancel">Cancel</button>
-            </div>
-        </div>
-
-    </div>
-
-    {# view ss report for a particular student - will be triggered when a student is being selected in window 1 #}
-    <div class="box" id="view-student-report-div"
-         style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 0;display: none">
-        <h3 class="title is-3" style="margin:16px 16px 0;font-weight: bolder;font-family: 'HP Simplified',serif">
-            <u id="student_report_of"></u>
-        </h3>
-        <section class="section" id="reports_of_a_student">
-            {#            {% for i in range(10) %}#}
-            {#                <div class="box">#}
-            {#                    <h5 class="subtitle is-5" style="font-weight: bolder;"></h5>#}
-            {#                    <textarea class="textarea" placeholder="" disabled style="resize: none">#}
-            {#                </textarea>#}
+            {#        <div class="columns" id="intro_screen">#}
+            {##}
+            {# 16:9 ratio slide show #}
+            {##}
+            {#        <div id="feature-slideshow" style="margin: 0;padding: 0">#}
+            {#            <img src="https://phlearn.com/wp-content/uploads/2019/03/Aspect-Ratios-Explained-no-text.jpg"#}
+            {#                 style="width:100%;height: 300px"#}
+            {#                 alt="slide-1"/>#}
+            {#        </div>#}
+            {# slideshow script #}
+            {#        <script>#}
+            {#            var slideIndex = 0;#}
+            {#            showSlides();#}
+            {##}
+            {#            function showSlides() {#}
+            {#                var i;#}
+            {#                var slides = document.getElementsByClassName("mySlides");#}
+            {#                var dots = document.getElementsByClassName("dot");#}
+            {#                for (i = 0; i < slides.length; i++) {#}
+            {#                    slides[i].style.display = "none";#}
+            {#                }#}
+            {#                slideIndex++;#}
+            {#                if (slideIndex > slides.length) {#}
+            {#                    slideIndex = 1#}
+            {#                }#}
+            {#                for (i = 0; i < dots.length; i++) {#}
+            {#                    dots[i].className = dots[i].className.replace(" active", "");#}
+            {#                }#}
+            {#                slides[slideIndex - 1].style.display = "block";#}
+            {#                dots[slideIndex - 1].className += " active";#}
+            {#                setTimeout(showSlides, 2000); // Change image every 2 seconds#}
+            {#            }#}
+            {#        </script>#}
+            {##}
+            {##}
+            {# Quick Access #}
+            {#        <div style="padding: 16px">#}
+            {#            <h3 class="subtitle is-3" style="font-weight: bolder" id="quick-access-text">Quick Access</h3>#}
+            {##}
+            {#            <div class="block" id="quick-access" style="padding: 16px">#}
+            {#                <div class="columns">#}
+            {##}
+            {#                    <div class="column box">#}
+            {#                        <div class="columns">#}
+            {#                            <div class="column is-one-quarter">#}
+            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
+            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {##}
+            {#                    <div class="column box">#}
+            {#                        <div class="columns">#}
+            {#                            <div class="column is-one-quarter">#}
+            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
+            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
             {#                </div>#}
-            {#            {% endfor %}#}
-        </section>
-    </div>
+            {#                <div class="columns">#}
+            {#                    <div class="column box">#}
+            {#                        <div class="columns">#}
+            {#                            <div class="column is-one-quarter">#}
+            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
+            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {#                    <div class="column box">#}
+            {#                        <div class="columns">#}
+            {#                            <div class="column is-one-quarter">#}
+            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
+            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                            <div class="column">#}
+            {##}
+            {#                            </div>#}
+            {#                        </div>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            </div>#}
+            {##}
+            {##}
+            {#        </div>#}
 
-    {# settings page #}
-    <div class="box" id="settings_box" style="margin: 8px 8px 0;
+            <div id="intro_screen">
+                {#            <div class="column is-one-third">#}
+                {#                <img src="{{ url_for('static',filename='images/init.gif') }}" alt="gif" width="400px" height="300px"#}
+                {#                     style="pointer-events: none">#}
+                {#            </div>#}
+                {#            <div class="column is-two-thirds">#}
+                {#                <h1 class="title is-1" style="font-family: 'HP Simplified',serif;padding: 16px;margin-left: 32px">#}
+                {#                    Teach#}
+                {#                    with ONCHER</h1>#}
+                {#              #}
+                {#            </div>#}
+
+                <div class="block" style="margin-bottom: 0;padding-bottom: 0">
+                    {# https://wallpapercave.com/wp/wp2346070.png #}
+                    {# https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png #}
+
+                    <img src="https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-lively-cute-kindergarten-graduation-ceremony-board-poster-background-image_194026.jpg"
+                         alt="first-slide" style="width:100%;height:250px;border-radius: 30px">
+                </div>
+{##}
+{#                <h4 class="title is-4" style="font-weight: bolder;margin-top:16px;margin-left: 8px;">Quick Access</h4>#}
+                <div style="margin-top: 12px">
+                    {#                    <img style="margin: 16px" src="{{ url_for('static', filename='images/pdf_pic.jpg') }}"#}
+                    {#                         alt="pdf_pic"#}
+                    {#                         width="128px"#}
+                    {#                         height="128px">#}
+                    {#                    <h5 class="title is-5" style="font-family: 'HP Simplified',serif;#}
+                    {#                                        margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>#}
+                    {#                    <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt,#}
+                    {#                        .pptm,#}
+                    {#                        .pptx</h6>#}
+                    <div class="columns" style="margin-bottom:0;padding-bottom:0">
+                        <div class="column">
+                            <div class="box" style="border-radius: 20px;">
+                                <div class="columns">
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <img src="{{ url_for('static', filename='images/checklist.png') }}"
+                                             alt="camera" style="width: 48px;height: 48px"/>
+                                    </div>
+                                    <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
+                                        <h5 class="title is-6">Configure Study Materials</h5>
+                                        <h6 class="subtitle is-6">Add .ppt and .pdf documents.</h6>
+                                    </div>
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <button class="button is-info is-rounded is-small" style="font-weight: bolder">
+                                            GO
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="box" style="border-radius: 20px;">
+                                <div class="columns">
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <img src="{{ url_for('static', filename='images/window3/clock.png') }}"
+                                             alt="camera" style="width: 48px;height: 48px"/>
+                                    </div>
+                                    <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
+                                        <h5 class="title is-6">Setup Class timer</h5>
+                                        <h6 class="subtitle is-6">Fix minutes/hours of class time.</h6>
+                                    </div>
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <button class="button is-success is-rounded is-small"
+                                                style="font-weight: bolder">GO
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns" style="margin-top: 0;padding-top:0">
+                        <div class="column">
+                            <div class="box" style="border-radius: 20px;">
+                                <div class="columns">
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <img src="{{ url_for('static', filename='images/window3/game.png') }}"
+                                             alt="camera" style="width: 48px;height: 48px"/>
+                                    </div>
+                                    <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
+                                        <h5 class="title is-6">Play Games</h5>
+                                        <h6 class="subtitle is-6">Tik-tak-toe,Find,Match,Listen game.</h6>
+                                    </div>
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <button class="button is-danger is-rounded is-small"
+                                                style="font-weight: bolder">GO
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="box" style="border-radius: 20px;">
+                                <div class="columns">
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <img src="{{ url_for('static', filename='images/window3/thickness_tool.png') }}"
+                                             alt="camera" style="width: 48px;height: 48px"/>
+                                    </div>
+                                    <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
+                                        <h5 class="title is-6">View Student Reports </h5>
+                                        <h6 class="subtitle is-6">Choose a student and check report</h6>
+                                    </div>
+                                    <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
+                                        <button class="button is-warning is-rounded is-small"
+                                                style="font-weight: bolder">GO
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="columns" id="choose_games" style="display: none;">
+                <div class="column box" id="game_1" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">TikTakToe</h2>
+                </div>
+                <div class="column box" id="game_2" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">MATCH</h2>
+                </div>
+                <div class="column box" id="game_3" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">FIND</h2>
+                </div>
+                <div class="column box" id="game_4" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">LISTEN</h2>
+                </div>
+            </div>
+        </div>
+
+
+        {# after a class ends the student report will pop up here #}
+        <div class="box" id="student-report-input"
+             style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 0;display: none">
+
+            <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"><u>Students Report Form</u></h3>
+
+            <section class="section" id="student-report-forms">
+
+
+            </section>
+
+            <div class="field is-grouped" style="margin: 12px">
+                <div class="control">
+                    <button class="button is-link" id="report-save-submit">Save Report</button>
+                </div>
+                <div class="control">
+                    <button class="button is-link is-light" id="report-save-cancel">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+
+        {# view ss report for a particular student - will be triggered when a student is being selected in window 1 #}
+        <div class="box" id="view-student-report-div"
+             style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 0;display: none">
+            <h3 class="title is-3" style="margin:16px 16px 0;font-weight: bolder;font-family: 'HP Simplified',serif">
+                <u id="student_report_of"></u>
+            </h3>
+            <section class="section" id="reports_of_a_student">
+                {#            {% for i in range(10) %}#}
+                {#                <div class="box">#}
+                {#                    <h5 class="subtitle is-5" style="font-weight: bolder;"></h5>#}
+                {#                    <textarea class="textarea" placeholder="" disabled style="resize: none">#}
+                {#                </textarea>#}
+                {#                </div>#}
+                {#            {% endfor %}#}
+            </section>
+        </div>
+
+        {# settings page #}
+        <div class="box" id="settings_box" style="margin: 8px 8px 0;
          padding: 16px;border: none;border-radius: 8px;height: 500px;display: none;overflow: auto">
-        <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
+            <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
             <span id="configure-back" style="cursor: pointer">
                 <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp; </span>Configure Lesson Docs</h4>
-        {# todo:.... UPLOAD PPT/PDF as per GL #}
-        {# todo:.... UPLOAD Flashcard(with vocab) as per GL #}
-        {# todo: ask FRAZERH that what will the ZIP containing Lessons and all be like? from the site users will download #}
-        <div class="columns" style="margin-top:20px;margin-left: 4px;" id="settings_cards">
-            <div class="column">
-                <div class="box" id="upload_ppt_pdf"
-                     style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));cursor: pointer;">
-                    {#                    <img#}
-                    {#                            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);#}
-                    {#                            background: white;padding: 4px;"#}
-                    {#                            src="https://www.pdftoppt.net/images/logo-pdftoppt.net.png"#}
-                    {#                            alt="add_ppt_pdf" width="128px"#}
-                    {#                            height="128px"/>#}
-                    <h1 class="title is-1" style="color: white;font-weight: bolder">ADD PPT,PDF</h1>
+            {# todo:.... UPLOAD PPT/PDF as per GL #}
+            {# todo:.... UPLOAD Flashcard(with vocab) as per GL #}
+            {# todo: ask FRAZERH that what will the ZIP containing Lessons and all be like? from the site users will download #}
+            <div class="columns" style="margin-top:20px;margin-left: 4px;" id="settings_cards">
+                <div class="column">
+                    <div class="box" id="upload_ppt_pdf"
+                         style="background-image: linear-gradient(to left, rgb(70,206,23), rgb(90,231,29));cursor: pointer;">
+                        {#                    <img#}
+                        {#                            style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);#}
+                        {#                            background: white;padding: 4px;"#}
+                        {#                            src="https://www.pdftoppt.net/images/logo-pdftoppt.net.png"#}
+                        {#                            alt="add_ppt_pdf" width="128px"#}
+                        {#                            height="128px"/>#}
+                        <h1 class="title is-1" style="color: white;font-weight: bolder">ADD PPT,PDF</h1>
+                    </div>
                 </div>
-            </div>
-            <div class="column">
-                <div class="box" id="flashcard_upload" style="
+                <div class="column">
+                    <div class="box" id="flashcard_upload" style="
                 background-image: linear-gradient(to left, rgba(215,12,181,0.91), rgb(198,31,232));cursor: pointer;">
-                    {#                    <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"#}
-                    {#                         src="https://api.macmillanenglish.com/fileadmin/user_upload/Blog_and_Resources/Resources/resources_3/Flashcards.jpg"#}
-                    {#                         alt="add_flashcard" width="128px"#}
-                    {#                         height="128px"/>#}
-                    <h1 class="title is-1" style="color: white;font-weight: bolder">ADD FLASHCARD</h1>
+                        {#                    <img style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"#}
+                        {#                         src="https://api.macmillanenglish.com/fileadmin/user_upload/Blog_and_Resources/Resources/resources_3/Flashcards.jpg"#}
+                        {#                         alt="add_flashcard" width="128px"#}
+                        {#                         height="128px"/>#}
+                        <h1 class="title is-1" style="color: white;font-weight: bolder">ADD FLASHCARD</h1>
+                    </div>
                 </div>
             </div>
-        </div>
 
 
-        {# grade lesson table #}
+            {# grade lesson table #}
 
-        <section class="section" id="grade_lesson_list_section">
-            {# tabs is-centered is-toggle is-fullwidth is-medium #}
-            <div class="tabs is-centered is-boxed is-medium">
-                <ul>
-                    <li class="is-active" id="pdf_ppt_tab">
-                        <a>
-                            <span class="icon is-small"><i class="fas fa-file-pdf" aria-hidden="true"></i></span>
-                            <span>Pdf & ppt</span>
-                        </a>
-                    </li>
-                    <li id="flashcard_tab">
-                        <a>
+            <section class="section" id="grade_lesson_list_section">
+                {# tabs is-centered is-toggle is-fullwidth is-medium #}
+                <div class="tabs is-centered is-boxed is-medium">
+                    <ul>
+                        <li class="is-active" id="pdf_ppt_tab">
+                            <a>
+                                <span class="icon is-small"><i class="fas fa-file-pdf" aria-hidden="true"></i></span>
+                                <span>Pdf & ppt</span>
+                            </a>
+                        </li>
+                        <li id="flashcard_tab">
+                            <a>
                             <span class="icon is-small"><i class="fas fa-credit-card-blank"
                                                            aria-hidden="true"></i></span>
-                            <span>Flashcard</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <script>
-                // script for toggle the table
-                $('#pdf_ppt_tab').click(function () {
-                    $('#flashcard_table').hide();
-                    $('#ppt_pdf_table').show();
-                    $('#pdf_ppt_tab').attr({'class': 'is-active'});
-                    $('#flashcard_tab').removeAttr('class');
-                });
-                $('#flashcard_tab').click(function () {
-                    $('#ppt_pdf_table').hide();
-                    $('#flashcard_table').show();
-                    $('#flashcard_tab').attr({'class': 'is-active'});
-                    $('#pdf_ppt_tab').removeAttr('class');
-                });
-            </script>
-            {# ppt,pdf list table #}
-            <table class="table is-fullwidth" id="ppt_pdf_table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Grade</th>
-                    <th>Lesson</th>
-                    <th>Study Materials</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody id="grade-lesson-doc-list-body">
-                {% set counter= namespace(value=0) %}
-                {% for grade in grade_lessons %}
-                    {% for object in grade_lessons[grade] %}
-                        {% if object.is_flashcard == 0 %}
-                            {% set counter.value = counter.value + 1 %}
-                            <tr id="study_materials_{{ counter.value }}_{{ grade }}" style="cursor: pointer">
-                                <td>{{ counter.value }}</td>
-                                <td>{{ grade }}</td>
-                                <td>{{ object.lesson }}</td>
-                                <td>{{ object.folder_name }}</td>
-                                {# implement the edit window for ppt.pdf #}
-                                <td><i class="fal fa-edit" style="color: #5AE71DFF"></i></td>
-                            </tr>
-                        {% endif %}
+                                <span>Flashcard</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <script>
+                    // script for toggle the table
+                    $('#pdf_ppt_tab').click(function () {
+                        $('#flashcard_table').hide();
+                        $('#ppt_pdf_table').show();
+                        $('#pdf_ppt_tab').attr({'class': 'is-active'});
+                        $('#flashcard_tab').removeAttr('class');
+                    });
+                    $('#flashcard_tab').click(function () {
+                        $('#ppt_pdf_table').hide();
+                        $('#flashcard_table').show();
+                        $('#flashcard_tab').attr({'class': 'is-active'});
+                        $('#pdf_ppt_tab').removeAttr('class');
+                    });
+                </script>
+                {# ppt,pdf list table #}
+                <table class="table is-fullwidth" id="ppt_pdf_table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Grade</th>
+                        <th>Lesson</th>
+                        <th>Study Materials</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="grade-lesson-doc-list-body">
+                    {% set counter= namespace(value=0) %}
+                    {% for grade in grade_lessons %}
+                        {% for object in grade_lessons[grade] %}
+                            {% if object.is_flashcard == 0 %}
+                                {% set counter.value = counter.value + 1 %}
+                                <tr id="study_materials_{{ counter.value }}_{{ grade }}" style="cursor: pointer">
+                                    <td>{{ counter.value }}</td>
+                                    <td>{{ grade }}</td>
+                                    <td>{{ object.lesson }}</td>
+                                    <td>{{ object.folder_name }}</td>
+                                    {# implement the edit window for ppt.pdf #}
+                                    <td><i class="fal fa-edit" style="color: #5AE71DFF"></i></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
 
-            {# todo: flashcard table #}
-            <table class="table is-fullwidth" id="flashcard_table" style="display: none">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Grade</th>
-                    <th>Lesson</th>
-                    <th>Study Materials</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody id="flashcard-list-body">
-                {% set counter_1= namespace(value=0) %}
-                {% for grade in grade_lessons %}
-                    {% for object in grade_lessons[grade] %}
-                        {% if object.is_flashcard == 1 %}
-                            {% set counter_1.value = counter_1.value + 1 %}
-                            <tr id="study_materials_f_{{ counter_1.value }}_{{ grade }}" style="cursor: pointer">
-                                <td>{{ counter_1.value }}</td>
-                                <td>{{ grade }}</td>
-                                <td>{{ object.lesson }}</td>
-                                <td>9 Flashcards</td>
-                                {# implement the edit window for flashcards #}
-                                <td><i class="fal fa-edit" style="color: #f620d9"></i></td>
-                            </tr>
+                {# todo: flashcard table #}
+                <table class="table is-fullwidth" id="flashcard_table" style="display: none">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Grade</th>
+                        <th>Lesson</th>
+                        <th>Study Materials</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="flashcard-list-body">
+                    {% set counter_1= namespace(value=0) %}
+                    {% for grade in grade_lessons %}
+                        {% for object in grade_lessons[grade] %}
+                            {% if object.is_flashcard == 1 %}
+                                {% set counter_1.value = counter_1.value + 1 %}
+                                <tr id="study_materials_f_{{ counter_1.value }}_{{ grade }}" style="cursor: pointer">
+                                    <td>{{ counter_1.value }}</td>
+                                    <td>{{ grade }}</td>
+                                    <td>{{ object.lesson }}</td>
+                                    <td>9 Flashcards</td>
+                                    {# implement the edit window for flashcards #}
+                                    <td><i class="fal fa-edit" style="color: #f620d9"></i></td>
+                                </tr>
 
-                        {% endif %}
+                            {% endif %}
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-                </tbody>
-            </table>
-        </section>
+                    </tbody>
+                </table>
+            </section>
 
 
-        {# add ppt, pdf #}
+            {# add ppt, pdf #}
 
-        <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
-            <div class="container" style="padding: 4px">
+            <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
+                <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
+                <div class="container" style="padding: 4px">
 
-                <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-primary is-medium" type="number" id="grade_field"
-                           placeholder="INPUT GRADE"
-                           name="grade_field">
-                    <span class="icon is-small is-left">
+                    <div class="control has-icons-left" style="display: inline-block">
+                        <input class="input is-primary is-medium" type="number" id="grade_field"
+                               placeholder="INPUT GRADE"
+                               name="grade_field">
+                        <span class="icon is-small is-left">
       <i class="fas fa-graduation-cap"></i>
     </span>
-                </div>
-                <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-success is-medium" type="number" id="lesson_field"
-                           placeholder="INPUT LESSON"
-                           name="lesson_field">
-                    <span class="icon is-small is-left">
+                    </div>
+                    <div class="control has-icons-left" style="display: inline-block">
+                        <input class="input is-success is-medium" type="number" id="lesson_field"
+                               placeholder="INPUT LESSON"
+                               name="lesson_field">
+                        <span class="icon is-small is-left">
       <i class="fas fa-book-open"></i>
         </span>
+                    </div>
                 </div>
-            </div>
 
 
-            <br>
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Document (ppt, pptm, pptx,
-                pdf)</h5>
-            <div class="container" style="padding: 4px">
-                <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
-                    <div class="file is-primary" style="font-weight: bolder;">
-                        <label class="file-label">
-                            <input class="file-input" type="file" name="myfile" id="myfile"
-                            > {# accept=".ppt, .pptx,.pptm,.pdf" #}
-                            <script>
-                                $('input[type=file]').change(function () {
-                                    var filename = $('input[type=file]').val().split('\\').pop();
-                                    // alert("filename: " + filename);
-                                    $('#filename_text').text(filename);
-                                });
-                            </script>
-                            <span class="file-cta">
+                <br>
+                <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Document (ppt, pptm, pptx,
+                    pdf)</h5>
+                <div class="container" style="padding: 4px">
+                    <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">
+                        <div class="file is-primary" style="font-weight: bolder;">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="myfile" id="myfile"
+                                > {# accept=".ppt, .pptx,.pptm,.pdf" #}
+                                <script>
+                                    $('input[type=file]').change(function () {
+                                        var filename = $('input[type=file]').val().split('\\').pop();
+                                        // alert("filename: " + filename);
+                                        $('#filename_text').text(filename);
+                                    });
+                                </script>
+                                <span class="file-cta">
                         <span class="file-icon">
                           <i class="fas fa-upload"></i>
                         </span>
@@ -450,1302 +543,1303 @@
                           Upload PPT/PDF
                         </span>
                             </span>
-                            <span id="filename_text" style="margin: 8px;color: #f82222">
+                                <span id="filename_text" style="margin: 8px;color: #f82222">
 
                             </span>
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <hr>
-            <div style="margin-left: 4px">
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <hr>
+                <div style="margin-left: 4px">
 
-                <button style="font-weight: bolder;background: #e31266"
-                        type="button" class="button is-link field is-inline-block-mobile"
-                        id="add_ppt" onclick="add_documents(0)"><i class="fa fa-plus"></i>&nbsp; ADD
-                </button>
-            </div>
+                    <button style="font-weight: bolder;background: #e31266"
+                            type="button" class="button is-link field is-inline-block-mobile"
+                            id="add_ppt" onclick="add_documents(0)"><i class="fa fa-plus"></i>&nbsp; ADD
+                    </button>
+                </div>
 
-        </section>
+            </section>
 
-        {# add flashcard #}
-        <section style="display: none;margin-left: 24px" id="add_flashcard">
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
-            <div class="container" style="padding: 4px">
+            {# add flashcard #}
+            <section style="display: none;margin-left: 24px" id="add_flashcard">
+                <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
+                <div class="container" style="padding: 4px">
 
-                <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-primary is-medium" type="number" id="grade_field_1"
-                           placeholder="INPUT GRADE"
-                           name="grade_field"> {# grade_field_1 is for the flashcard #}
-                    <span class="icon is-small is-left">
+                    <div class="control has-icons-left" style="display: inline-block">
+                        <input class="input is-primary is-medium" type="number" id="grade_field_1"
+                               placeholder="INPUT GRADE"
+                               name="grade_field"> {# grade_field_1 is for the flashcard #}
+                        <span class="icon is-small is-left">
       <i class="fas fa-graduation-cap"></i>
     </span>
-                </div>
-                <div class="control has-icons-left" style="display: inline-block">
-                    <input class="input is-success is-medium" type="number" id="lesson_field_1"
-                           placeholder="INPUT LESSON"
-                           name="lesson_field"> {# lesson_field_1 is for the flashcard #}
-                    <span class="icon is-small is-left">
+                    </div>
+                    <div class="control has-icons-left" style="display: inline-block">
+                        <input class="input is-success is-medium" type="number" id="lesson_field_1"
+                               placeholder="INPUT LESSON"
+                               name="lesson_field"> {# lesson_field_1 is for the flashcard #}
+                        <span class="icon is-small is-left">
       <i class="fas fa-book-open"></i>
     </span>
+                    </div>
                 </div>
-            </div>
 
 
-            <br>
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Flashcard</h5>
-            <div class="container" style="padding: 4px">
-                <form id="flashcard_add_form" method="post" name="flashcard_add_form">
-                    {% for i in range(3) %}
+                <br>
+                <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Flashcard</h5>
+                <div class="container" style="padding: 4px">
+                    <form id="flashcard_add_form" method="post" name="flashcard_add_form">
+                        {% for i in range(3) %}
+                            <div class="columns">
+                                {% for j in range(3) %}
+                                    <input type="file" id="flashcard_{{ i }}_{{ j }}_input"
+                                           name="flashcard_{{ i }}_{{ j }}_input"
+                                           accept="image/*"
+                                           style="display: none" onchange="on_input_flashcard({{ i }}, {{ j }})">
+                                    <div class="column box" style="text-align: center;margin: 12px;cursor: pointer"
+                                         onclick="flashcard_image_upload({{ i }},{{ j }})">
+
+                                        <img style="margin-left: auto;margin-right: auto;"
+                                             id="flashcard_{{ i }}__{{ j }}_image"
+                                             src="https://icon-library.com/images/upload-icon/upload-icon-18.jpg"
+                                             width="100px"
+                                             height="100px"
+                                             alt="flashcard_{{ i }}__{{ j }}_image"/>
+                                        <h6 class="title is-6" id="click_to_select_{{ i }}_{{ j }}">Click to select</h6>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                <hr>
+                <div style="margin-left: 4px">
+
+                    <button style="font-weight: bolder;background: #2996f8;margin-bottom: 20px"
+                            type="button" class="button is-link field is-inline-block-mobile"
+                            id="add_flashcard" onclick="add_documents(1)"><i class="fal fa-cloud-upload"></i>&nbsp;
+                        Upload
+                        Flashcards
+                    </button>
+                </div>
+
+            </section>
+
+            {# upload ppt,pdf or Flashcard to server code in below <script> tag #}
+            <script>
+
+                // for flashcard image upload
+                function flashcard_image_upload(i, j) {
+                    //  alert("i am here");
+                    $(`#flashcard_${i}_${j}_input`).trigger('click');
+                }
+
+                function on_input_flashcard(i, j) {
+                    let oFReader = new FileReader();
+                    oFReader.readAsDataURL(document.getElementById(`flashcard_${i}_${j}_input`).files[0]);
+                    oFReader.onload = function (oFREvent) {
+                        document.getElementById(`flashcard_${i}__${j}_image`).src = oFREvent.target.result;
+                        $(`#click_to_select_${i}_${j}`).text("Click to change");
+                    };
+                }
+
+                // this will get incremented as we add docs
+                let grade_lesson_load_count_ppt_pdf = {{ grade_lesson_load_count_ppt_pdf }};
+                let grade_lesson_load_count_flashcard = {{ grade_lesson_load_count_flashcard }};
+
+                function add_documents(is_flashcard) {
+                    // initiate loading
+                    let f = is_flashcard.toString() === "1";
+
+                    let grade = $(`${f ? '#grade_field_1' : '#grade_field'}`).val();
+                    let lesson = $(`${f ? '#lesson_field_1' : '#lesson_field'}`).val();
+                    //  alert("grade " + grade + " lesson " + lesson);
+
+                    if (typeof grade !== "undefined" && typeof lesson !== "undefined"
+                        && grade !== null && lesson !== null && grade !== "" && lesson !== "") {
+                        // for the ppt,pdf
+                        let fd = new FormData(document.getElementById(f ? "flashcard_add_form" : "fileinfo"));
+                        fd.append("grade", grade);
+                        fd.append("lesson", lesson);
+                        fd.append("is_flashcard", f.toString()); // "false", "true"
+
+
+                        $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().text('UPLOADING'
+                        ).attr({'class': 'button is-link is-loading'});
+                        $.ajax({
+                            url: "/upload_document",
+                            type: "POST",
+                            data: fd,
+                            processData: false,  // tell jQuery not to process the data
+                            contentType: false   // tell jQuery not to set contentType
+                        }).done(function (data) {
+                            //   alert('Done..');
+                            if (data['status']) {
+                                // if flashcard
+                                if (f) {
+                                    $('#add_flashcard').hide();
+                                    grade_lesson_load_count_flashcard++;
+                                    $('#flashcard-list-body').append("<tr id=\"study_materials_f_" + `${grade_lesson_load_count_flashcard}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
+                                        `    <td>${grade_lesson_load_count_flashcard}</td>\n` +
+                                        `    <td>${grade}</td>\n` +
+                                        `    <td>${lesson}</td>\n` +
+                                        `    <td>9 Flashcards</td>\n` +
+                                        `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
+                                        "</tr>\n");
+
+                                } else {
+                                    $('#add_ppt_pdf_div').hide();
+                                    grade_lesson_load_count_ppt_pdf++;
+                                    $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count_ppt_pdf}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
+                                        `    <td>${grade_lesson_load_count_ppt_pdf}</td>\n` +
+                                        `    <td>${grade}</td>\n` +
+                                        `    <td>${lesson}</td>\n` +
+                                        `    <td>${data['folder_name']}</td>\n` +
+                                        `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
+                                        "</tr>\n");
+                                }
+
+                                // todo: fix this below code according to f==false or true
+                                $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
+                                    '<i+ class="fa fa-plus"></i>&nbsp; ADD').attr(
+                                    {'class': 'button is-link field is-inline-block-mobile'});
+
+                                $('#settings_cards').show();
+                                $('#grade_lesson_list_section').show();
+
+                            } else {
+                                alert("Failed to upload");
+                                $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
+                                    '<i class="fa fa-plus"></i>&nbsp; Failed.Try Again').attr(
+                                    {'class': 'button is-link field is-inline-block-mobile'});
+                            }
+                        });
+                    } else {
+                        // error
+                        alert("Please select grade & lesson both");
+                    }
+                }
+            </script>
+
+
+        </div>
+
+        {# todo: view SS report and make report.. #}
+
+
+        <div class="box" id="view-ss-report-for-specific-student"
+             style="margin: 8px 8px 0;
+         padding: 16px;border: none;border-radius: 0;display: none">
+
+            <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"></h3>
+
+
+        </div>
+
+
+        {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
+
+        {# start => tik-tak-toe game screen #}
+        <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px">
+            <div class="columns is-one-quarter">
+                <div class="column" id="score_area">
+                    <h4 class="title is-4" style="color: #5efa0a" id="whose-turn">Teacher's Turn</h4>
+
+                    <h4 class="title is-4" style="color: cornflowerblue">Student's Score (X)</h4>
+                    <h2 class="title is-3" style="color: gold" id="student-score">0</h2>
+                    <br>
+                    <h4 class="title is-4" style="color: hotpink">Teacher's Score (O)</h4>
+                    <h2 class="title is-3" style="color: gold" id="teacher-score">0</h2>
+                </div>
+
+                <script>
+                    // tik-tak-toe game logics
+                    // variables
+                    let whose_turn = "teacher"; // first move will be "teacher"
+                    let arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]]; // -1 means empty, 0 means teacher 1 means student
+                    let count_clicks = 0;
+
+                    // teacher is 0 and student is X
+                    function change_tik_tak_toe_result(i, j) {
+                        count_clicks++;
+                        // i, j is the clicked position in the 3 x 3 grid of tik-tak-toe game
+                        let tik_tak_toe_card = $(`#tik_tak_toe_${i}_${j}`);
+                        let card_image = $(`#card_${i}_${j}`);
+                        if (whose_turn === "teacher") {
+                            $(`#canvas_circle_${i}__${j}`).css('visibility', 'visible');
+                            whose_turn = "student";
+                            arr[i][j] = 0;
+                            $('#whose-turn').hide().text("Student's Turn").show(1000);
+                        } else {
+                            $(`#canvas_cross_${i}__${j}`).css('visibility', 'visible');
+                            whose_turn = "teacher";
+                            arr[i][j] = 5;
+                            $('#whose-turn').hide().text("Teacher's Turn").show(1500);
+                        }
+                        // now check if there is any cross (potential points)
+                        // row and col check
+                        for (let x = 0; x < 3; x++) {
+                            let row_tot = 0;
+                            let col_tot = 0;
+                            for (let y = 0; y < 3; y++) {
+                                row_tot += arr[x][y];
+                                col_tot += arr[y][x];
+                            }
+                            // alert(" " + row_tot + " " + col_tot);
+                            if (row_tot === 0 || row_tot === 15)
+                                // done for row
+                                return reset_game(row_tot === 0 ? "teacher" : "student");
+                            if (col_tot === 0 || col_tot === 15)
+                                return reset_game(col_tot === 0 ? "teacher" : "student");
+                        }
+                        // 2 diagonal check
+                        let D1 = arr[0][0] + arr[1][1] + arr[2][2];
+                        if (D1 === 0 || D1 === 15)
+                            return reset_game(D1 === 0 ? "teacher" : "student");
+
+                        let D2 = arr[0][2] + arr[1][1] + arr[2][0];
+                        if (D2 === 0 || D2 === 15)
+                            return reset_game(D2 === 0 ? "teacher" : "student");
+
+                        if (count_clicks === 9) {
+                            //   alert("Draw man");
+                            // todo: return reset_game()
+                        }
+                        // todo: check for draw..... and show and it's draw... and reset
+                    }
+
+                    function reset_game(who_won) {
+                        // todo: implement function
+                        for (let x = 0; x < 3; x++) {
+                            for (let y = 0; y < 3; y++) {
+                                $(`#canvas_circle_${x}__${y}`).css('visibility', 'hidden');
+                                $(`#canvas_cross_${x}__${y}`).css('visibility', 'hidden');
+                            }
+                        }
+                        if (who_won === "none") {
+
+                        } else if (who_won === "teacher") {
+                            let teacher_score = parseInt($('#teacher-score').text());
+                            teacher_score++;
+                            $('#teacher-score').text("" + teacher_score);
+                        } else {
+                            let student_score = parseInt($('#student-score').text());
+                            student_score++;
+                            $('#student-score').text("" + student_score);
+                        }
+                        arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]];
+                        whose_turn = "teacher";
+                        count_clicks = 0;
+
+                    }
+
+                    // on change grade and lesson, change the card images
+                    let socket = io.connect('/');
+                    socket.on('grade_and_lesson_change', function (data) {
+                        // data => [src of images.., '/static/flashcards/...']
+                        for (let k = 0; k < 9; k++) { // 9 images
+                            let i = Math.floor(k / 3);
+                            let j = k % 3;
+                            $(`#card_${i}_${j}`).attr('src', data[k]);
+                        }
+                        reset_game("none");
+                    });
+
+
+                </script>
+
+                <div class="column is-half" id="game_area">
+
+                    {% for j in range(3) %}
                         <div class="columns">
-                            {% for j in range(3) %}
-                                <input type="file" id="flashcard_{{ i }}_{{ j }}_input"
-                                       name="flashcard_{{ i }}_{{ j }}_input"
-                                       accept="image/*"
-                                       style="display: none" onchange="on_input_flashcard({{ i }}, {{ j }})">
-                                <div class="column box" style="text-align: center;margin: 12px;cursor: pointer"
-                                     onclick="flashcard_image_upload({{ i }},{{ j }})">
+                            {% for i in range(3) %}
+                                <div class="column box"
+                                     style="text-align:center;position:relative;margin: 8px;width: 150px;height: 150px;"
+                                     id="tik_tak_toe_{{ i }}_{{ j }}"
+                                     onclick="change_tik_tak_toe_result({{ i }},{{ j }})">
 
-                                    <img style="margin-left: auto;margin-right: auto;"
-                                         id="flashcard_{{ i }}__{{ j }}_image"
-                                         src="https://icon-library.com/images/upload-icon/upload-icon-18.jpg"
-                                         width="100px"
-                                         height="100px"
-                                         alt="flashcard_{{ i }}__{{ j }}_image"/>
-                                    <h6 class="title is-6" id="click_to_select_{{ i }}_{{ j }}">Click to select</h6>
+                                    <img style="top: 50%;left: 50%;transform: translate(-50%, -50%);width: 50%;height:50%;z-index: 1;position: absolute"
+                                         id="card_{{ i }}_{{ j }}"
+                                         src="https://i2.wp.com/files.123freevectors.com/wp-content/uploads/new/animals/370-cartoon-dog-vector-image.png?w=800&q=95"
+                                         alt="{{ i }}">
+
+                                    {# draw circle #}
+                                    <canvas id="canvas_circle_{{ i }}__{{ j }}" width="150" height="150"
+                                            style="z-index: 2;position: relative;visibility: hidden"></canvas>
+                                    <script>
+                                        var ctx = document.getElementById("canvas_circle_{{ i }}__{{ j }}").getContext("2d");
+                                        ctx.lineWidth = 7;
+                                        ctx.strokeStyle = 'cornflowerblue';
+                                        ctx.beginPath();
+                                        var w = $(`#tik_tak_toe_{{ i }}_{{ j }}`).width();
+                                        var h = $(`#tik_tak_toe_{{ i }}_{{ j }}`).height();
+                                        //   alert("w " + "h " + h);
+                                        var x = Math.ceil(w / 2);
+                                        var y = Math.ceil(h / 2);
+                                        ctx.arc(x, y, 50, 0, 2 * Math.PI);
+                                        ctx.stroke();
+                                    </script>
+
+                                    {# draw cross #}
+                                    <canvas id="canvas_cross_{{ i }}__{{ j }}" width="150" height="150"
+                                            style="z-index: 3;position: relative;margin-top: -150px;visibility: hidden"></canvas>
+                                    <script>
+                                        var ctx2 = document.getElementById("canvas_cross_{{ i }}__{{ j }}").getContext("2d");
+                                        ctx2.lineWidth = 7;
+                                        ctx2.strokeStyle = 'hotpink';
+                                        ctx2.beginPath();
+                                        var w = $(`#tik_tak_toe_{{ i }}_{{ j }}`).width();
+                                        var h = $(`#tik_tak_toe_{{ i }}_{{ j }}`).height();
+                                        var x = Math.ceil(w / 2);
+                                        var y = Math.ceil(h / 2) - 20;
+                                        var x1 = Math.ceil(x / 2);
+                                        var y1 = Math.ceil(y / 2) + 20;
+
+                                        ctx2.moveTo(x - x1, y - y1);
+                                        ctx2.lineTo(x + x1, y + y1);
+                                        ctx2.stroke();
+                                        ctx2.moveTo(x + x1, y - y1);
+                                        ctx2.lineTo(x - x1, y + y1);
+                                        ctx2.stroke();
+                                    </script>
+
                                 </div>
                             {% endfor %}
                         </div>
                     {% endfor %}
-                </form>
+                </div>
+
+                <div class="column is-one-quarter" id="others_area">
+                    <button class="button is-success" id="new_game_from_game_1"
+                            style="background: #08ce08;color: white;border-radius: 12px;font-weight: bolder">New Game
+                    </button>
+                    <br>
+                    <button class="button is-danger" id="back_to_lesson_from_game_1"
+                            style="background: #ec2323;color: white;border-radius: 12px;font-weight: bolder;margin-top: 8px">
+                        Back To
+                        Lesson
+                    </button>
+                </div>
             </div>
-            <hr>
-            <div style="margin-left: 4px">
+        </div>
 
-                <button style="font-weight: bolder;background: #2996f8;margin-bottom: 20px"
-                        type="button" class="button is-link field is-inline-block-mobile"
-                        id="add_flashcard" onclick="add_documents(1)"><i class="fal fa-cloud-upload"></i>&nbsp;
-                    Upload
-                    Flashcards
-                </button>
+        {# end => tik-tak-toe game screen #}
+
+        {# start => match game screen #}
+        <div class="box" id="match_game" style="background: #207bdd;display: none;margin: 8px">
+            <h3 class="title is-3" style="font-weight: bolder">MATCH</h3>
+            <h6 class="subtitle is-6" style="display: none;">Please choose Grade and Lesson</h6>
+
+            <div class="columns">
+                {# game's first part #}
+                {% set grid_num = [[1,2,3],[4,5,6],[7,8,9]] %}
+                <div class="box column is-two-fifths" style="background: black">
+                    {% set num=0 %}
+                    {% for j in range(3) %}
+                        <div class="columns">
+                            {% for i in range(3) %}
+                                {% set num= num + 1 %}
+                                <div class="column box"
+                                     style="margin: 8px;cursor: pointer"
+                                     id="match_1_{{ i }}_{{ j }}"
+                                     onclick="chosen_first_grid({{ j }},
+                                             {{ i }})">
+                                    <h2 class="title is-3" id="number_{{ i }}_{{ j }}"
+                                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ grid_num[j][i] }}</h2>
+                                    <img
+                                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                            id="match_card_2_{{ i }}_{{ j }}"
+                                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                                            alt="{{ i }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% endfor %}
+                </div>
+                {# game's second part #}
+                {% set grid_letter = [['A','B','C'],['D','E','F'],['G','H','I']] %}
+                <div class="box column is-two-fifths" style="background: black;margin-left: 16px">
+                    {% for j in range(3) %}
+                        <div class="columns">
+                            {% for i in range(3) %}
+                                {# todo: should the height: 126px a hard-coded one? #}
+                                <div class="column box"
+                                     style="margin: 8px;height: 126px;background: #02c9ff;cursor: pointer"
+                                     id="match_2_{{ i }}_{{ j }}" onclick="chosen_second_grid({{ i }},{{ j }})">
+                                    <h2 class="title is-2" id="letter_{{ i }}_{{ j }}"
+                                        style="font-weight: bolder;color: black">{{ grid_letter[j][i] }}</h2>
+                                    <h5 class="title is-5 has-text-centered" style="color: blue"
+                                        id="name_{{ i }}_{{ j }}">
+                                        Elephant</h5>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% endfor %}
+                </div>
+                <div class="column is-one-fifth">
+                    <button class="button is-success" id="new_game_from_game_2"
+                            style="background: #08ce08;color: white;font-weight: bolder;border-radius: 12px;">New Game
+                    </button>
+                    <br>
+                    <button class="button is-danger" id="back_to_lesson_from_game_2"
+                            style="background: #ec2323;color: white;border-radius: 12px;font-weight: bolder;margin-top: 8px">
+                        Back To
+                        Lesson
+                    </button>
+                </div>
             </div>
-
-        </section>
-
-        {# upload ppt,pdf or Flashcard to server code in below <script> tag #}
-        <script>
-
-            // for flashcard image upload
-            function flashcard_image_upload(i, j) {
-                //  alert("i am here");
-                $(`#flashcard_${i}_${j}_input`).trigger('click');
-            }
-
-            function on_input_flashcard(i, j) {
-                let oFReader = new FileReader();
-                oFReader.readAsDataURL(document.getElementById(`flashcard_${i}_${j}_input`).files[0]);
-                oFReader.onload = function (oFREvent) {
-                    document.getElementById(`flashcard_${i}__${j}_image`).src = oFREvent.target.result;
-                    $(`#click_to_select_${i}_${j}`).text("Click to change");
-                };
-            }
-
-            // this will get incremented as we add docs
-            let grade_lesson_load_count_ppt_pdf = {{ grade_lesson_load_count_ppt_pdf }};
-            let grade_lesson_load_count_flashcard = {{ grade_lesson_load_count_flashcard }};
-
-            function add_documents(is_flashcard) {
-                // initiate loading
-                let f = is_flashcard.toString() === "1";
-
-                let grade = $(`${f ? '#grade_field_1' : '#grade_field'}`).val();
-                let lesson = $(`${f ? '#lesson_field_1' : '#lesson_field'}`).val();
-                //  alert("grade " + grade + " lesson " + lesson);
-
-                if (typeof grade !== "undefined" && typeof lesson !== "undefined"
-                    && grade !== null && lesson !== null && grade !== "" && lesson !== "") {
-                    // for the ppt,pdf
-                    let fd = new FormData(document.getElementById(f ? "flashcard_add_form" : "fileinfo"));
-                    fd.append("grade", grade);
-                    fd.append("lesson", lesson);
-                    fd.append("is_flashcard", f.toString()); // "false", "true"
-
-
-                    $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().text('UPLOADING'
-                    ).attr({'class': 'button is-link is-loading'});
-                    $.ajax({
-                        url: "/upload_document",
-                        type: "POST",
-                        data: fd,
-                        processData: false,  // tell jQuery not to process the data
-                        contentType: false   // tell jQuery not to set contentType
-                    }).done(function (data) {
-                        alert('Done..');
-                        if (data['status']) {
-                            // if flashcard
-                            if (f) {
-                                $('#add_flashcard').hide();
-                                grade_lesson_load_count_flashcard++;
-                                $('#flashcard-list-body').append("<tr id=\"study_materials_f_" + `${grade_lesson_load_count_flashcard}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
-                                    `    <td>${grade_lesson_load_count_flashcard}</td>\n` +
-                                    `    <td>${grade}</td>\n` +
-                                    `    <td>${lesson}</td>\n` +
-                                    `    <td>9 Flashcards</td>\n` +
-                                    `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
-                                    "</tr>\n");
-
-                            } else {
-                                $('#add_ppt_pdf_div').hide();
-                                grade_lesson_load_count_ppt_pdf++;
-                                $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count_ppt_pdf}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
-                                    `    <td>${grade_lesson_load_count_ppt_pdf}</td>\n` +
-                                    `    <td>${grade}</td>\n` +
-                                    `    <td>${lesson}</td>\n` +
-                                    `    <td>${data['folder_name']}</td>\n` +
-                                    `    <td><i class=\"fa fa-edit\" style=\"color: #f620d9\"></i></td>\n` +
-                                    "</tr>\n");
-                            }
-
-                            // todo: fix this below code according to f==false or true
-                            $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
-                                '<i+ class="fa fa-plus"></i>&nbsp; ADD').attr(
-                                {'class': 'button is-link field is-inline-block-mobile'});
-
-                            $('#settings_cards').show();
-                            $('#grade_lesson_list_section').show();
-
-                        } else {
-                            alert("Failed to upload");
-                            $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
-                                '<i class="fa fa-plus"></i>&nbsp; Failed.Try Again').attr(
-                                {'class': 'button is-link field is-inline-block-mobile'});
-                        }
-                    });
-                } else {
-                    // error
-                    alert("Please select grade & lesson both");
-                }
-            }
-        </script>
-
-
-    </div>
-
-    {# todo: view SS report and make report.. #}
-
-
-    <div class="box" id="view-ss-report-for-specific-student"
-         style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 0;display: none">
-
-        <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"></h3>
-
-
-    </div>
-
-
-    {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
-
-    {# start => tik-tak-toe game screen #}
-    <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px">
-        <div class="columns is-one-quarter">
-            <div class="column" id="score_area">
-                <h4 class="title is-4" style="color: #5efa0a" id="whose-turn">Teacher's Turn</h4>
-
-                <h4 class="title is-4" style="color: cornflowerblue">Student's Score (X)</h4>
-                <h2 class="title is-3" style="color: gold" id="student-score">0</h2>
-                <br>
-                <h4 class="title is-4" style="color: hotpink">Teacher's Score (O)</h4>
-                <h2 class="title is-3" style="color: gold" id="teacher-score">0</h2>
-            </div>
-
             <script>
-                // tik-tak-toe game logics
-                // variables
-                let whose_turn = "teacher"; // first move will be "teacher"
-                let arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]]; // -1 means empty, 0 means teacher 1 means student
-                let count_clicks = 0;
+                let card_array = [];
+                let card_image_name_map = {};
 
-                // teacher is 0 and student is X
-                function change_tik_tak_toe_result(i, j) {
-                    count_clicks++;
-                    // i, j is the clicked position in the 3 x 3 grid of tik-tak-toe game
-                    let tik_tak_toe_card = $(`#tik_tak_toe_${i}_${j}`);
-                    let card_image = $(`#card_${i}_${j}`);
-                    if (whose_turn === "teacher") {
-                        $(`#canvas_circle_${i}__${j}`).css('visibility', 'visible');
-                        whose_turn = "student";
-                        arr[i][j] = 0;
-                        $('#whose-turn').hide().text("Student's Turn").show(1000);
-                    } else {
-                        $(`#canvas_cross_${i}__${j}`).css('visibility', 'visible');
-                        whose_turn = "teacher";
-                        arr[i][j] = 5;
-                        $('#whose-turn').hide().text("Teacher's Turn").show(1500);
-                    }
-                    // now check if there is any cross (potential points)
-                    // row and col check
-                    for (let x = 0; x < 3; x++) {
-                        let row_tot = 0;
-                        let col_tot = 0;
-                        for (let y = 0; y < 3; y++) {
-                            row_tot += arr[x][y];
-                            col_tot += arr[y][x];
-                        }
-                        // alert(" " + row_tot + " " + col_tot);
-                        if (row_tot === 0 || row_tot === 15)
-                            // done for row
-                            return reset_game(row_tot === 0 ? "teacher" : "student");
-                        if (col_tot === 0 || col_tot === 15)
-                            return reset_game(col_tot === 0 ? "teacher" : "student");
-                    }
-                    // 2 diagonal check
-                    let D1 = arr[0][0] + arr[1][1] + arr[2][2];
-                    if (D1 === 0 || D1 === 15)
-                        return reset_game(D1 === 0 ? "teacher" : "student");
-
-                    let D2 = arr[0][2] + arr[1][1] + arr[2][0];
-                    if (D2 === 0 || D2 === 15)
-                        return reset_game(D2 === 0 ? "teacher" : "student");
-
-                    if (count_clicks === 9) {
-                        alert("Draw man");
-                        // todo: return reset_game()
-                    }
-                    // todo: check for draw..... and show and it's draw... and reset
-                }
-
-                function reset_game(who_won) {
-                    // todo: implement function
-                    for (let x = 0; x < 3; x++) {
-                        for (let y = 0; y < 3; y++) {
-                            $(`#canvas_circle_${x}__${y}`).css('visibility', 'hidden');
-                            $(`#canvas_cross_${x}__${y}`).css('visibility', 'hidden');
-                        }
-                    }
-                    if (who_won === "none") {
-
-                    } else if (who_won === "teacher") {
-                        let teacher_score = parseInt($('#teacher-score').text());
-                        teacher_score++;
-                        $('#teacher-score').text("" + teacher_score);
-                    } else {
-                        let student_score = parseInt($('#student-score').text());
-                        student_score++;
-                        $('#student-score').text("" + student_score);
-                    }
-                    arr = [[-1, -1, -1], [-1, -1, -1], [-1, -1, -1]];
-                    whose_turn = "teacher";
-                    count_clicks = 0;
-
-                }
-
-                // on change grade and lesson, change the card images
-                let socket = io.connect('/');
                 socket.on('grade_and_lesson_change', function (data) {
-                    // data => [src of images.., '/static/flashcards/...']
-                    for (let k = 0; k < 9; k++) { // 9 images
+                    card_array = data;
+                    // match_card_2_{i} => normal card
+                    for (let k = 0; k < 9; k++) {
                         let i = Math.floor(k / 3);
                         let j = k % 3;
-                        $(`#card_${i}_${j}`).attr('src', data[k]);
+                        $(`#match_card_2_${i}_${j}`).attr({'src': data[k], 'alt': ''});
+                        // we need to parse the name of the image from the url
+                        let image_name = card_array[k].split("/");
+                        let image_name_1 = image_name[image_name.length - 1].split(".");
+                        // we set the value here
+                        card_image_name_map[image_name_1[0].toUpperCase()] = [i, j]; // {'ELEPHANT': [0,1]}
                     }
-                    reset_game("none");
+                    // shuffling for second card..
+                    let shuffled_card_array = shuffle(data.slice());
+                    for (let m = 0; m < 9; m++) {
+                        let i = Math.floor(m / 3);
+                        let j = m % 3;
+                        let image_name_2 = shuffled_card_array[m].split("/");
+                        let image_name_3 = image_name_2[image_name_2.length - 1].split(".");
+                        $(`#name_${i}_${j}`).text(`${image_name_3[0]}`.toUpperCase());
+                    }
                 });
 
+                // todo: the below code is for matching ... use the "MAP" created above
+                let last_selected = null; // [i,j]
+                // let colors = [[], [], []];
+                let already_chosen = [];
 
-            </script>
-
-            <div class="column is-half" id="game_area">
-
-                {% for j in range(3) %}
-                    <div class="columns">
-                        {% for i in range(3) %}
-                            <div class="column box"
-                                 style="text-align:center;position:relative;margin: 8px;width: 150px;height: 150px;"
-                                 id="tik_tak_toe_{{ i }}_{{ j }}"
-                                 onclick="change_tik_tak_toe_result({{ i }},{{ j }})">
-
-                                <img style="top: 50%;left: 50%;transform: translate(-50%, -50%);width: 50%;height:50%;z-index: 1;position: absolute"
-                                     id="card_{{ i }}_{{ j }}"
-                                     src="https://i2.wp.com/files.123freevectors.com/wp-content/uploads/new/animals/370-cartoon-dog-vector-image.png?w=800&q=95"
-                                     alt="{{ i }}">
-
-                                {# draw circle #}
-                                <canvas id="canvas_circle_{{ i }}__{{ j }}" width="150" height="150"
-                                        style="z-index: 2;position: relative;visibility: hidden"></canvas>
-                                <script>
-                                    var ctx = document.getElementById("canvas_circle_{{ i }}__{{ j }}").getContext("2d");
-                                    ctx.lineWidth = 7;
-                                    ctx.strokeStyle = 'cornflowerblue';
-                                    ctx.beginPath();
-                                    var w = $(`#tik_tak_toe_{{ i }}_{{ j }}`).width();
-                                    var h = $(`#tik_tak_toe_{{ i }}_{{ j }}`).height();
-                                    //   alert("w " + "h " + h);
-                                    var x = Math.ceil(w / 2);
-                                    var y = Math.ceil(h / 2);
-                                    ctx.arc(x, y, 50, 0, 2 * Math.PI);
-                                    ctx.stroke();
-                                </script>
-
-                                {# draw cross #}
-                                <canvas id="canvas_cross_{{ i }}__{{ j }}" width="150" height="150"
-                                        style="z-index: 3;position: relative;margin-top: -150px;visibility: hidden"></canvas>
-                                <script>
-                                    var ctx2 = document.getElementById("canvas_cross_{{ i }}__{{ j }}").getContext("2d");
-                                    ctx2.lineWidth = 7;
-                                    ctx2.strokeStyle = 'hotpink';
-                                    ctx2.beginPath();
-                                    var w = $(`#tik_tak_toe_{{ i }}_{{ j }}`).width();
-                                    var h = $(`#tik_tak_toe_{{ i }}_{{ j }}`).height();
-                                    var x = Math.ceil(w / 2);
-                                    var y = Math.ceil(h / 2) - 20;
-                                    var x1 = Math.ceil(x / 2);
-                                    var y1 = Math.ceil(y / 2) + 20;
-
-                                    ctx2.moveTo(x - x1, y - y1);
-                                    ctx2.lineTo(x + x1, y + y1);
-                                    ctx2.stroke();
-                                    ctx2.moveTo(x + x1, y - y1);
-                                    ctx2.lineTo(x - x1, y + y1);
-                                    ctx2.stroke();
-                                </script>
-
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            </div>
-
-            <div class="column is-one-quarter" id="others_area">
-                <button class="button is-success" id="new_game_from_game_1"
-                        style="background: #08ce08;color: white;border-radius: 12px;font-weight: bolder">New Game
-                </button>
-                <br>
-                <button class="button is-danger" id="back_to_lesson_from_game_1"
-                        style="background: #ec2323;color: white;border-radius: 12px;font-weight: bolder;margin-top: 8px">
-                    Back To
-                    Lesson
-                </button>
-            </div>
-        </div>
-    </div>
-
-    {# end => tik-tak-toe game screen #}
-
-    {# start => match game screen #}
-    <div class="box" id="match_game" style="background: #207bdd;display: none;margin: 8px">
-        <h3 class="title is-3" style="font-weight: bolder">MATCH</h3>
-        <h6 class="subtitle is-6" style="display: none;">Please choose Grade and Lesson</h6>
-
-        <div class="columns">
-            {# game's first part #}
-            {% set grid_num = [[1,2,3],[4,5,6],[7,8,9]] %}
-            <div class="box column is-two-fifths" style="background: black">
-                {% set num=0 %}
-                {% for j in range(3) %}
-                    <div class="columns">
-                        {% for i in range(3) %}
-                            {% set num= num + 1 %}
-                            <div class="column box"
-                                 style="margin: 8px;cursor: pointer"
-                                 id="match_1_{{ i }}_{{ j }}"
-                                 onclick="chosen_first_grid({{ j }},
-                                         {{ i }})">
-                                <h2 class="title is-3" id="number_{{ i }}_{{ j }}"
-                                    style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ grid_num[j][i] }}</h2>
-                                <img
-                                        style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                                        id="match_card_2_{{ i }}_{{ j }}"
-                                        src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
-                                        alt="{{ i }}">
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                {% endfor %}
-            </div>
-            {# game's second part #}
-            {% set grid_letter = [['A','B','C'],['D','E','F'],['G','H','I']] %}
-            <div class="box column is-two-fifths" style="background: black;margin-left: 16px">
-                {% for j in range(3) %}
-                    <div class="columns">
-                        {% for i in range(3) %}
-                            {# todo: should the height: 126px a hard-coded one? #}
-                            <div class="column box"
-                                 style="margin: 8px;height: 126px;background: #02c9ff;cursor: pointer"
-                                 id="match_2_{{ i }}_{{ j }}" onclick="chosen_second_grid({{ i }},{{ j }})">
-                                <h2 class="title is-2" id="letter_{{ i }}_{{ j }}"
-                                    style="font-weight: bolder;color: black">{{ grid_letter[j][i] }}</h2>
-                                <h5 class="title is-5 has-text-centered" style="color: blue"
-                                    id="name_{{ i }}_{{ j }}">
-                                    Elephant</h5>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                {% endfor %}
-            </div>
-            <div class="column is-one-fifth">
-                <button class="button is-success" id="new_game_from_game_2"
-                        style="background: #08ce08;color: white;font-weight: bolder;border-radius: 12px;">New Game
-                </button>
-                <br>
-                <button class="button is-danger" id="back_to_lesson_from_game_2"
-                        style="background: #ec2323;color: white;border-radius: 12px;font-weight: bolder;margin-top: 8px">
-                    Back To
-                    Lesson
-                </button>
-            </div>
-        </div>
-        <script>
-            let card_array = [];
-            let card_image_name_map = {};
-
-            socket.on('grade_and_lesson_change', function (data) {
-                card_array = data;
-                // match_card_2_{i} => normal card
-                for (let k = 0; k < 9; k++) {
-                    let i = Math.floor(k / 3);
-                    let j = k % 3;
-                    $(`#match_card_2_${i}_${j}`).attr({'src': data[k], 'alt': ''});
-                    // we need to parse the name of the image from the url
-                    let image_name = card_array[k].split("/");
-                    let image_name_1 = image_name[image_name.length - 1].split(".");
-                    // we set the value here
-                    card_image_name_map[image_name_1[0].toUpperCase()] = [i, j]; // {'ELEPHANT': [0,1]}
-                }
-                // shuffling for second card..
-                let shuffled_card_array = shuffle(data.slice());
-                for (let m = 0; m < 9; m++) {
-                    let i = Math.floor(m / 3);
-                    let j = m % 3;
-                    let image_name_2 = shuffled_card_array[m].split("/");
-                    let image_name_3 = image_name_2[image_name_2.length - 1].split(".");
-                    $(`#name_${i}_${j}`).text(`${image_name_3[0]}`.toUpperCase());
-                }
-            });
-
-            // todo: the below code is for matching ... use the "MAP" created above
-            let last_selected = null; // [i,j]
-            // let colors = [[], [], []];
-            let already_chosen = [];
-
-            function chosen_first_grid(j, i) {
-                if (last_selected != null && !already_chosen.includes(last_selected)) {
-                    $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css({'box-shadow': ''});
-                    $(`#number_${last_selected[0]}_${last_selected[1]}`).css({'color': 'black'});
-                }
-                //card_1.effect("shake", {direction: "up", times: 5, distance: 50}, 2000);
-                $(`#match_1_${i}_${j}`).css({'box-shadow': '10px 10px 5px hotpink'});
-                $(`#number_${i}_${j}`).css({'color': 'hotpink'});
-                last_selected = [i, j];
-            }
-
-            function chosen_second_grid(j, i) {
-                // todo: get the mapping between grid-1 and grid-2, thus used to match
-                // todo: if correct/wrong make sound
-                if (last_selected != null) {
-                    // first get the text (image name, like: ELEPHANT , ALL UPPER CASE)
-                    let text_of_second_grid_card = $(`#name_${j}_${i}`).text();
-                    // alert("text: " + text_of_second_grid_card);
-                    // alert(JSON.stringify(card_image_name_map) +
-                    //     " => " + card_image_name_map[text_of_second_grid_card] + " => " + last_selected);
-                    // now match from {'ELEPHANT': index_number}
-                    if (`${card_image_name_map[text_of_second_grid_card]}` ===
-                        `${last_selected}`) {
-
-                        document.getElementById('play_star_sound').click();
-                        $(`#match_2_${j}_${i}`).hide(1500);
-                        $(`#number_${last_selected[0]}_${last_selected[1]}`).css({
-                                'font-size': '18px',
-                                'color': 'green'
-                            }
-                        ).hide().show(1500).text(text_of_second_grid_card);
-                        // to remove the 'cursor: pointer' attribute
-                        $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css(
-                            {
-                                'pointer-events': 'none',
-                                'cursor': 'none',
-                                'box-shadow': '10px 10px 5px green'
-                            });// make the 1st grid elem un-click-able
-                        // todo: if correct then add to already chose
-                        already_chosen.push(last_selected);
-                        last_selected = null; // so that current correct is not being selected as 'last_selected'
-                    } else {
-                        // todo: show it's wrong , show a nice notifications
-                        alert("Oops! It's Wrong, try again.");
+                function chosen_first_grid(j, i) {
+                    if (last_selected != null && !already_chosen.includes(last_selected)) {
+                        $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css({'box-shadow': ''});
+                        $(`#number_${last_selected[0]}_${last_selected[1]}`).css({'color': 'black'});
                     }
-
-
-                    // $(`#letter_${i}_${j}`).text('✔️');
-                } else {
-                    // todo: show a notification that nothing is selected from grid-1
-                    alert('Nothing has been selected from Grid 1');
+                    //card_1.effect("shake", {direction: "up", times: 5, distance: 50}, 2000);
+                    $(`#match_1_${i}_${j}`).css({'box-shadow': '10px 10px 5px hotpink'});
+                    $(`#number_${i}_${j}`).css({'color': 'hotpink'});
+                    last_selected = [i, j];
                 }
 
-            }
-        </script>
-    </div>
+                function chosen_second_grid(j, i) {
+                    // todo: get the mapping between grid-1 and grid-2, thus used to match
+                    // todo: if correct/wrong make sound
+                    if (last_selected != null) {
+                        // first get the text (image name, like: ELEPHANT , ALL UPPER CASE)
+                        let text_of_second_grid_card = $(`#name_${j}_${i}`).text();
+                        // alert("text: " + text_of_second_grid_card);
+                        // alert(JSON.stringify(card_image_name_map) +
+                        //     " => " + card_image_name_map[text_of_second_grid_card] + " => " + last_selected);
+                        // now match from {'ELEPHANT': index_number}
+                        if (`${card_image_name_map[text_of_second_grid_card]}` ===
+                            `${last_selected}`) {
 
-    {# end => match game screen #}
-
-
-    {# start => find game screen #}
-    <div class="box" id="find_game" style="background: #8b35d5;display: none;margin: 8px">
-        <div class="columns">
-            <div class="column">
-                <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">FIND</h3>
-            </div>
-            <div class="column">
-                {# todo: start button #}
-                <h2 class="title is-3" style="color:green;">
-                    {% for i in range(5) %}&nbsp;{% endfor %}
-                    <span style="color: #5ce55c" id="find_game_timer">00:08</span>
-                    <span style="color: #60b8f3"><i class="fa fa-play" id="start_find_game_timer"
-                                                    style="cursor: pointer"></i></span>
-
-                </h2>
-                <div class="columns" style="display: none">
-                    <div class="column box" style="margin-right: 125px">
-                        <img class="is-centered"
-                             style="height: 64px;width: 64px;margin: 0;padding: 0;align-content: center"
-                             id="card_"
-                             src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
-                             alt="_">
-                    </div>
-
-                </div>
-            </div>
-            <div class="column" id="points_column">
-                <h3 class="title is-3" style="color: gold">Points:&nbsp; <span id="find_game_points">0</span></h3>
-            </div>
-        </div>
-        <div class="columns">
-            {# this is the test card #}
-
-            <div class="column box" style="margin: 8px;display: none" id="test_card">
-                <img
-                        style="height: 100px;width: 100px;z-index: 0;margin: 0;padding: 8px;align-content: center"
-                        id="test_card_image"
-                        src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
-                        alt="test_card_image">
-            </div>
-
-            {# normal 9 show cards #}
-
-            {% for k in range(5) %}
-                <div class="column box" style="margin: 8px" id="find_card_box_{{ k }}"
-                     onclick="on_click_possible_match_card({{ k }})">
-                    <h2 class="title is-3" id="number_{{ k }}"
-                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
-                    <img
-                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                            id="find_card_{{ k }}"
-                            src=""
-                            alt="{{ k }}">
-                </div>
-            {% endfor %}
-        </div>
-
-
-        <div class="columns">
-            {% for y in range(5,9) %}
-                <div class="column box" style="margin: 8px" id="find_card_box_{{ y }}"
-                     onclick="on_click_possible_match_card({{ y }})">
-                    <h2 class="title is-3" id="number_{{ y }}"
-                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">
-                        {% set x = loop.index + 5 %}
-                        {{ x }}</h2>
-                    <img
-                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                            id="find_card_{{ y }}"
-                            src=""
-                            alt="{{ y }}">
-                </div>
-            {% endfor %}
-        </div>
-        <section class="section" style="float: right">
-            <button class="button is-success" id="new_game_from_game_3"
-                    style="background: #08ce08;color: white;font-weight: bolder">New Game
-            </button>
-            <button class="button is-danger" id="back_to_lesson_from_game_3"
-                    style="margin-left: 12px;background: #ec2323;color: white;font-weight: bolder">Back To Lesson
-            </button>
-        </section>
-
-        {# script for find game #}
-        <script>
-
-            // todo: from where we are getting the flashcard names and all?
-            // todo: should there be any "STOP" button for the game ?
-            let the_find_game_array = []; // flat array AKA 1-Dimension
-            let index_elem_map = {};
-            let shuffled_test_arr = []; // this will be used
-            // time related
-            const SHOW_TIME = 8 + 1; // 8 seconds (+1 for init)
-            const TEST_TIME = 5 + 1  // 5 seconds (+1 for init)
-            // on click related
-            let is_show_on_going = true;
-            let timers = [];
-            let data = null;
-            // on change grade and lesson, change the card images
-            // let socket = io.connect('/');
-            function reset_the_game(is_initial) {
-                // if not initial setup then
-                //  if (!is_initial) {
-                //  alert("=> " + JSON.stringify(timers));
-                // todo: we need to clear any timer if available
-                for (let k = 0; k < timers.length; k++) {
-                    if (timers[k] !== null && typeof timers[k] !== 'undefined')
-                        clearInterval(timers[k]);
-                    else
-                        alert("Null Timer");
-                }
-                timers = [];
-                // hide the test card and show the icon and all (initial setup)
-                $('#start_find_game_timer').show(); // play icon
-                document.getElementById("find_game_timer").innerHTML = "00:08";
-                $('#test_card').hide();
-                $('#find_game_points').text(`0`); // points
-                //     }
-
-
-                the_find_game_array = data; // {'find': [.....]} 9 elements and a singular array
-                shuffled_test_arr = shuffle(data.slice());
-                // we create a map, to match the random elem with the index while TESTING
-                for (let i = 0; i < the_find_game_array.length; i++) {
-                    index_elem_map[the_find_game_array[i]] = i;
-                    // alert("i: " + i);
-                    $(`#find_card_${i}`).attr({
-                        'src': the_find_game_array[i],
-                        'alt': `${the_find_game_array[i]}`
-                    });
-                    $(`#find_card_box_${i}`).attr({
-                        'background-color': 'none',
-                        'cursor': 'none'
-                    });
-                }
-                // alert(" " + JSON.stringify(index_elem_map));
-            }
-
-            socket.on('grade_and_lesson_change', function (d) {
-                data = d; // update the data
-                reset_the_game(true); // for initial setup + back to lesson + new game
-            });
-
-
-            // find game javascript
-            $('#start_find_game_timer').click(function () {
-                // todo: change the icon
-                // for now just hide the icon
-                $('#start_find_game_timer').hide();
-
-                const countDownDate = new Date();
-                countDownDate.setSeconds(countDownDate.getSeconds() + SHOW_TIME); //
-
-                let y = setInterval(function () {
-                    //    alert("Timer  arr main base; " + JSON.stringify(timers));
-                    // Get today's date and time
-                    const now = new Date().getTime();
-
-                    // Find the distance between now and the count down date
-                    const distance = countDownDate - now;
-
-                    // Time calculations for days, hours, minutes and seconds
-                    // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    // Output the result in an element with id="demo"
-                    document.getElementById("find_game_timer").innerHTML = "00:0" + seconds;
-
-                    // If the count down is over, write some text
-                    if (distance <= 0) { // || should_stop
-
-                        // when the time is over we need to clear the images and show the test image
-                        // show the test card
-                        // remove the images and white background from the show cards
-                        for (let i = 0; i < 10; i++) {
-                            $(`#find_card_${i}`).attr({
-                                'src': 'https://images.vexels.com/media/users/3/152864/isolated/preview/2e095de08301a57890aad6898ad8ba4c-yellow-circle-question-mark-icon-by-vexels.png',
-                                'alt': '?'
-                            });
-                            $(`#find_card_box_${i}`).attr({
-                                'background-color': '#8b35d5',
-                                'cursor': 'pointer'
-                            });
+                            document.getElementById('play_star_sound').click();
+                            $(`#match_2_${j}_${i}`).hide(1500);
+                            $(`#number_${last_selected[0]}_${last_selected[1]}`).css({
+                                    'font-size': '18px',
+                                    'color': 'green'
+                                }
+                            ).hide().show(1500).text(text_of_second_grid_card);
+                            // to remove the 'cursor: pointer' attribute
+                            $(`#match_1_${last_selected[0]}_${last_selected[1]}`).css(
+                                {
+                                    'pointer-events': 'none',
+                                    'cursor': 'none',
+                                    'box-shadow': '10px 10px 5px green'
+                                });// make the 1st grid elem un-click-able
+                            // todo: if correct then add to already chose
+                            already_chosen.push(last_selected);
+                            last_selected = null; // so that current correct is not being selected as 'last_selected'
+                        } else {
+                            // todo: show it's wrong , show a nice notifications
+                            alert("Oops! It's Wrong, try again.");
                         }
-                        $('#test_card').show(1000);
-                        clearInterval(y);
-                        start_test_timer(); // START THE TESTING PROCESS
-                    }
-                }, 1000);
-                timers.push(y);
-
-            });
-
-            // shuffle an array - util code
-            function shuffle(assh) {
-                return assh.sort(function () {
-                    return Math.random() - Math.random()
-                });
-            }
 
 
-            // after the show timer ends we call this function to start the test timer and it's functionalities...
-            // Returns a Promise that resolves after "ms" Milliseconds
-            const timer = ms => new Promise(res => setTimeout(res, ms))
-
-            // current test card (picked at random from shuffled array)
-            let current_test_card = null;
-
-            async function start_test_timer() {
-                // the game will be played as long as "user gets all correct" or clicks "new game/back to lesson"
-                /*
-                Game continues until the user clicks New Game/Back to lesson or all the cards are found
-                * */
-                while (shuffled_test_arr.length > 0) { // while arr.length > 0 we loop to infinity
-                    // we are copying the whole array because from the main array "shuffled_test_arr", the elem will be deleted..
-                    let copy_of_shuff_array = shuffled_test_arr.slice();
-                    for (let i = 0; i < copy_of_shuff_array.length; i++) {
-                        is_show_on_going = false;
-                        current_test_card = copy_of_shuff_array[i];
-                        $('#test_card_image').attr({'src': copy_of_shuff_array[i], 'alt': ''});
-                        initialize_a_test_timer();
-                        // synchronous sleep for 5 seconds!
-                        await timer(TEST_TIME * 1000);
-                    }
-                }
-            }
-
-            function initialize_a_test_timer() {
-
-                document.getElementById("find_game_timer").innerHTML = "00:05";
-                const countDownDate = new Date();
-                countDownDate.setSeconds(countDownDate.getSeconds() + TEST_TIME); //
-
-                let x = setInterval(function () {
-                    //   alert("Timer arr each base; " + JSON.stringify(timers));
-                    // Find the distance between now and the count down date
-                    const distance = countDownDate - new Date().getTime();
-
-                    // If the count down is over, write some text
-                    if (distance <= 0) { // || should_stop
-                        clearInterval(x);
+                        // $(`#letter_${i}_${j}`).text('✔️');
                     } else {
+                        // todo: show a notification that nothing is selected from grid-1
+                        alert('Nothing has been selected from Grid 1');
+                    }
+
+                }
+            </script>
+        </div>
+
+        {# end => match game screen #}
+
+
+        {# start => find game screen #}
+        <div class="box" id="find_game" style="background: #8b35d5;display: none;margin: 8px">
+            <div class="columns">
+                <div class="column">
+                    <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">FIND</h3>
+                </div>
+                <div class="column">
+                    {# todo: start button #}
+                    <h2 class="title is-3" style="color:green;">
+                        {% for i in range(5) %}&nbsp;{% endfor %}
+                        <span style="color: #5ce55c" id="find_game_timer">00:08</span>
+                        <span style="color: #60b8f3"><i class="fa fa-play" id="start_find_game_timer"
+                                                        style="cursor: pointer"></i></span>
+
+                    </h2>
+                    <div class="columns" style="display: none">
+                        <div class="column box" style="margin-right: 125px">
+                            <img class="is-centered"
+                                 style="height: 64px;width: 64px;margin: 0;padding: 0;align-content: center"
+                                 id="card_"
+                                 src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                                 alt="_">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="column" id="points_column">
+                    <h3 class="title is-3" style="color: gold">Points:&nbsp; <span id="find_game_points">0</span></h3>
+                </div>
+            </div>
+            <div class="columns">
+                {# this is the test card #}
+
+                <div class="column box" style="margin: 8px;display: none" id="test_card">
+                    <img
+                            style="height: 100px;width: 100px;z-index: 0;margin: 0;padding: 8px;align-content: center"
+                            id="test_card_image"
+                            src="https://thumbs.dreamstime.com/b/cartoon-elephant-vector-illustration-cute-baby-friendly-smile-big-ears-66547601.jpg"
+                            alt="test_card_image">
+                </div>
+
+                {# normal 9 show cards #}
+
+                {% for k in range(5) %}
+                    <div class="column box" style="margin: 8px" id="find_card_box_{{ k }}"
+                         onclick="on_click_possible_match_card({{ k }})">
+                        <h2 class="title is-3" id="number_{{ k }}"
+                            style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ loop.index }}</h2>
+                        <img
+                                style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                id="find_card_{{ k }}"
+                                src=""
+                                alt="{{ k }}">
+                    </div>
+                {% endfor %}
+            </div>
+
+
+            <div class="columns">
+                {% for y in range(5,9) %}
+                    <div class="column box" style="margin: 8px" id="find_card_box_{{ y }}"
+                         onclick="on_click_possible_match_card({{ y }})">
+                        <h2 class="title is-3" id="number_{{ y }}"
+                            style="font-weight: bolder;color: black;margin: 0;padding: 0;">
+                            {% set x = loop.index + 5 %}
+                            {{ x }}</h2>
+                        <img
+                                style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                id="find_card_{{ y }}"
+                                src=""
+                                alt="{{ y }}">
+                    </div>
+                {% endfor %}
+            </div>
+            <section class="section" style="float: right">
+                <button class="button is-success" id="new_game_from_game_3"
+                        style="background: #08ce08;color: white;font-weight: bolder">New Game
+                </button>
+                <button class="button is-danger" id="back_to_lesson_from_game_3"
+                        style="margin-left: 12px;background: #ec2323;color: white;font-weight: bolder">Back To Lesson
+                </button>
+            </section>
+
+            {# script for find game #}
+            <script>
+
+                // todo: from where we are getting the flashcard names and all?
+                // todo: should there be any "STOP" button for the game ?
+                let the_find_game_array = []; // flat array AKA 1-Dimension
+                let index_elem_map = {};
+                let shuffled_test_arr = []; // this will be used
+                // time related
+                const SHOW_TIME = 8 + 1; // 8 seconds (+1 for init)
+                const TEST_TIME = 5 + 1  // 5 seconds (+1 for init)
+                // on click related
+                let is_show_on_going = true;
+                let timers = [];
+                let data = null;
+                // on change grade and lesson, change the card images
+                // let socket = io.connect('/');
+                function reset_the_game(is_initial) {
+                    // if not initial setup then
+                    //  if (!is_initial) {
+                    //  alert("=> " + JSON.stringify(timers));
+                    // todo: we need to clear any timer if available
+                    for (let k = 0; k < timers.length; k++) {
+                        if (timers[k] !== null && typeof timers[k] !== 'undefined')
+                            clearInterval(timers[k]);
+                        else
+                            alert("Null Timer");
+                    }
+                    timers = [];
+                    // hide the test card and show the icon and all (initial setup)
+                    $('#start_find_game_timer').show(); // play icon
+                    document.getElementById("find_game_timer").innerHTML = "00:08";
+                    $('#test_card').hide();
+                    $('#find_game_points').text(`0`); // points
+                    //     }
+
+
+                    the_find_game_array = data; // {'find': [.....]} 9 elements and a singular array
+                    shuffled_test_arr = shuffle(data.slice());
+                    // we create a map, to match the random elem with the index while TESTING
+                    for (let i = 0; i < the_find_game_array.length; i++) {
+                        index_elem_map[the_find_game_array[i]] = i;
+                        // alert("i: " + i);
+                        $(`#find_card_${i}`).attr({
+                            'src': the_find_game_array[i],
+                            'alt': `${the_find_game_array[i]}`
+                        });
+                        $(`#find_card_box_${i}`).attr({
+                            'background-color': 'none',
+                            'cursor': 'none'
+                        });
+                    }
+                    // alert(" " + JSON.stringify(index_elem_map));
+                }
+
+                socket.on('grade_and_lesson_change', function (d) {
+                    data = d; // update the data
+                    reset_the_game(true); // for initial setup + back to lesson + new game
+                });
+
+
+                // find game javascript
+                $('#start_find_game_timer').click(function () {
+                    // todo: change the icon
+                    // for now just hide the icon
+                    $('#start_find_game_timer').hide();
+
+                    const countDownDate = new Date();
+                    countDownDate.setSeconds(countDownDate.getSeconds() + SHOW_TIME); //
+
+                    let y = setInterval(function () {
+                        //    alert("Timer  arr main base; " + JSON.stringify(timers));
+                        // Get today's date and time
+                        const now = new Date().getTime();
+
+                        // Find the distance between now and the count down date
+                        const distance = countDownDate - now;
+
                         // Time calculations for days, hours, minutes and seconds
                         // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
                         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                         // Output the result in an element with id="demo"
                         document.getElementById("find_game_timer").innerHTML = "00:0" + seconds;
-                    }
-                }, 1000);
-                timers.push(x);
-            }
 
-            // on click a card while testing.. check if it is correct or not
-            // if correct +1 else -1
-            function on_click_possible_match_card(card_index) {
-                //  alert("on click a potential card index : " + card_index);
-                if (!is_show_on_going) { // if test is going on then react to click else not
-                    let img_src_text = $('#test_card_image').attr('src');
-                    // alert("=> " + JSON.stringify(index_elem_map) + " => " + img_src_text + " => " + card_index);
-                    let point_elem = $('#find_game_points');
-                    if (index_elem_map[img_src_text] === card_index) {
-                        shuffled_test_arr = shuffled_test_arr.filter(item => item !== img_src_text);
-                        //   alert("Matched. elem => " + index_elem_map[img_src_text] + " => card index: " + card_index);
-                        // todo: should we hide the matched card? or keep it all?
-                        // increment the point
-                        point_elem.text(`${parseInt(point_elem.text()) + 1}`);
-                        // todo: when correct we need to make all the cards un-clickable for (5 - past) seconds , right?
-                        is_show_on_going = true; // thus makes all cards un-clickable
-                        // shake animation
-                        // $('#points_column').effect( "shake" );
-                    } else {
-                        // didn't match , show some texts or pop up
-                        //    alert("Didn't Match");
-                        // decrement the point
-                        point_elem.text(`${parseInt(point_elem.text()) - 1}`);
-                        // we don't make is_show_on_going=false to keep trying within 5 seconds
-                    }
-                }
-            }
+                        // If the count down is over, write some text
+                        if (distance <= 0) { // || should_stop
 
-        </script>
+                            // when the time is over we need to clear the images and show the test image
+                            // show the test card
+                            // remove the images and white background from the show cards
+                            for (let i = 0; i < 10; i++) {
+                                $(`#find_card_${i}`).attr({
+                                    'src': 'https://images.vexels.com/media/users/3/152864/isolated/preview/2e095de08301a57890aad6898ad8ba4c-yellow-circle-question-mark-icon-by-vexels.png',
+                                    'alt': '?'
+                                });
+                                $(`#find_card_box_${i}`).attr({
+                                    'background-color': '#8b35d5',
+                                    'cursor': 'pointer'
+                                });
+                            }
+                            $('#test_card').show(1000);
+                            clearInterval(y);
+                            start_test_timer(); // START THE TESTING PROCESS
+                        }
+                    }, 1000);
+                    timers.push(y);
 
+                });
 
-    </div>
-
-    {# end => find game screen #}
-
-    {# listen => listen game screen #}
-    <div class="box" id="listen_game" style="background: black;display: none;margin: 8px">
-        <div class="columns">
-            <div class="column">
-                <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">LISTEN</h3>
-            </div>
-            <div class="column">
-                <h3 class="title is-3"
-                ><span style="color: #fa0a62">Points:&nbsp;</span> <span
-                        id="listen_game_points"
-                        style="color: gold;font-weight: bolder">0</span>
-                </h3>
-            </div>
-            <div class="column">
-                <h3 class="title is-3"><span style="color: #0a7efa">Found:</span> <span
-                        id="listen_game_found_how_many"
-                        style="color: #4cff00;font-weight: bolder">0</span>
-                    {#                    <span style="co">&nbsp;Cards</span>#}
-                </h3>
-            </div>
-        </div>
-
-
-        <div class="columns" style="margin-top: 12px">
-            {% for k in range(5) %}
-                <div class="column box" style="margin: 8px;cursor: pointer" onclick="check_if_correct({{ k }})"
-                     id="number_listen_{{ k }}">
-                    <h2 class="title is-3"
-                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">
-                        {{ loop.index }}</h2>
-                    <img
-                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                            id="card_listen_{{ k }}"
-                            src=""
-                            alt="">
-                </div>
-            {% endfor %}
-        </div>
-        <div class="columns">
-            {% for y in range(5,9) %}
-                <div class="column box" style="margin: 8px;cursor: pointer" onclick="check_if_correct({{ y }})">
-                    {% set count = y + 1 %}
-                    <h2 class="title is-3" id="number_listen_{{ y }}"
-                        style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ count }}</h2>
-                    <img
-                            style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
-                            id="card_listen_{{ y }}"
-                            src=""
-                            alt="{{ y }}">
-                </div>
-            {% endfor %}
-        </div>
-        <section class="section" style="float: right;margin-right: 0;padding-right: 0;">
-            <button class="button is-success" id="new_game_from_game_4"
-                    style="background: #08ce08;color: white;font-weight: bolder">New Game
-            </button>
-            <button class="button is-danger" id="back_to_lesson_from_game_4"
-                    style="margin-left: 12px;background: #ec2323;color: white;font-weight: bolder">Back To Lesson
-            </button>
-        </section>
-
-        {# listen script #}
-        <script>
-            // url "/static/flashcards/cat.PNG" => "CAT" parser func
-            function url_to_name_parser(url) {
-                let x = url.split("/");
-                let y = x[x.length - 1].split(".");
-                return y[0].toUpperCase();
-            }
-
-            // grade lesson change receiver
-            let the_listen_game_array = [];
-            let the_listen_shuffled_arr = []; // used for testing..
-            let the_listen_elem_map = {};
-
-            // tracker variable
-            let current_test_image_index = -1; // null
-            let current_test_pos = 0;
-            let listen_game_found_how_many = 0; // if found 9(== Flashcard) cards then game over
-            let number_of_guesses = 0; // how many times the student guessed for a potential match (will be shown in final res.)
-
-
-            socket.on('grade_and_lesson_change', function (data) {
-                //   alert("data " + JSON.stringify(data));
-                the_listen_game_array = data;
-                the_listen_shuffled_arr = shuffle(data.slice());
-                // if (JSON.stringify(the_listen_game_array) === JSON.stringify(the_listen_shuffled_arr)) {
-                //     alert("Fuck! they matched");
-                //     // the_listen_shuffled_arr = [...the_listen_game_array].sort();
-                // }
-                // else
-                //     alert("ok now")
-                // alert("\nshuff " + the_listen_shuffled_arr);
-                // now assign the src to img and create the map
-                for (let x = 0; x < the_listen_game_array.length; x++) {
-                    the_listen_elem_map[the_listen_game_array[x]] = x;
-                    $(`#card_listen_${x}`).attr({
-                        'src': the_listen_game_array[x],
-                        'alt': `${the_listen_game_array[x]}`
+                // shuffle an array - util code
+                function shuffle(assh) {
+                    return assh.sort(function () {
+                        return Math.random() - Math.random()
                     });
                 }
-                // initialize the "SAY X" in window_3 from here via socket
-                // initialize with [0] element
-                current_test_image_index = the_listen_elem_map[
-                    the_listen_shuffled_arr[0]];
-            });
 
-            let current_grade = null; // if null even after clicked the games, then show error to select grade
-            socket.on('grade_lesson_update_trigger', function (data) {
-                current_grade = `${data['grade']}`; // string type
-            });
 
-            $('#game_4').click(function () {
-                if (current_grade === null || current_grade.length === 0)
-                    alert("Please Select Grade and Lesson for Flashcard"); // todo: show_notifications()
-                else {
-                    $('#initial_box').hide(1000);
-                    $('#listen_game').show(1200);
-                    socket.emit('game_4_initialize', {
-                        'image_name':
-                            url_to_name_parser(the_listen_shuffled_arr[current_test_pos])
-                    });
-                    current_test_pos++;
+                // after the show timer ends we call this function to start the test timer and it's functionalities...
+                // Returns a Promise that resolves after "ms" Milliseconds
+                const timer = ms => new Promise(res => setTimeout(res, ms))
+
+                // current test card (picked at random from shuffled array)
+                let current_test_card = null;
+
+                async function start_test_timer() {
+                    // the game will be played as long as "user gets all correct" or clicks "new game/back to lesson"
+                    /*
+                    Game continues until the user clicks New Game/Back to lesson or all the cards are found
+                    * */
+                    while (shuffled_test_arr.length > 0) { // while arr.length > 0 we loop to infinity
+                        // we are copying the whole array because from the main array "shuffled_test_arr", the elem will be deleted..
+                        let copy_of_shuff_array = shuffled_test_arr.slice();
+                        for (let i = 0; i < copy_of_shuff_array.length; i++) {
+                            is_show_on_going = false;
+                            current_test_card = copy_of_shuff_array[i];
+                            $('#test_card_image').attr({'src': copy_of_shuff_array[i], 'alt': ''});
+                            initialize_a_test_timer();
+                            // synchronous sleep for 5 seconds!
+                            await timer(TEST_TIME * 1000);
+                        }
+                    }
                 }
-            });
 
-            // todo: FIX: there are some problems with 9th card's click and all...
+                function initialize_a_test_timer() {
 
-            function check_if_correct(k) {
-                number_of_guesses++; // increment the guess counter
+                    document.getElementById("find_game_timer").innerHTML = "00:05";
+                    const countDownDate = new Date();
+                    countDownDate.setSeconds(countDownDate.getSeconds() + TEST_TIME); //
 
-                //  alert("K => " + k + " current_test_image_index " + current_test_image_index);
-                if (k === current_test_image_index) {
-                    //  todo: remove comment => document.getElementById('play_star_sound').click();
-                    // hide that card
-                    // $(`#number_listen_${k}`).css({'visibility': 'hidden'});
-                    let points = $('#listen_game_points');
-                    points.hide().show(1100).text(`${parseInt(points.text()) + 1}`);
-                    listen_game_found_how_many++;
-                    $('#listen_game_found_how_many').text(`${listen_game_found_how_many}`); // update the text
+                    let x = setInterval(function () {
+                        //   alert("Timer arr each base; " + JSON.stringify(timers));
+                        // Find the distance between now and the count down date
+                        const distance = countDownDate - new Date().getTime();
 
-                    if (listen_game_found_how_many === 9) {
-                        socket.emit('game_4_initialize', {}); // this will send a signal to window3 "SAY NULL"..
-                        // todo: reset the game ... write the reset_game_function()
-                        alert(`Congratulations! You have found all cards in ${number_of_guesses} guesses. Points: ${points.text()}.\nACCURACY: ${Math.floor(9 / number_of_guesses) * 100}%`);
-                    } else {
+                        // If the count down is over, write some text
+                        if (distance <= 0) { // || should_stop
+                            clearInterval(x);
+                        } else {
+                            // Time calculations for days, hours, minutes and seconds
+                            // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                            // Output the result in an element with id="demo"
+                            document.getElementById("find_game_timer").innerHTML = "00:0" + seconds;
+                        }
+                    }, 1000);
+                    timers.push(x);
+                }
+
+                // on click a card while testing.. check if it is correct or not
+                // if correct +1 else -1
+                function on_click_possible_match_card(card_index) {
+                    //  alert("on click a potential card index : " + card_index);
+                    if (!is_show_on_going) { // if test is going on then react to click else not
+                        let img_src_text = $('#test_card_image').attr('src');
+                        // alert("=> " + JSON.stringify(index_elem_map) + " => " + img_src_text + " => " + card_index);
+                        let point_elem = $('#find_game_points');
+                        if (index_elem_map[img_src_text] === card_index) {
+                            shuffled_test_arr = shuffled_test_arr.filter(item => item !== img_src_text);
+                            //   alert("Matched. elem => " + index_elem_map[img_src_text] + " => card index: " + card_index);
+                            // todo: should we hide the matched card? or keep it all?
+                            // increment the point
+                            point_elem.text(`${parseInt(point_elem.text()) + 1}`);
+                            // todo: when correct we need to make all the cards un-clickable for (5 - past) seconds , right?
+                            is_show_on_going = true; // thus makes all cards un-clickable
+                            // shake animation
+                            // $('#points_column').effect( "shake" );
+                        } else {
+                            // didn't match , show some texts or pop up
+                            //    alert("Didn't Match");
+                            // decrement the point
+                            point_elem.text(`${parseInt(point_elem.text()) - 1}`);
+                            // we don't make is_show_on_going=false to keep trying within 5 seconds
+                        }
+                    }
+                }
+
+            </script>
+
+
+        </div>
+
+        {# end => find game screen #}
+
+        {# listen => listen game screen #}
+        <div class="box" id="listen_game" style="background: black;display: none;margin: 8px">
+            <div class="columns">
+                <div class="column">
+                    <h3 class="title is-3" style="font-weight: bolder;color: #00d1b2">LISTEN</h3>
+                </div>
+                <div class="column">
+                    <h3 class="title is-3"
+                    ><span style="color: #fa0a62">Points:&nbsp;</span> <span
+                            id="listen_game_points"
+                            style="color: gold;font-weight: bolder">0</span>
+                    </h3>
+                </div>
+                <div class="column">
+                    <h3 class="title is-3"><span style="color: #0a7efa">Found:</span> <span
+                            id="listen_game_found_how_many"
+                            style="color: #4cff00;font-weight: bolder">0</span>
+                        {#                    <span style="co">&nbsp;Cards</span>#}
+                    </h3>
+                </div>
+            </div>
+
+
+            <div class="columns" style="margin-top: 12px">
+                {% for k in range(5) %}
+                    <div class="column box" style="margin: 8px;cursor: pointer" onclick="check_if_correct({{ k }})"
+                         id="number_listen_{{ k }}">
+                        <h2 class="title is-3"
+                            style="font-weight: bolder;color: black;margin: 0;padding: 0;">
+                            {{ loop.index }}</h2>
+                        <img
+                                style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                id="card_listen_{{ k }}"
+                                src=""
+                                alt="">
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="columns">
+                {% for y in range(5,9) %}
+                    <div class="column box" style="margin: 8px;cursor: pointer" onclick="check_if_correct({{ y }})">
+                        {% set count = y + 1 %}
+                        <h2 class="title is-3" id="number_listen_{{ y }}"
+                            style="font-weight: bolder;color: black;margin: 0;padding: 0;">{{ count }}</h2>
+                        <img
+                                style="height: 60px;width: 60px;z-index: 0;margin: 0;padding: 4px"
+                                id="card_listen_{{ y }}"
+                                src=""
+                                alt="{{ y }}">
+                    </div>
+                {% endfor %}
+            </div>
+            <section class="section" style="float: right;margin-right: 0;padding-right: 0;">
+                <button class="button is-success" id="new_game_from_game_4"
+                        style="background: #08ce08;color: white;font-weight: bolder">New Game
+                </button>
+                <button class="button is-danger" id="back_to_lesson_from_game_4"
+                        style="margin-left: 12px;background: #ec2323;color: white;font-weight: bolder">Back To Lesson
+                </button>
+            </section>
+
+            {# listen script #}
+            <script>
+                // url "/static/flashcards/cat.PNG" => "CAT" parser func
+                function url_to_name_parser(url) {
+                    let x = url.split("/");
+                    let y = x[x.length - 1].split(".");
+                    return y[0].toUpperCase();
+                }
+
+                // grade lesson change receiver
+                let the_listen_game_array = [];
+                let the_listen_shuffled_arr = []; // used for testing..
+                let the_listen_elem_map = {};
+
+                // tracker variable
+                let current_test_image_index = -1; // null
+                let current_test_pos = 0;
+                let listen_game_found_how_many = 0; // if found 9(== Flashcard) cards then game over
+                let number_of_guesses = 0; // how many times the student guessed for a potential match (will be shown in final res.)
+
+
+                socket.on('grade_and_lesson_change', function (data) {
+                    //   alert("data " + JSON.stringify(data));
+                    the_listen_game_array = data;
+                    the_listen_shuffled_arr = shuffle(data.slice());
+                    // if (JSON.stringify(the_listen_game_array) === JSON.stringify(the_listen_shuffled_arr)) {
+                    //     alert("Fuck! they matched");
+                    //     // the_listen_shuffled_arr = [...the_listen_game_array].sort();
+                    // }
+                    // else
+                    //     alert("ok now")
+                    // alert("\nshuff " + the_listen_shuffled_arr);
+                    // now assign the src to img and create the map
+                    for (let x = 0; x < the_listen_game_array.length; x++) {
+                        the_listen_elem_map[the_listen_game_array[x]] = x;
+                        $(`#card_listen_${x}`).attr({
+                            'src': the_listen_game_array[x],
+                            'alt': `${the_listen_game_array[x]}`
+                        });
+                    }
+                    // initialize the "SAY X" in window_3 from here via socket
+                    // initialize with [0] element
+                    current_test_image_index = the_listen_elem_map[
+                        the_listen_shuffled_arr[0]];
+                });
+
+                let current_grade = null; // if null even after clicked the games, then show error to select grade
+                socket.on('grade_lesson_update_trigger', function (data) {
+                    current_grade = `${data['grade']}`; // string type
+                });
+
+                $('#game_4').click(function () {
+                    if (current_grade === null || current_grade.length === 0)
+                        alert("Please Select Grade and Lesson for Flashcard"); // todo: show_notifications()
+                    else {
+                        $('#initial_box').hide(1000);
+                        $('#listen_game').show(1200);
                         socket.emit('game_4_initialize', {
                             'image_name':
                                 url_to_name_parser(the_listen_shuffled_arr[current_test_pos])
                         });
-                        current_test_image_index = the_listen_elem_map[
-                            the_listen_shuffled_arr[current_test_pos]];
                         current_test_pos++;
                     }
-                } else {
-                    // in-correct
-                    let points = $('#listen_game_points');
-                    // todo: Question: will the points keep decrementing as student makes it wrong?
-                    points.hide().show(1100).text(`${parseInt(points.text()) - 1}`);
-                    alert("Try Again");
+                });
+
+                // todo: FIX: there are some problems with 9th card's click and all...
+
+                function check_if_correct(k) {
+                    number_of_guesses++; // increment the guess counter
+
+                    //  alert("K => " + k + " current_test_image_index " + current_test_image_index);
+                    if (k === current_test_image_index) {
+                        //  todo: remove comment => document.getElementById('play_star_sound').click();
+                        // hide that card
+                        // $(`#number_listen_${k}`).css({'visibility': 'hidden'});
+                        let points = $('#listen_game_points');
+                        points.hide().show(1100).text(`${parseInt(points.text()) + 1}`);
+                        listen_game_found_how_many++;
+                        $('#listen_game_found_how_many').text(`${listen_game_found_how_many}`); // update the text
+
+                        if (listen_game_found_how_many === 9) {
+                            socket.emit('game_4_initialize', {}); // this will send a signal to window3 "SAY NULL"..
+                            // todo: reset the game ... write the reset_game_function()
+                            alert(`Congratulations! You have found all cards in ${number_of_guesses} guesses. Points: ${points.text()}.\nACCURACY: ${Math.floor(9 / number_of_guesses) * 100}%`);
+                        } else {
+                            socket.emit('game_4_initialize', {
+                                'image_name':
+                                    url_to_name_parser(the_listen_shuffled_arr[current_test_pos])
+                            });
+                            current_test_image_index = the_listen_elem_map[
+                                the_listen_shuffled_arr[current_test_pos]];
+                            current_test_pos++;
+                        }
+                    } else {
+                        // in-correct
+                        let points = $('#listen_game_points');
+                        // todo: Question: will the points keep decrementing as student makes it wrong?
+                        points.hide().show(1100).text(`${parseInt(points.text()) - 1}`);
+                        alert("Try Again");
+                    }
                 }
-            }
-        </script>
+            </script>
 
-    </div>
-    {# listen => listen game screen #}
-
-
-    {#    <div class="animation_div" style="display: none">#}
-    {#        <img src="{{ url_for('static', filename='images/star.gif') }}" alt="happy_gif"#}
-    {#             width="196px"#}
-    {#             height="196px" id="star_animation">#}
-    {#    </div>#}
-    {# todo: when a student is not selectedin window 1 then this will be disabled, when selected enable #}
-    {# star animation #}
-    <div class="content" style="display:none;" id="star_animation_div">
-        <div class="trophy">
-            <img src="{{ url_for('static', filename='images/trophy.png') }}" alt="trophy" id="trophy_img">
         </div>
-    </div>
+        {# listen => listen game screen #}
 
-    {# dice animation #}
 
-    <div class="panel" style="display: none;margin-top: 50px;" id="dice_animation_div">
-        <div class="dice">
-            <div class="side one">
-                <span class="dot"></span>
-            </div>
-            <div class="side two">
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </div>
-            <div class="side three">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </div>
-            <div class="side four">
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-            <div class="side five">
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-                <div class="kolona">
-                    <span class="dot"></span>
-                </div>
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-            <div class="side six">
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-                <div class="kolona">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
+        {#    <div class="animation_div" style="display: none">#}
+        {#        <img src="{{ url_for('static', filename='images/star.gif') }}" alt="happy_gif"#}
+        {#             width="196px"#}
+        {#             height="196px" id="star_animation">#}
+        {#    </div>#}
+        {# todo: when a student is not selectedin window 1 then this will be disabled, when selected enable #}
+        {# star animation #}
+        <div class="content" style="display:none;" id="star_animation_div">
+            <div class="trophy">
+                <img src="{{ url_for('static', filename='images/trophy.png') }}" alt="trophy" id="trophy_img">
             </div>
         </div>
-    </div>
 
-    {# toss animation #}
-    <div id="toss_animation_div" style="display: none">
+        {# dice animation #}
 
-        <div id="coin">
-            <div class="side-a"></div>
-            <div class="side-b"></div>
+        <div class="panel" style="display: none;margin-top: 50px;" id="dice_animation_div">
+            <div class="dice">
+                <div class="side one">
+                    <span class="dot"></span>
+                </div>
+                <div class="side two">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="side three">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <div class="side four">
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+                <div class="side five">
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <div class="kolona">
+                        <span class="dot"></span>
+                    </div>
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+                <div class="side six">
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                    <div class="kolona">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    {# pdf,ppt loading div #}
-    <div class="box" id="iframe-container"
-         style="margin: 8px;border-radius: 8px;display: none;padding: 0;
+        {# toss animation #}
+        <div id="toss_animation_div" style="display: none">
+
+            <div id="coin">
+                <div class="side-a"></div>
+                <div class="side-b"></div>
+            </div>
+        </div>
+
+        {# pdf,ppt loading div #}
+        <div class="box" id="iframe-container"
+             style="margin: 8px;border-radius: 8px;display: none;padding: 0;
          height: 550px;overflow-y:auto;background: gold;z-index: -1">
 
-        {#
+            {#
     <iframe class="responsive-iframe" id="responsive-iframe" allowfullscreen width="100%" height="500px" frameBorder="0"
             #}
-        {#
+            {#
             src="https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217">
         #}
-        {##}
-        {#
+            {##}
+            {#
     </iframe>
     #}
-        {#        <canvas id="pdf_canvas_" width="100%" height="100%">#}
-        {#            #}
-        {#        </canvas>#}
-        {#        <script>#}
-        {#            var myCanvas = document.getElementById(`pdf_canvas_${i}`);#}
-        {#            var ctx = myCanvas.getContext('2d');#}
-        {#            var img = new Image();#}
-        {#            img.onload = function () {#}
-        {#                ctx.drawImage(img, 0, 0); // Or at whatever offset you like#}
-        {#            };#}
-        {#            img.src = `${data['parsed_pdf_dir_path'] + "/" + i + ".png"}`;#}
-        {#        </script>#}
+            {#        <canvas id="pdf_canvas_" width="100%" height="100%">#}
+            {#            #}
+            {#        </canvas>#}
+            {#        <script>#}
+            {#            var myCanvas = document.getElementById(`pdf_canvas_${i}`);#}
+            {#            var ctx = myCanvas.getContext('2d');#}
+            {#            var img = new Image();#}
+            {#            img.onload = function () {#}
+            {#                ctx.drawImage(img, 0, 0); // Or at whatever offset you like#}
+            {#            };#}
+            {#            img.src = `${data['parsed_pdf_dir_path'] + "/" + i + ".png"}`;#}
+            {#        </script>#}
 
-    </div>
-
-
-    {# canvas to draw over for ppt... #}
-
-    <div id="drawing-div" style="position: absolute;margin-top: -570px;z-index: 2">
-
-    </div>
-    {# end canvas code #}
-
-    {# eraser canvas circle #}
-    {#    <canvas  id="eraser-circle" width="120" height="120"#}
-    {#             style="border:1px solid #d3d3d3;z-index: 4;display: none">#}
-    {#        Your browser does not support the HTML5 canvas tag.#}
-    {#    </canvas>#}
-    {#    <script>#}
-    {#        var c = document.getElementById("eraser-circle");#}
-    {#        var ctx = c.getContext("2d");#}
-    {#        ctx.beginPath();#}
-    {#        ctx.arc(60, 60, 40, 0, 2 * Math.PI);#}
-    {#        ctx.stroke();#}
-    {#    </script>#}
+        </div>
 
 
-    {# hidden sound block for animations #}
-    {#
+        {# canvas to draw over for ppt... #}
+
+        <div id="drawing-div" style="position: absolute;margin-top: -570px;z-index: 2">
+
+        </div>
+        {# end canvas code #}
+
+        {# eraser canvas circle #}
+        {#    <canvas  id="eraser-circle" width="120" height="120"#}
+        {#             style="border:1px solid #d3d3d3;z-index: 4;display: none">#}
+        {#        Your browser does not support the HTML5 canvas tag.#}
+        {#    </canvas>#}
+        {#    <script>#}
+        {#        var c = document.getElementById("eraser-circle");#}
+        {#        var ctx = c.getContext("2d");#}
+        {#        ctx.beginPath();#}
+        {#        ctx.arc(60, 60, 40, 0, 2 * Math.PI);#}
+        {#        ctx.stroke();#}
+        {#    </script>#}
+
+
+        {# hidden sound block for animations #}
+        {#
 <audio controls>#}
-    {#
+        {#
     <source src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" type="audio/mpeg" id="star_sound">
     #}
-    {#
+        {#
 </audio>#}
 
-    <audio id="audiotag1" src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" preload="auto"></audio>
-    <audio id="audiotag2" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}" preload="auto"></audio>
-    <a href="javascript:play_star_sound();" style="display: none" id="play_star_sound"></a>
-    <a href="javascript:play_dice_sound(event);" style="display: none" id="play_dice_sound"></a>
-    <script type="text/javascript">
-        function play_star_sound() {
-            document.getElementById('audiotag1').play();
-        }
+        <audio id="audiotag1" src="{{ url_for('static', filename='sounds/star_sound.mp3') }}" preload="auto"></audio>
+        <audio id="audiotag2" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}" preload="auto"></audio>
+        <a href="javascript:play_star_sound();" style="display: none" id="play_star_sound"></a>
+        <a href="javascript:play_dice_sound(event);" style="display: none" id="play_dice_sound"></a>
+        <script type="text/javascript">
+            function play_star_sound() {
+                document.getElementById('audiotag1').play();
+            }
 
-        function play_dice_sound(e) {
-            e.preventDefault();
-            document.getElementById('audiotag2').play();
-        }
+            function play_dice_sound(e) {
+                e.preventDefault();
+                document.getElementById('audiotag2').play();
+            }
 
-    </script>
+        </script>
 
 
-    {# modal to change timer time for class #}
-    <div class="modal" id="timer_modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Set Class Time Length</p>
-                <button class="delete" aria-label="close" onclick="close_modal()"></button>
-            </header>
-            <section class="modal-card-body">
-                <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time">00:50:00</h1>
-                <div class="columns">
-                    <div class="column">
-                        <label for="hours"> Hours</label>
-                        <input class="input is-medium" type="number" placeholder="hours" value="0" id="hours"
-                               onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
-                               oninput="update_time()" onautocomplete="update_time()">
-                    </div>
-                    <div class="column">
-                        <label for="minutes">Minutes</label>
-                        <input class="input is-medium" type="number" placeholder="minutes" value="50" id="minutes"
-                               onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
-                               oninput="update_time()" onautocomplete="update_time()">
-                    </div>
-                    <div class="column">
-                        <label for="seconds">Seconds</label>
-                        <input class="input is-medium" type="number" placeholder="seconds" value="0" id="seconds"
-                               onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
-                               oninput="update_time()" onautocomplete="update_time()"
-                        >
-                    </div>
-                    <script>
-                        function close_modal() {
-                            $('#timer_modal').removeClass("modal is-active").addClass("modal");
-                        }
-
-                        function update_time() {
-                            let h = $('#hours');
-                            let m = $('#minutes');
-                            let s = $('#seconds');
-                            let save_changes = $('#save_time');
-                            let hi = parseInt(h.val());
-                            let mi = parseInt(m.val());
-                            let si = parseInt(s.val());
-
-                            if (hi < 0 || hi > 23) {
-                                save_changes.prop('disabled', true);
-                                h.removeClass("input is-medium").addClass("input is-medium is-danger");
-                                return;
-                            } else {
-                                save_changes.prop('disabled', false);
-                                h.removeClass("input is-medium is-danger").addClass("input is-medium");
-                                if (hi < 10)
-                                    hi = "0" + hi;
-                                else
-                                    hi = "" + hi;
-                            }
-                            if (mi < 0 || mi > 59) {
-                                save_changes.prop('disabled', true);
-                                m.removeClass("input is-medium").addClass("input is-medium is-danger");
-                                return;
-                            } else {
-                                save_changes.prop('disabled', false);
-                                m.removeClass("input is-medium is-danger").addClass("input is-medium");
-                                if (mi < 10)
-                                    mi = "0" + mi;
-                                else
-                                    mi = "" + mi;
-                            }
-                            if (si < 0 || si > 59) {
-                                save_changes.prop('disabled', true);
-                                s.removeClass("input is-medium").addClass("input is-medium is-danger");
-                                return;
-                            } else {
-                                save_changes.prop('disabled', false);
-                                s.removeClass("input is-medium is-danger").addClass("input is-medium");
-                                if (si < 10)
-                                    si = "0" + si;
-                                else
-                                    si = "" + si;
+        {# modal to change timer time for class #}
+        <div class="modal" id="timer_modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Set Class Time Length</p>
+                    <button class="delete" aria-label="close" onclick="close_modal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time">00:50:00</h1>
+                    <div class="columns">
+                        <div class="column">
+                            <label for="hours"> Hours</label>
+                            <input class="input is-medium" type="number" placeholder="hours" value="0" id="hours"
+                                   onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
+                                   oninput="update_time()" onautocomplete="update_time()">
+                        </div>
+                        <div class="column">
+                            <label for="minutes">Minutes</label>
+                            <input class="input is-medium" type="number" placeholder="minutes" value="50" id="minutes"
+                                   onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
+                                   oninput="update_time()" onautocomplete="update_time()">
+                        </div>
+                        <div class="column">
+                            <label for="seconds">Seconds</label>
+                            <input class="input is-medium" type="number" placeholder="seconds" value="0" id="seconds"
+                                   onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
+                                   oninput="update_time()" onautocomplete="update_time()"
+                            >
+                        </div>
+                        <script>
+                            function close_modal() {
+                                $('#timer_modal').removeClass("modal is-active").addClass("modal");
                             }
 
+                            function update_time() {
+                                let h = $('#hours');
+                                let m = $('#minutes');
+                                let s = $('#seconds');
+                                let save_changes = $('#save_time');
+                                let hi = parseInt(h.val());
+                                let mi = parseInt(m.val());
+                                let si = parseInt(s.val());
 
-                            $('#time').text(hi + ":" + mi + ":" + si);
-                        }
-                    </script>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button is-success" id="save_time">Save Changes</button>
-                <button class="button" onclick="close_modal()">Cancel</button>
-            </footer>
+                                if (hi < 0 || hi > 23) {
+                                    save_changes.prop('disabled', true);
+                                    h.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                    return;
+                                } else {
+                                    save_changes.prop('disabled', false);
+                                    h.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                    if (hi < 10)
+                                        hi = "0" + hi;
+                                    else
+                                        hi = "" + hi;
+                                }
+                                if (mi < 0 || mi > 59) {
+                                    save_changes.prop('disabled', true);
+                                    m.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                    return;
+                                } else {
+                                    save_changes.prop('disabled', false);
+                                    m.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                    if (mi < 10)
+                                        mi = "0" + mi;
+                                    else
+                                        mi = "" + mi;
+                                }
+                                if (si < 0 || si > 59) {
+                                    save_changes.prop('disabled', true);
+                                    s.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                    return;
+                                } else {
+                                    save_changes.prop('disabled', false);
+                                    s.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                    if (si < 10)
+                                        si = "0" + si;
+                                    else
+                                        si = "" + si;
+                                }
+
+
+                                $('#time').text(hi + ":" + mi + ":" + si);
+                            }
+                        </script>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success" id="save_time">Save Changes</button>
+                    <button class="button" onclick="close_modal()">Cancel</button>
+                </footer>
+            </div>
         </div>
-    </div>
 
 
-    {# modal to change the screenshot timer settings #}
-    <div class="modal" id="screenshot-timer-modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Set ScreenShot Time Interval</p>
-                <button class="delete" aria-label="close" onclick="close_modal()"></button>
-            </header>
-            <section class="modal-card-body">
-                <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time-interval">5 seconds</h1>
-                <div class="columns">
-                    <div class="column">
-                        <label for="seconds">Seconds</label>
-                        <input class="input is-medium" type="number" placeholder="seconds" value="0"
-                               id="interval-seconds"
-                               onchange="update_interval_text()" onkeyup="update_interval_text()"
-                               onkeydown="update_interval_text()"
-                               oninput="update_interval_text()" onautocomplete="update_interval_text()"
-                        >
-                    </div>
-                    <script>
-                        function close_modal() {
-                            $('#screenshot-timer-modal').removeClass("modal is-active").addClass("modal");
-                        }
-
-                        function update_interval_text() {
-                            let save_interval_time = $('#save-interval-time');
-                            let interval = $('#interval-seconds');
-                            let si = parseInt(interval.val());
-
-                            if (si < 1 || si > 59) {
-                                save_interval_time.prop('disabled', true);
-                                interval.removeClass("input is-medium").addClass("input is-medium is-danger");
-                                return;
-                            } else {
-                                save_interval_time.prop('disabled', false);
-                                interval.removeClass("input is-medium is-danger").addClass("input is-medium");
-                                si = si + " seconds";
+        {# modal to change the screenshot timer settings #}
+        <div class="modal" id="screenshot-timer-modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Set ScreenShot Time Interval</p>
+                    <button class="delete" aria-label="close" onclick="close_modal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time-interval">5 seconds</h1>
+                    <div class="columns">
+                        <div class="column">
+                            <label for="seconds">Seconds</label>
+                            <input class="input is-medium" type="number" placeholder="seconds" value="0"
+                                   id="interval-seconds"
+                                   onchange="update_interval_text()" onkeyup="update_interval_text()"
+                                   onkeydown="update_interval_text()"
+                                   oninput="update_interval_text()" onautocomplete="update_interval_text()"
+                            >
+                        </div>
+                        <script>
+                            function close_modal() {
+                                $('#screenshot-timer-modal').removeClass("modal is-active").addClass("modal");
                             }
 
-                            $('#time-interval').text(si);
-                        }
-                    </script>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button is-success" id="save-interval-time">Save Changes</button>
-                <button class="button" onclick="close_modal()">Cancel</button>
-            </footer>
+                            function update_interval_text() {
+                                let save_interval_time = $('#save-interval-time');
+                                let interval = $('#interval-seconds');
+                                let si = parseInt(interval.val());
+
+                                if (si < 1 || si > 59) {
+                                    save_interval_time.prop('disabled', true);
+                                    interval.removeClass("input is-medium").addClass("input is-medium is-danger");
+                                    return;
+                                } else {
+                                    save_interval_time.prop('disabled', false);
+                                    interval.removeClass("input is-medium is-danger").addClass("input is-medium");
+                                    si = si + " seconds";
+                                }
+
+                                $('#time-interval').text(si);
+                            }
+                        </script>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success" id="save-interval-time">Save Changes</button>
+                    <button class="button" onclick="close_modal()">Cancel</button>
+                </footer>
+            </div>
         </div>
     </div>
 {% endblock %}

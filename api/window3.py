@@ -78,12 +78,11 @@ def timer_trigger(data):
     print("time triggered: {}".format(start_or_end))
     t = {"start_or_end": start_or_end}
     if start_or_end == "start":
-        print("here x")
         pickle_path = os.path.abspath(os.path.join('static', 'pickles', 'start_timer.pickle'))
         if os.path.exists(pickle_path):
             with open(pickle_path, 'rb') as handle:
                 t['timer_data'] = pickle.load(handle)
-                print(t['timer_data'])
+                print("timer data after loading from pickle is ", t['timer_data'])
         else:
             t['timer_data'] = "None"
     print("t => {}".format(t))
@@ -92,6 +91,7 @@ def timer_trigger(data):
 
 @socket_io.on('open_time_settings')
 def open_time_settings(data):
+    print(data)
     # same as top route but send timer_data: None
     t = {"start_or_end": '', 'timer_data': "None"}
     emit('timer_trigger_emit_to_win2', t, namespace='/', broadcast=True)
@@ -120,7 +120,7 @@ def k_or_a_receive_signal(data):
 
 @socket_io.on('switch_to_games_receive')
 def switch_to_games(data):
-
+    # todo: emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
     emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
 
 

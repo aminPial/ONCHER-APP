@@ -33,16 +33,15 @@ def add_header(response):
     return response
 
 
-from routers import *
-
-database_cluster.create_all()
-
-
 @oncher_app.route('/favicon.ico')
 def favicon_ico():
     return ""
 
-#
+
+from routers import *
+
+database_cluster.create_all()
+
 # if __name__ == '__main__':
 #     database_cluster.create_all()
 #     socket_io.run(oncher_app, port=5000, debug=True)

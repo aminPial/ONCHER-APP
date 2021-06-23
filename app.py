@@ -1,6 +1,7 @@
 from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep
+
 import pyautogui as p
 from webview import create_window, start
 # from webview.platforms.cef import settings  #
@@ -10,6 +11,8 @@ from server import socket_io, oncher_app  # can be deleted
 from os import _exit
 import sentry_sdk
 
+# import logging
+
 sentry_sdk.init(
     "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -17,6 +20,17 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
+
+# logging stuff
+# logger = logging.getLogger()
+# logger.setLevel(logging.DEBUG)
+#
+# ch = logging.StreamHandler()
+# ch.setLevel(logging.DEBUG)
+# formatter = logging.Formatter('%(asctime)s - %(message)s')
+# ch.setFormatter(formatter)
+#
+# logger.addHandler(ch)
 
 BASE_URL = None
 
@@ -42,9 +56,9 @@ def is_port_available(port: int):
     return result
 
 
-def destroy_window(window):
+def destroy_window(ww):
     sleep(10)
-    window.destroy()
+    ww.destroy()
     return
 
 
@@ -72,6 +86,14 @@ def start_process(port):
 def on_closed():
     # close the app if a single window is closed
     _exit(0)
+
+
+# def hide(ws: List[webview.Window], show: bool = False):
+#     print(ws, show)
+#     if show:
+#         [wx.show() for wx in ws]
+#     else:
+#         [wx.hide() for wx in ws]
 
 
 if __name__ == '__main__':
@@ -103,7 +125,7 @@ if __name__ == '__main__':
     # t.join()
 
     # this is URL loading time before the window creation
-    # show_loading_screen()
+    show_loading_screen()
 
     w, h = p.size()
     # w, h = w_a, h_a - int(h_a * 0.10)
@@ -118,7 +140,7 @@ if __name__ == '__main__':
     w3x, w3y = w1w, w2h - 30  # window three start y-co-ordinate looks like wrong!
     w3w, w3h = w2w, int(h * 0.15)
 
-    _should_on_top = False
+    _should_on_top = True
 
     second_window = create_window('',
                                   url=f"{BASE_URL}/window_2",
@@ -216,4 +238,5 @@ if __name__ == '__main__':
             print("Failed to maximize window because of {}".format(e))
 
 
+    # func=hide, args=(windows, False),
     start(debug=True, gui="edgehtml")

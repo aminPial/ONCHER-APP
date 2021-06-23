@@ -45,13 +45,22 @@ $(document).ready(function () {
     $('#start_end_timer_button').click(function () {
         let st = $('#start_end_timer_button');
         let start_or_end = st.text().toLowerCase();
-        if (start_or_end === 'start')
-            st.text("End");
-        else
-            st.text("Start");
+        /// alert(`${start_or_end === 'start'}`);
+        if (start_or_end === 'start') {
+            //  alert("End text");
+            $('#start_end_timer_button').html("End").text("End").val("End");
+            //  alert("x");
+        } else {
+            $('#start_end_timer_button').html("Start").text("Start").val("Start");
+        }
         // todo: if no time is set then pop up (response from the server that time has not set)
         socket.emit('timer_trigger', {'start_or_end': start_or_end});
     });
+
+    socket.on('timer_is_finished_normally', function (data) {
+        $('#start_end_timer_button').html("Start").text("Start").val("Start");
+    });
+
     // open time settings
     $('#timer_settings').click(function () {
         socket.emit('open_time_settings', {'': ''});
@@ -73,7 +82,10 @@ $(document).ready(function () {
     });
 
     // all related icon of docs..
-    function doc_icon_enable_disable(will_be_enabled) {
+    // icon activate deactivate .. based on actions and setup and triggers
+    // icons list
+    function doc_icon_enable_disable(will_be_enabled, should_skip) {
+        // should_skip is a list of elements/index that will be skipped from the enable/disable action
         let elem = [
             $('#draw_tool'),
             $('#erase_tool'),
@@ -81,27 +93,30 @@ $(document).ready(function () {
             $('#thickness_tool'),
             $('#color_pick_tool'),
             $('#text_tool'),
-            $('#timer_settings'),
+            //    $('#timer_settings'),
             $('#star_animation_trigger'),
             $('#toss_animation_trigger'),
             $('#dice_animation_trigger'),
             $('#start_end_timer_button'),
-            $('#games_start_trigger'),
+            //  $('#games_start_trigger'),
 
             // screen shot $('#timer-settings')
         ]
         for (let x = 0; x < elem.length; x++) {
             if (will_be_enabled)
-                elem[x].css('pointer-events', '');
+                elem[x].css('pointer-events', '').removeAttr('disabled');
             else
-                elem[x].css('pointer-events', 'none');
+                elem[x].css('pointer-events', 'none').attr({'disabled': 'disabled'});
         }
-
     }
+
+    // on body load (document ready)
+    doc_icon_enable_disable(false, []);
 
     // will be trigger by 'back to lesson' from window2.js -> window2.py then here
     socket.on('enable_doc_related_icon', function (data) {
-        doc_icon_enable_disable(true); // true means will be enabled
+        // data['skip']
+        doc_icon_enable_disable(data['should_enable'], data['skip']); // true means will be enabled
     });
 
     // games
@@ -149,12 +164,11 @@ $(document).ready(function () {
     // last game => game4 special function
     socket.on('game_4_init_emit_signal', function (data) {
         // this will be used for "SAY CAT" and etc.
-       if (data['image_name'] !== "NULL") {
+        if (data['image_name'] !== "NULL") {
             $('#image_name').text(data['image_name']); // has to be ALL CAPS
             $('#game_4_special').show();
-        }
-       else
-           $('#game_4_special').hide();
+        } else
+            $('#game_4_special').hide();
     });
 
     // screenshot related triggers
@@ -169,11 +183,14 @@ $(document).ready(function () {
     });
 
     $('#take_screenshot').click(function () {
-        socket.emit('take_screenshot', {
-            'full_student_object_in_dict_format': student_object_data,
-            'selected_lesson': selected_lesson,
-            'is_continuous': false
-        });
+        if (student_object_data != null) {
+            socket.emit('take_screenshot', {
+                'full_student_object_in_dict_format': student_object_data,
+                'selected_lesson': selected_lesson,
+                'is_continuous': false
+            });
+        } else
+            alert("Please choose a student");
     });
 
     let is_on_now = false;

@@ -11,6 +11,9 @@ from models import *
 from app import BASE_URL
 
 
+# from app import logger
+
+
 @oncher_app.route('/window_1')
 def window_1():
     # todo: there are 2 grade_lesson dict version. One is flashcard and another is docs(pdf, ppt)
@@ -178,8 +181,6 @@ def grade_lesson_select_signal_receive(data):
     if study_mat_query:
         study_mat_query: StudyMaterials
 
-        payload = {}
-
         if study_mat_query.is_pdf:
             parsed_pdf_dir_path = "/static/cache/{}".format(study_mat_query.folder_name)
             # we need to parse width and height from the doc
@@ -207,11 +208,13 @@ def grade_lesson_select_signal_receive(data):
                 'ppt_url': study_mat_query.ppt_server_url
             }
         emit('study_doc_update', payload, namespace='/', broadcast=True)
+        emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
     else:
         print("No docs available under this grade and lesson")
 
-    # this is for the window 3 screen shot purpose, that we need lesson and window-2 error check for un-selected GL for flshcards
-    emit('grade_lesson_update_trigger', {'lesson': data['lesson'], 'grade': data['grade']}, namespace='/', broadcast=True)
+    # this is for the window 3 screen shot purpose, that we need lesson and window-2 error check for un-selected GL for flashcards
+    emit('grade_lesson_update_trigger', {'lesson': data['lesson'], 'grade': data['grade']}, namespace='/',
+         broadcast=True)
 
 # @oncher_app.route('/test')
 # def test():

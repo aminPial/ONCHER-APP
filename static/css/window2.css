@@ -81,16 +81,16 @@ html {
     }
 }
 
-#drag_and_drop_section {
-    font-weight: bold;
-    text-align: center;
-    padding: 1em 0;
-    margin: 1em 0;
-    color: gold;
-    border: 2px dashed gold;
-    border-radius: 7px;
-    cursor: default;
-}
+/*#drag_and_drop_section {*/
+/*    font-weight: bold;*/
+/*    text-align: center;*/
+/*    padding: 1em 0;*/
+/*    margin: 1em 0;*/
+/*    color: gold;*/
+/*    border: 2px dashed gold;*/
+/*    border-radius: 7px;*/
+/*    cursor: default;*/
+/*}*/
 
 /* dice animation styles */
 .dice {

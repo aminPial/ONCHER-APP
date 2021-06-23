@@ -254,7 +254,7 @@ $(document).ready(function () {
         // todo: ? for ppt
         if (type_of_action === 'draw' || type_of_action === "full_clear") {
             if (current_doc_type === 'ppt' && document.getElementById(`ppt_canvas`) === null) {
-                alert("here");
+              //  alert("here");
                 init_drawing_board_for_ppt();
             }
         }
@@ -815,8 +815,7 @@ $(document).ready(function () {
         let timer_data = data['timer_data'];
         // can be actually none or it can send to change the time (from settings of timer)
         if (timer_data === "None") {
-            alert("timer data is none");
-            // pop up the modal to set up time
+            // pop up the modal to set up (timer data none means => pop up settings)
             $('#timer_modal').removeClass("modal").addClass("modal is-active");
         } else {
             console.log(data['start_or_end']);
@@ -870,6 +869,9 @@ $(document).ready(function () {
                         $('#iframe-container').hide();
                         $('#loading_box').hide();
                         $('#student-report-input').show();
+                        // here we need to send a trigger to window 3 that it ends...
+                        // so that the button in window3 can have a the text "Start
+                        socket.emit("timer_is_finished_trigger_9", {});
                     }
                 }, 1000);
             }

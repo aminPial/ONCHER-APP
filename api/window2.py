@@ -74,6 +74,12 @@ def save_time_interval_of_screenshot():
         return jsonify(status=0)
 
 
+@socket_io.on('timer_is_finished_trigger_9')
+def timer_is_finished_trigger_9(data):
+    print("timer_is_finished trigger called")
+    emit('timer_is_finished_normally', {}, namespace='/', broadcast=True)
+
+
 #
 @socket_io.on('add_star_to_student_record')
 def add_star_to_student_record(data):
@@ -304,7 +310,8 @@ def upload_document():
 @socket_io.on('refresh_grades_as_per_docs')
 def refresh_grades_as_per_docs(data):
     emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
-    emit('enable_doc_related_icon', {}, namespace='/', broadcast=True)  # back from games (back-to-lesson)
+    emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/',
+         broadcast=True)  # back from games (back-to-lesson)
 
 
 @oncher_app.route('/student_report_submit', methods=['POST'])
