@@ -181,7 +181,7 @@
   justify-content: space-between;">
                 <span id="base_grade_text" style="font-weight: bolder">Select Grade</span>
                 <span class="icon is-small">
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 4px"></i>
                  </span>
             </button>
 
@@ -205,20 +205,21 @@
             <button class="button is-link" aria-haspopup="true"
                     aria-controls="dropdown-menu3"
                     style="box-shadow: 0 0 11px rgba(236,220,220,0.45);
-                        float: left;width: 100%;display: flex;
+                        float: left;;width: 100%;display: flex;padding-right: 8px;
   justify-content: space-between">
-                <span id="base_lesson_text" style="font-weight: bolder">Select Lesson</span>
-                <span class="icon is-small">
-                           <i class="fas fa-angle-down" aria-hidden="true" style="float: right"></i>
-                         </span>
+                <span id="base_lesson_text" style="font-weight: bolder">Select Lesson
+                     <i class="fas fa-angle-down" aria-hidden="true" ></i><span>
+{#                    #}
+{#                </span></span>#}
+{#                <span class="icon is-small" style="padding-right: 4px">#}
+{#                          #}
+{#                         </span>#}
             </button>
 
 
             <div class="dropdown-menu" id="dropdown-menu5" role="menu">
                 <div class="dropdown-content" id="lessons_div">
                     {# empty... will be appended by JS on grade select.. #}
-
-
                 </div>
 
             </div>
@@ -245,7 +246,7 @@
                 for (const [__grade, __lesson] of Object.entries(
                     which_one === 'docs_version' ? grade_lessons_docs_version : grade_lessons_flashcard_version
                 )) {
-                   // alert(`${__grade}: ${__lesson}`);
+                    // alert(`${__grade}: ${__lesson}`);
                     g_elem.append(`<a onClick=\"send_grade_select_signal(${__grade})\" class=\"dropdown-item\">\n` +
                         `    ${__grade}\n` +
                         "</a>");
@@ -260,7 +261,7 @@
             });
 
             socket.on('switch_to_games_emit', function (data) {
-             //   alert("Switching to games"); // data is already there when loaded
+                //   alert("Switching to games"); // data is already there when loaded
                 which_one = 'flashcard_version';
                 refresh_grade();
             });

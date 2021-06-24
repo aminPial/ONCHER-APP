@@ -190,7 +190,7 @@ $(document).ready(function () {
                 'is_continuous': false
             });
         } else
-            alert("Please choose a student");
+             send_data_for_notifications(false,"Please choose a student to take SS");
     });
 
     let is_on_now = false;
@@ -237,8 +237,7 @@ $(document).ready(function () {
                 interval_var = setInterval(openfolder, 1100);
 
             } else {
-                // todo: show this in the window 2
-                alert("Missing lesson/student. Please select before taking ss");
+                send_data_for_notifications(false, "Missing lesson/student. Please select before taking ss");
             }
         }
         is_on_now = !is_on_now;
@@ -251,5 +250,11 @@ $(document).ready(function () {
         socket.emit('screenshot_timer_settings', {});
     });
 
+    function send_data_for_notifications(is_positive,msg ){
+        socket.emit('pass_message_to_window_2', {
+            'is_positive': is_positive,
+            'message': msg
+        })
+    }
 
 });

@@ -144,3 +144,10 @@ def take_screenshot(data):
         # if only one time then we emit to window 2 for showing notifications
         if not data['is_continuous']:
             emit('screen_shots_taken', {'filename': filename}, namespace='/', broadcast=True)
+
+
+@socket_io.on('pass_message_to_window_2')
+def pass_message_to_window_2(data):
+    print("Passing Message {}".format(data))
+    # data => {'is_positive': false/true, 'message': string}
+    emit('receive_notification_message', data, namespace='/', broadcast=True)

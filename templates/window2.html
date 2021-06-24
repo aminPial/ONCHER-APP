@@ -2,7 +2,6 @@
 
 {% block script_link %}
     <script src="{{ url_for('static', filename='js/window2.js') }}"></script>
-    {#    <script src="{{ url_for('static', filename='js/white_board.js') }}"></script>#}
 {% endblock %}
 
 {% block css_link %}
@@ -12,7 +11,21 @@
 
 {% block body %}
 
-    <div class="block is-grouped-right" style="margin: 8px;text-align: right">
+    {# notifications #}
+    <div class="notification is-danger is-light" id="notific" style="display: none">
+        <button class="delete" id="close_notification"></button>
+        <div style="margin-left: auto;margin-top: auto;">
+            <strong id="is-positive"></strong>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+
+    {#    <div id="top-top-bar">#}
+    {#        <div class="block is-grouped" style="float: left">#}
+    {#            <img src="{{ url_for('static', filename='images/app_logo_small.png') }}"#}
+    {#                 alt="app-logo" style="margin-left: 12px;margin-top: 8px;"/>#}
+    {#        </div>#}
+    <div class="block is-grouped-right" style="margin-bottom: 0;margin-top:4px;margin-right:8px;text-align: right">
         <i id="settings_window" style="font-size: 20px;color: white;cursor: pointer;" class="fal fa-cog"></i>
         <i id="minimize_window" style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer"
            class="fal fa-minus"></i>
@@ -23,20 +36,21 @@
            style="font-size: 24px;margin-left: 18px;margin-right: 12px;color: white;cursor: pointer;margin-top: 8px;"
            class="fal fa-times"></i>
     </div>
+    {#    </div>#}
+
 
     <div style="overflow-y: auto">
         {# todo: fix this using css float & width percentage #}
-        <div class="box" id="top-bar" style="margin: 8px;">
+        <div class="box" id="top-bar" style="margin: 8px;display: none">
             <div class="columns">
                 <div class="column" id="app_logo_section">
                     <img src="{{ url_for('static',filename='images/app_logo.png') }}"
                          alt="Oncher App">
-
                 </div>
                 <div class="column is-narrow-desktop" style="margin-top: 10px;visibility: hidden" id="student_name_div">
 
                 </div>
-                {#  #}
+
                 <div class="column is-narrow-desktop" style="margin-top: 4px;visibility: hidden" id="stars_bar">
                     {% for i in range(10) %}
                         <i class="fa fa-star" style="font-size: 36px" id="star_count_{{ i }}"></i>
@@ -76,147 +90,32 @@
 
         <div class="box" id="initial_box"
              style="margin: 8px 8px 0;
-         padding: 16px;border: 8px;border-radius: 0;">
+         padding: 16px;border: transparent;border-radius: 8px;">
 
-            {#        <div class="columns" id="intro_screen">#}
-            {##}
-            {# 16:9 ratio slide show #}
-            {##}
-            {#        <div id="feature-slideshow" style="margin: 0;padding: 0">#}
-            {#            <img src="https://phlearn.com/wp-content/uploads/2019/03/Aspect-Ratios-Explained-no-text.jpg"#}
-            {#                 style="width:100%;height: 300px"#}
-            {#                 alt="slide-1"/>#}
-            {#        </div>#}
-            {# slideshow script #}
-            {#        <script>#}
-            {#            var slideIndex = 0;#}
-            {#            showSlides();#}
-            {##}
-            {#            function showSlides() {#}
-            {#                var i;#}
-            {#                var slides = document.getElementsByClassName("mySlides");#}
-            {#                var dots = document.getElementsByClassName("dot");#}
-            {#                for (i = 0; i < slides.length; i++) {#}
-            {#                    slides[i].style.display = "none";#}
-            {#                }#}
-            {#                slideIndex++;#}
-            {#                if (slideIndex > slides.length) {#}
-            {#                    slideIndex = 1#}
-            {#                }#}
-            {#                for (i = 0; i < dots.length; i++) {#}
-            {#                    dots[i].className = dots[i].className.replace(" active", "");#}
-            {#                }#}
-            {#                slides[slideIndex - 1].style.display = "block";#}
-            {#                dots[slideIndex - 1].className += " active";#}
-            {#                setTimeout(showSlides, 2000); // Change image every 2 seconds#}
-            {#            }#}
-            {#        </script>#}
-            {##}
-            {##}
-            {# Quick Access #}
-            {#        <div style="padding: 16px">#}
-            {#            <h3 class="subtitle is-3" style="font-weight: bolder" id="quick-access-text">Quick Access</h3>#}
-            {##}
-            {#            <div class="block" id="quick-access" style="padding: 16px">#}
-            {#                <div class="columns">#}
-            {##}
-            {#                    <div class="column box">#}
-            {#                        <div class="columns">#}
-            {#                            <div class="column is-one-quarter">#}
-            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                        </div>#}
-            {#                    </div>#}
-            {##}
-            {#                    <div class="column box">#}
-            {#                        <div class="columns">#}
-            {#                            <div class="column is-one-quarter">#}
-            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                        </div>#}
-            {#                    </div>#}
-            {#                </div>#}
-            {#                <div class="columns">#}
-            {#                    <div class="column box">#}
-            {#                        <div class="columns">#}
-            {#                            <div class="column is-one-quarter">#}
-            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                        </div>#}
-            {#                    </div>#}
-            {#                    <div class="column box">#}
-            {#                        <div class="columns">#}
-            {#                            <div class="column is-one-quarter">#}
-            {#                                <img src="{{ url_for('static', filename='images/trophy.png') }}"#}
-            {#                                     width="96px" height="96px" style="border-radius: 12px"/>#}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                            <div class="column">#}
-            {##}
-            {#                            </div>#}
-            {#                        </div>#}
-            {#                    </div>#}
-            {#                </div>#}
-            {#            </div>#}
-            {##}
-            {##}
-            {#        </div>#}
 
             <div id="intro_screen">
-                {#            <div class="column is-one-third">#}
-                {#                <img src="{{ url_for('static',filename='images/init.gif') }}" alt="gif" width="400px" height="300px"#}
-                {#                     style="pointer-events: none">#}
-                {#            </div>#}
-                {#            <div class="column is-two-thirds">#}
-                {#                <h1 class="title is-1" style="font-family: 'HP Simplified',serif;padding: 16px;margin-left: 32px">#}
-                {#                    Teach#}
-                {#                    with ONCHER</h1>#}
-                {#              #}
-                {#            </div>#}
 
-                <div class="block" style="margin-bottom: 0;padding-bottom: 0">
+                {# Slide Show #}
+                <div class="block" style="margin-bottom: 0;padding-bottom: 0" id="slide-show-container">
                     {# https://wallpapercave.com/wp/wp2346070.png #}
                     {# https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png #}
 
                     <img src="https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-lively-cute-kindergarten-graduation-ceremony-board-poster-background-image_194026.jpg"
-                         alt="first-slide" style="width:100%;height:250px;border-radius: 30px">
+                         alt="first-slide" style="width:100%;height:250px;border-radius: 24px" id="slide-image">
                 </div>
-{##}
-{#                <h4 class="title is-4" style="font-weight: bolder;margin-top:16px;margin-left: 8px;">Quick Access</h4>#}
-                <div style="margin-top: 12px">
-                    {#                    <img style="margin: 16px" src="{{ url_for('static', filename='images/pdf_pic.jpg') }}"#}
-                    {#                         alt="pdf_pic"#}
-                    {#                         width="128px"#}
-                    {#                         height="128px">#}
-                    {#                    <h5 class="title is-5" style="font-family: 'HP Simplified',serif;#}
-                    {#                                        margin-top: 8px;">Drop File or <a href="#"> Browse</a> to teach</h5>#}
-                    {#                    <h6 class="title is-6" style="font-family: 'HP Simplified Light',serif;">Supports .pdf, .ppt,#}
-                    {#                        .pptm,#}
-                    {#                        .pptx</h6>#}
-                    <div class="columns" style="margin-bottom:0;padding-bottom:0">
+
+                <script>
+                    //$(window).load(function () {
+
+                    // });
+                </script>
+
+
+                {# Quick Access #}
+                <div>
+                    <h4 class="title is-4" style="font-weight: bolder;margin-top:16px;margin-left: 8px;
+                    margin-bottom: 0;padding-bottom: 0">Quick Access</h4>
+                    <div class="columns" style="margin-top:0;padding-top:0;margin-bottom:0;padding-bottom:0">
                         <div class="column">
                             <div class="box" style="border-radius: 20px;">
                                 <div class="columns">
@@ -225,11 +124,13 @@
                                              alt="camera" style="width: 48px;height: 48px"/>
                                     </div>
                                     <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
-                                        <h5 class="title is-6">Configure Study Materials</h5>
+                                        <h5 class="title is-6" style="font-weight: bolder">Configure Study
+                                            Materials</h5>
                                         <h6 class="subtitle is-6">Add .ppt and .pdf documents.</h6>
                                     </div>
                                     <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
-                                        <button class="button is-info is-rounded is-small" style="font-weight: bolder">
+                                        <button id="add_ppt_pdf_go" class="button is-info is-rounded is-small"
+                                                style="font-weight: bolder">
                                             GO
                                         </button>
                                     </div>
@@ -244,12 +145,12 @@
                                              alt="camera" style="width: 48px;height: 48px"/>
                                     </div>
                                     <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
-                                        <h5 class="title is-6">Setup Class timer</h5>
+                                        <h5 class="title is-6" style="font-weight: bolder">Setup Class timer</h5>
                                         <h6 class="subtitle is-6">Fix minutes/hours of class time.</h6>
                                     </div>
                                     <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
                                         <button class="button is-success is-rounded is-small"
-                                                style="font-weight: bolder">GO
+                                                style="font-weight: bolder" id="setup_class_timer_go">GO
                                         </button>
                                     </div>
                                 </div>
@@ -265,12 +166,12 @@
                                              alt="camera" style="width: 48px;height: 48px"/>
                                     </div>
                                     <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
-                                        <h5 class="title is-6">Play Games</h5>
+                                        <h5 class="title is-6" style="font-weight: bolder">Play Games</h5>
                                         <h6 class="subtitle is-6">Tik-tak-toe,Find,Match,Listen game.</h6>
                                     </div>
                                     <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
                                         <button class="button is-danger is-rounded is-small"
-                                                style="font-weight: bolder">GO
+                                                style="font-weight: bolder" id="play_games_go">GO
                                         </button>
                                     </div>
                                 </div>
@@ -284,12 +185,12 @@
                                              alt="camera" style="width: 48px;height: 48px"/>
                                     </div>
                                     <div class="column is-three-fifths;" style="margin-top: auto;margin-bottom: auto">
-                                        <h5 class="title is-6">View Student Reports </h5>
+                                        <h5 class="title is-6" style="font-weight: bolder">View Student Reports </h5>
                                         <h6 class="subtitle is-6">Choose a student and check report</h6>
                                     </div>
                                     <div class="column is-one-fifth" style="margin-top: auto;margin-bottom: auto">
                                         <button class="button is-warning is-rounded is-small"
-                                                style="font-weight: bolder">GO
+                                                style="font-weight: bolder" id="view_ss_report_go">GO
                                         </button>
                                     </div>
                                 </div>
@@ -628,6 +529,20 @@
             {# upload ppt,pdf or Flashcard to server code in below <script> tag #}
             <script>
 
+                function show_notifications(is_positive, message) {
+                    Notification.create(
+                        // Title
+                        is_positive ? `Hooray!` : 'Oops!',
+                        // Text
+                        `${message}`,
+                        // Notificaiton icon
+                        "http://localhost:5000/static/images/notification_bell.png",
+                        // animate.css classname
+                        "bounceIn",
+                        3,
+                        10);
+                }
+
                 // for flashcard image upload
                 function flashcard_image_upload(i, j) {
                     //  alert("i am here");
@@ -708,7 +623,7 @@
                                 $('#grade_lesson_list_section').show();
 
                             } else {
-                                alert("Failed to upload");
+                                show_notifications(false, "Failed to upload");
                                 $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().append(
                                     '<i class="fa fa-plus"></i>&nbsp; Failed.Try Again').attr(
                                     {'class': 'button is-link field is-inline-block-mobile'});
@@ -716,7 +631,7 @@
                         });
                     } else {
                         // error
-                        alert("Please select grade & lesson both");
+                        show_notifications(false, "Please select grade & lesson both");
                     }
                 }
             </script>
@@ -1066,14 +981,14 @@
                             last_selected = null; // so that current correct is not being selected as 'last_selected'
                         } else {
                             // todo: show it's wrong , show a nice notifications
-                            alert("Oops! It's Wrong, try again.");
+                            show_notifications(false, "Oops! It's Wrong, try again.");
                         }
 
 
                         // $(`#letter_${i}_${j}`).text('✔️');
                     } else {
                         // todo: show a notification that nothing is selected from grid-1
-                        alert('Nothing has been selected from Grid 1');
+                        show_notifications(false, 'Nothing has been selected from Grid 1');
                     }
 
                 }
@@ -1192,7 +1107,7 @@
                         if (timers[k] !== null && typeof timers[k] !== 'undefined')
                             clearInterval(timers[k]);
                         else
-                            alert("Null Timer");
+                            show_notifications(false, "Null Timer");
                     }
                     timers = [];
                     // hide the test card and show the icon and all (initial setup)
@@ -1485,7 +1400,7 @@
 
                 $('#game_4').click(function () {
                     if (current_grade === null || current_grade.length === 0)
-                        alert("Please Select Grade and Lesson for Flashcard"); // todo: show_notifications()
+                        show_notifications(false, "Please Select Grade and Lesson for Flashcard"); // todo: show_notifications()
                     else {
                         $('#initial_box').hide(1000);
                         $('#listen_game').show(1200);
@@ -1515,7 +1430,7 @@
                         if (listen_game_found_how_many === 9) {
                             socket.emit('game_4_initialize', {}); // this will send a signal to window3 "SAY NULL"..
                             // todo: reset the game ... write the reset_game_function()
-                            alert(`Congratulations! You have found all cards in ${number_of_guesses} guesses. Points: ${points.text()}.\nACCURACY: ${Math.floor(9 / number_of_guesses) * 100}%`);
+                            show_notifications(true, `Congratulations! You have found all cards in ${number_of_guesses} guesses. Points: ${points.text()}.\nACCURACY: ${Math.floor(9 / number_of_guesses) * 100}%`);
                         } else {
                             socket.emit('game_4_initialize', {
                                 'image_name':
@@ -1530,7 +1445,7 @@
                         let points = $('#listen_game_points');
                         // todo: Question: will the points keep decrementing as student makes it wrong?
                         points.hide().show(1100).text(`${parseInt(points.text()) - 1}`);
-                        alert("Try Again");
+                        show_notifications(false, "Try Again");
                     }
                 }
             </script>
@@ -1682,14 +1597,27 @@
         <audio id="audiotag2" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}" preload="auto"></audio>
         <a href="javascript:play_star_sound();" style="display: none" id="play_star_sound"></a>
         <a href="javascript:play_dice_sound(event);" style="display: none" id="play_dice_sound"></a>
+
+        <audio id="audiotag3" src="{{ url_for('static', filename='sounds/success.mp3') }}" preload="auto"></audio>
+        <audio id="audiotag4" src="{{ url_for('static', filename='sounds/error.mp3') }}" preload="auto"></audio>
+        <a href="javascript:play_success_sound();" style="display: none" id="play_success_sound"></a>
+        <a href="javascript:play_error_sound();" style="display: none" id="play_error_sound"></a>
+
         <script type="text/javascript">
             function play_star_sound() {
                 document.getElementById('audiotag1').play();
             }
 
-            function play_dice_sound(e) {
-                e.preventDefault();
+            function play_dice_sound() {
                 document.getElementById('audiotag2').play();
+            }
+
+            function play_success_sound() {
+                document.getElementById('audiotag3').play();
+            }
+
+            function play_error_sound() {
+                document.getElementById('audiotag4').play();
             }
 
         </script>
@@ -1701,7 +1629,8 @@
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">Set Class Time Length</p>
-                    <button class="delete" aria-label="close" onclick="close_modal()"></button>
+                    <button class="delete" aria-label="close"
+                            onclick="$('#timer_modal').removeClass('modal is-active').addClass('modal');"></button>
                 </header>
                 <section class="modal-card-body">
                     <h1 class="title is-1" style="text-align: center;color: #f8c30d" id="time">00:50:00</h1>
@@ -1710,19 +1639,19 @@
                             <label for="hours"> Hours</label>
                             <input class="input is-medium" type="number" placeholder="hours" value="0" id="hours"
                                    onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
-                                   oninput="update_time()" onautocomplete="update_time()">
+                                   oninput="update_time()">
                         </div>
                         <div class="column">
                             <label for="minutes">Minutes</label>
                             <input class="input is-medium" type="number" placeholder="minutes" value="50" id="minutes"
                                    onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
-                                   oninput="update_time()" onautocomplete="update_time()">
+                                   oninput="update_time()">
                         </div>
                         <div class="column">
                             <label for="seconds">Seconds</label>
                             <input class="input is-medium" type="number" placeholder="seconds" value="0" id="seconds"
                                    onchange="update_time()" onkeyup="update_time()" onkeydown="update_time()"
-                                   oninput="update_time()" onautocomplete="update_time()"
+                                   oninput="update_time()"
                             >
                         </div>
                         <script>
@@ -1784,7 +1713,9 @@
                 </section>
                 <footer class="modal-card-foot">
                     <button class="button is-success" id="save_time">Save Changes</button>
-                    <button class="button" onclick="close_modal()">Cancel</button>
+                    <button class="button"
+                            onclick="$('#timer_modal').removeClass('modal is-active').addClass('modal');">Cancel
+                    </button>
                 </footer>
             </div>
         </div>

@@ -73,7 +73,7 @@ $(document).ready(function () {
         let initial_box = $('#initial_box');
 
         if (data['is_loading']) {
-            // alert("is loading");
+            show_notifications(true, "Doc is loading");
             // todo: show loading anim and all
             initial_box.hide();
             doc_container.hide();
@@ -81,6 +81,10 @@ $(document).ready(function () {
             loading_container.show();
             $('#time_count_div').css('visibility', 'hidden');
         } else {
+
+            // show top app bar
+            $('#top-bar').show();
+
             doc_container.empty(); // clear all the content inside it
 
             let width = $(document).width() - 0; // extra space - X
@@ -254,7 +258,7 @@ $(document).ready(function () {
         // todo: ? for ppt
         if (type_of_action === 'draw' || type_of_action === "full_clear") {
             if (current_doc_type === 'ppt' && document.getElementById(`ppt_canvas`) === null) {
-              //  alert("here");
+                //  alert("here");
                 init_drawing_board_for_ppt();
             }
         }
@@ -283,7 +287,7 @@ $(document).ready(function () {
                 // todo: draw text dynamically
             // https://www.youtube.com/watch?v=pRYF07gI8gk
             else {
-                alert("No Action matched in draw tools");
+                show_notifications(false, "No Action matched in draw tools");
             }
             ctx_es[c] = ctx;
         }
@@ -359,13 +363,49 @@ $(document).ready(function () {
 
     // Toast notifications
     // show notifications and related triggers
-    function show_notifications(message) {
-        //for now just alert
-        alert(message.toString());
+    function show_notifications(is_positive, message) {
+        document.getElementById(`${is_positive ? 'play_success_sound' : 'play_error_sound'}`).click();
+        // Notification.create(
+        //     // Title
+        //     is_positive ? `Hooray!`: 'Oops!',
+        //     // Text
+        //     `${message}`,
+        //     // Notification icon
+        //     "http://localhost:5000/static/images/notification_bell.png",
+        //     // animate.css classname
+        //     "bounceIn",
+        //     3,
+        //     7);
+
+        // $("#notific").animate({
+        //     left: '250px',
+        //     opacity: '0.5',
+        //     height: '100px',
+        //     width: '100px'
+        // });
+
+        $('#is-positive').text(is_positive ? `Hooray!` : 'Oops!');
+        $('#notification-message').text(message)
+        $('#notific').attr({
+            'class': is_positive ? 'notification is-success is-light' :
+                'notification is-danger is-light'
+        }).show();
+        setTimeout(function () {
+            $('#notific').hide();
+        }, 1000 * 4);
     }
 
+    $('#close_notification').click(function () {
+        $('#notific').hide(); // todo: maybe animate?
+    });
+
+    socket.on('receive_notification_message', function (data) {
+        show_notifications(data['is_positive'], data['message'])
+    })
+
+
     socket.on('screen_shots_taken', function (data) {
-        show_notifications(`Screenshot saved as ${data['filename']}`);
+        show_notifications(true, `Screenshot saved as ${data['filename']}`);
     });
 
     // view ss report signal receiver
@@ -493,7 +533,7 @@ $(document).ready(function () {
         }).done(function (data) {
             //   alert("data " + data['status']);
             if (data["status"] === 0) {
-                alert("Something is wrong while saving student report");
+                show_notifications(false, "Something is wrong while saving student report");
             } else {
                 // todo: show a success notifications...
                 $('#student-report-input').hide();
@@ -516,6 +556,43 @@ $(document).ready(function () {
         $('#initial_box').show(); // todo: shouldn't it be the initial box.. intro ?
     });
 
+    // initial box 'GO buttons' functions
+    $('#add_ppt_pdf_go').click(function () {
+        $('#view-student-report-div').hide();
+        $('#initial_box').hide();
+        $('#choose_games').hide();
+        $('#student-report-input').hide();
+        $('#settings_box').show();
+        on_which_config_page_now = '1'; // as we now go to 1st page of config
+    });
+    $('#setup_class_timer_go').click(function () {
+        $('#timer_modal').removeClass("modal").addClass("modal is-active");
+    });
+    $('#play_games_go').click(function () {
+        $('#intro_screen').hide(1000);
+        $('#choose_games').show(1200);
+        $('#student-report-input').hide();
+        $('#view-student-report-div').hide();
+    });
+    $('#view_ss_report_go').click(function () {
+        // todo:
+    });
+
+
+    // slideshow
+
+    let _index = 0;
+    let _slides = [
+        "https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-lively-cute-kindergarten-graduation-ceremony-board-poster-background-image_194026.jpg",
+        "https://wallpapercave.com/wp/wp2346070.png",
+        "https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png"
+    ];
+    setInterval(
+        function () {
+            $('#slide-image').attr('src', _slides[_index % 3]);
+            _index++;
+        }, 2000);
+
 
     // GAMES <<<<
     socket.on('switch_to_games_emit', function (data) {
@@ -534,7 +611,7 @@ $(document).ready(function () {
     // todo: on click games => we need to check if the lesson and grade for flashcards are selected or not.
     $('#game_1').click(function () {
         if (current_grade === null || current_grade.length === 0)
-            show_notifications("Please Select Grade and Lesson for Flashcard");
+            show_notifications(false, "Please Select Grade and Lesson for Flashcard");
         else {
             $('#initial_box').hide(1000);
             $('#tik_tak_toe').show(1200);
@@ -544,7 +621,7 @@ $(document).ready(function () {
 
     $('#game_2').click(function () {
         if (current_grade === null || current_grade.length === 0)
-            show_notifications("Please Select Grade and Lesson for Flashcard");
+            show_notifications(false, "Please Select Grade and Lesson for Flashcard");
         else {
             $('#initial_box').hide(1000);
             $('#match_game').show(1200);
@@ -554,7 +631,7 @@ $(document).ready(function () {
 
     $('#game_3').click(function () {
         if (current_grade === null || current_grade.length === 0)
-            show_notifications("Please Select Grade and Lesson for Flashcard");
+            show_notifications(false, "Please Select Grade and Lesson for Flashcard");
         else {
             $('#initial_box').hide(1000);
             $('#find_game').show(1200);
@@ -920,7 +997,7 @@ $(document).ready(function () {
                 $('#screenshot-timer-modal').removeClass("modal is-active").addClass("modal");
             } else {
                 // todo: show error something
-                alert("Error happened");
+                show_notifications(false, "Error happened");
             }
         });
     });
