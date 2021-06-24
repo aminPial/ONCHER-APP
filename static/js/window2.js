@@ -568,15 +568,14 @@ $(document).ready(function () {
 
 
     // slideshow
-
     let _index = 0;
-    let _slides = [
+    const _slides = [
         "https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-lively-cute-kindergarten-graduation-ceremony-board-poster-background-image_194026.jpg",
         "https://wallpapercave.com/wp/wp2346070.png",
         "https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png"
     ];
 
-    let _height = Math.ceil($(document).height() * 0.47);
+    const _height = Math.ceil($(document).height() * 0.47); // todo: fine tune if needed
     $('#slide-image').attr('src', _slides[_index % 3]).css('height', `${_height}`);
     _index++;
     let slide_0 = $('#slide-0');
