@@ -365,18 +365,6 @@ $(document).ready(function () {
     // show notifications and related triggers
     function show_notifications(is_positive, message) {
         document.getElementById(`${is_positive ? 'play_success_sound' : 'play_error_sound'}`).click();
-        // Notification.create(
-        //     // Title
-        //     is_positive ? `Hooray!`: 'Oops!',
-        //     // Text
-        //     `${message}`,
-        //     // Notification icon
-        //     "http://localhost:5000/static/images/notification_bell.png",
-        //     // animate.css classname
-        //     "bounceIn",
-        //     3,
-        //     7);
-
         // $("#notific").animate({
         //     left: '250px',
         //     opacity: '0.5',
@@ -587,11 +575,52 @@ $(document).ready(function () {
         "https://wallpapercave.com/wp/wp2346070.png",
         "https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png"
     ];
+
+    let _height = Math.ceil($(document).height() * 0.47);
+    $('#slide-image').attr('src', _slides[_index % 3]).css('height', `${_height}`);
+    _index++;
+    let slide_0 = $('#slide-0');
+    let slide_1 = $('#slide-1');
+    let slide_2 = $('#slide-2');
+    // $('#slide_image').css('height',`${_height}`);
+    // todo: on slide with cursor
+
+    function update_indicator_color(_i){
+        if (_i === 0) {
+                slide_0.css('color', 'gold');
+                slide_1.css('color', 'grey');
+                slide_2.css('color', 'grey');
+            } else if (_i === 1) {
+                slide_0.css('color', 'grey');
+                slide_1.css('color', 'gold');
+                slide_2.css('color', 'grey');
+            } else {
+                slide_0.css('color', 'grey');
+                slide_1.css('color', 'grey');
+                slide_2.css('color', 'gold');
+            }
+    }
+
     setInterval(
         function () {
-            $('#slide-image').attr('src', _slides[_index % 3]);
+            const __i = _index % 3;
+            $('#slide-image').attr('src', _slides[__i]); //.css('height', `${_height}`);
             _index++;
-        }, 2000);
+            update_indicator_color(__i);
+        }, 2500);
+
+    slide_0.click(function () {
+        $('#slide-image').attr('src', _slides[0]);
+        update_indicator_color(0);
+    });
+    slide_1.click(function () {
+        $('#slide-image').attr('src', _slides[1]);
+        update_indicator_color(1);
+    });
+    slide_2.click(function () {
+        $('#slide-image').attr('src', _slides[2]);
+        update_indicator_color(2);
+    });
 
 
     // GAMES <<<<
