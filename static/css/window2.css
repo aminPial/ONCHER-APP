@@ -5,6 +5,40 @@ html {
 
 }
 
+/*#iframe-container ::-webkit-scrollbar {*/
+/*    width: 2px;*/
+/*}*/
+
+/*#iframe-container ::-webkit-scrollbar-track {*/
+/*    box-shadow: inset 0 0 5px grey;*/
+/*    border-radius: 10px;*/
+/*}*/
+
+
+/*!* Handle *!*/
+/*#iframe-container ::-webkit-scrollbar-thumb {*/
+/*    background: darkgray;*/
+/*    border-radius: 10px;*/
+/*}*/
+
+
+/*!* Handle on hover *!*/
+/*#iframe-container ::-webkit-scrollbar-thumb:hover {*/
+/*    background: grey;*/
+/*}*/
+
+
+/*#iframe-container {*/
+/*    overflow: -moz-scrollbars-vertical;*/
+/*}*/
+
+/*#iframe-container {*/
+/*    -ms-overflow-style: scrollbar;*/
+/*    -ms-scrollbar-arrow-color: #0a7efa;*/
+/*    -ms-scrollbar-shadow-color: #00c4a7;*/
+/*}*/
+
+
 #notific {
     width: 40%;
     height: 80px;
@@ -20,7 +54,6 @@ html {
 }
 
 /* top bar css */
-
 
 
 /*#iframe-container {*/
@@ -51,9 +84,12 @@ html {
 /*}*/
 
 #star_animation_div {
-    position: absolute;
-    z-index: 2;
+    z-index: 9000;
+    position: fixed;
     width: 100%;
+    bottom: 0;
+    top: 0;
+    margin-top: 15%;
     text-align: center;
 }
 

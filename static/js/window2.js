@@ -64,6 +64,7 @@ $(document).ready(function () {
     // todo: make is_drawing null when moved to somewhere other than docs, e.g: games
     let is_drawing = null; // is_drawing = false means 'erasing' , null means other than draw and erase
     // let eraser_canvas = document.getElementById('eraser-circle');
+    let ppt_canvas_data = {}; // todo: ...
 
     // todo: initially before even clicking the pen the shit is drawing,, fix this
     socket.on('study_doc_update', function (da) {
@@ -163,6 +164,27 @@ $(document).ready(function () {
 
     });
 
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+
+        e = e || window.event;
+
+        if (e.keyCode == '38') {
+            // up arrow
+            alert("h");
+        } else if (e.keyCode == '40') {
+            // down arrow
+            alert("h");
+        } else if (e.keyCode == '37') {
+            // left arrow
+            alert("h");
+        } else if (e.keyCode == '39') {
+            // right arrow
+            alert("h");
+        }
+
+    }
 
     function revise_canvas_on_click(index) {
         // todo: make this function efficient
@@ -575,7 +597,7 @@ $(document).ready(function () {
         "https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png"
     ];
 
-    const _height = Math.ceil($(document).height() * 0.47); // todo: fine tune if needed
+    const _height = Math.ceil($(document).height() * 0.44); // todo: fine tune if needed
     $('#slide-image').attr('src', _slides[_index % 3]).css('height', `${_height}`);
     _index++;
     let slide_0 = $('#slide-0');
@@ -584,20 +606,20 @@ $(document).ready(function () {
     // $('#slide_image').css('height',`${_height}`);
     // todo: on slide with cursor
 
-    function update_indicator_color(_i){
+    function update_indicator_color(_i) {
         if (_i === 0) {
-                slide_0.css('color', 'gold');
-                slide_1.css('color', 'grey');
-                slide_2.css('color', 'grey');
-            } else if (_i === 1) {
-                slide_0.css('color', 'grey');
-                slide_1.css('color', 'gold');
-                slide_2.css('color', 'grey');
-            } else {
-                slide_0.css('color', 'grey');
-                slide_1.css('color', 'grey');
-                slide_2.css('color', 'gold');
-            }
+            slide_0.css('color', 'gold');
+            slide_1.css('color', 'grey');
+            slide_2.css('color', 'grey');
+        } else if (_i === 1) {
+            slide_0.css('color', 'grey');
+            slide_1.css('color', 'gold');
+            slide_2.css('color', 'grey');
+        } else {
+            slide_0.css('color', 'grey');
+            slide_1.css('color', 'grey');
+            slide_2.css('color', 'gold');
+        }
     }
 
     setInterval(
@@ -833,7 +855,7 @@ $(document).ready(function () {
         let animation_type = data['animation_type'];
         //   console.log("animation type from window2.js is " + animation_type);
         if (animation_type === "star") {
-            document.getElementById('play_star_sound').click();
+            //   document.getElementById('play_star_sound').click();
             confetti.start();
             $('#star_animation_div').show(1).delay(4500).hide(1);
             setTimeout(function () {
@@ -844,6 +866,8 @@ $(document).ready(function () {
                 let star_count = parseInt($('#star_count').text());
                 if (star_count == null)
                     star_count = 0;
+                $(`#star_count_${star_count % 10}`).css({'color': 'gold'}); // update the star color
+                // then we increment
                 star_count++;
                 $('#star_count').text(star_count.toString());
                 // if star_count (updated after + 1) is divisible by 10 then we add +1 star
@@ -854,8 +878,11 @@ $(document).ready(function () {
                         diamond_count = 0;
                     diamond_count++;
                     $('#diamond_count').text(diamond_count.toString());
+                    // make all the star black (non-gold)
+                    for (let j = 0; j < 10; j++) {
+                        $(`#star_count_${j}`).css({'color': ''});
+                    }
                 }
-
                 // todo: update ths stars in the bar and also handle the EDGE case of 10 stars -> diamond
 
             }, 4000);
@@ -863,7 +890,6 @@ $(document).ready(function () {
 
         } else if (animation_type === "dice") {
             // dice animation code
-
 
             $('#dice_animation_div').show(1).delay(2000).hide(1);
             // e.preventDefault();
