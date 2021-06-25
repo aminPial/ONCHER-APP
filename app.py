@@ -3,11 +3,13 @@ from socket import socket, AF_INET, SOCK_STREAM
 from time import sleep
 
 import pyautogui as p
+from pynput import keyboard
 from webview import create_window, start
 # from webview.platforms.cef import settings  #
 from math import ceil
 from engineio.async_drivers import gevent  # this is needed for the error we got after freezing
 from server import socket_io, oncher_app  # can be deleted
+from flask_socketio import emit
 from os import _exit
 import sentry_sdk
 
@@ -78,6 +80,36 @@ def show_loading_screen():
                                         on_top=True))
 
 
+def on_press(key):
+    try:
+        # print('alphanumeric key {0} pressed'.format(
+        #     key.char))
+        key.char
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
+        if (key == keyboard.Key.right or key == keyboard.Key.left) and IS_WINDOW_2_ACTIVE and IS_PPT_ACTIVE:
+            with oncher_app.app_context():
+                emit('left-right-key-press', {'key': 'L' if key == keyboard.Key.left else 'R'}, namespace='/',
+                     broadcast=True)
+
+
+# def on_release(key):
+#     print('{0} released'.format(
+#         key))
+#     if key == keyboard.Key.esc:
+#         # Stop listener
+#         return False
+
+
+def listen_for_keyboard():
+    # ...or, in a non-blocking fashion:
+    listener = keyboard.Listener(
+        on_press=on_press)
+    # on_release=on_release)
+    listener.start()
+
+
 def start_process(port):
     t = Thread(target=start_server, args=(port,))
     t.start()
@@ -97,6 +129,10 @@ def on_closed():
 
 
 if __name__ == '__main__':
+
+    IS_WINDOW_2_ACTIVE = False
+    IS_PPT_ACTIVE = False
+
     # special code-blocks for win platform
     # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
     # if sys.platform.startswith('win'):
@@ -125,6 +161,7 @@ if __name__ == '__main__':
     # t.join()
 
     # this is URL loading time before the window creation
+    listen_for_keyboard()
     show_loading_screen()
 
     w, h = p.size()
@@ -211,6 +248,8 @@ if __name__ == '__main__':
             # todo: Q: should all windows to be minimized?
             # todo: can we fix this "after minimizing when click on icon in pan/app bar then restore 3 windows all together"
             [win.minimize() for win in windows]
+            global IS_WINDOW_2_ACTIVE
+            # IS_WINDOW_2_ACTIVE = False  # todo: how can we know that it was again maximized ?
         except Exception as e:
             # todo: log to sentry
             print("Failed to minimize window because of {}".format(e))
@@ -238,5 +277,13 @@ if __name__ == '__main__':
             print("Failed to maximize window because of {}".format(e))
 
 
-    # func=hide, args=(windows, False),
-    start(debug=True, gui="edgehtml")
+    @socket_io.on('is_ppt_active')
+    def is_ppt_active(data):
+        global IS_PPT_ACTIVE
+        IS_PPT_ACTIVE = True  # not data
+        print("IS PPT ACTIVE ", IS_PPT_ACTIVE)
+
+
+    IS_WINDOW_2_ACTIVE = True
+    # func=hide, args=(w v  windows, False),
+    start(debug=True, gui="cef")  # edgehtml

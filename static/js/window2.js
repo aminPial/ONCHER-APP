@@ -152,6 +152,8 @@ $(document).ready(function () {
                     // context1.strokeStyle = 'green';
                     // context1.stroke();
                 });
+                // send IS_PPT_ACTIVE = True in app.py
+                socket.emit('is_ppt_active', {});
             }
 
             initial_box.hide();
@@ -164,27 +166,6 @@ $(document).ready(function () {
 
     });
 
-    document.onkeydown = checkKey;
-
-    function checkKey(e) {
-
-        e = e || window.event;
-
-        if (e.keyCode == '38') {
-            // up arrow
-            alert("h");
-        } else if (e.keyCode == '40') {
-            // down arrow
-            alert("h");
-        } else if (e.keyCode == '37') {
-            // left arrow
-            alert("h");
-        } else if (e.keyCode == '39') {
-            // right arrow
-            alert("h");
-        }
-
-    }
 
     function revise_canvas_on_click(index) {
         // todo: make this function efficient
@@ -254,6 +235,7 @@ $(document).ready(function () {
                     current_ctx.lineJoin = "round";
                     current_ctx.stroke();
                 } else {
+                    // this is eraser
                     // eraser_canvas.width = 200;
                     // eraser_canvas.height = 200;
                     // eraser_canvas.style.left = `${lastX}px`;
@@ -264,9 +246,12 @@ $(document).ready(function () {
                     current_ctx.arc(lastX, lastY, 8, 0, Math.PI * 2, false);
                     current_ctx.fill();
                 }
+                if (current_doc_type === 'ppt')
+                    ppt_canvas_data[_ppt_page_counter].push([lastX, lastY, mouseX, mouseY, current_ctx.strokeStyle]);
                 // update
                 lastX = mouseX;
                 lastY = mouseY;
+
             }
             // else { do nothing... }
         }
@@ -338,8 +323,55 @@ $(document).ready(function () {
         ctx_es.push(myCanvas1.getContext('2d'));
     }
 
+    /* @doc:  ppt draw, save and re-draw on page-return */
+    let _ppt_page_counter = -1; // todo: remember the reset when leaving ppt
+    // listen for Left and Right arrow press
+    socket.on('left-right-key-press', function (data) {
+        try {
+            const L_OR_R = data['key'];
+            if (L_OR_R === 'L') {
+                if (_ppt_page_counter > 0)
+                    _ppt_page_counter--;
+            } else {
+                _ppt_page_counter++;
+            }
+            let c_ctx = null;
+            if (ctx_es.length === 1 && canvases.length === 1) {
+                // clear first
+                c_ctx = ctx_es[0];
+                c_ctx.clearRect(0, 0, canvases[0].width, canvases[0].height); // in ppt case there is only 1
+            }
+            // alert("counter " + _ppt_page_counter);
+            // alert("d " + JSON.stringify(ppt_canvas_data));
 
-    // students report form
+            if (ppt_canvas_data[_ppt_page_counter] === undefined) {
+                //  alert("here 2");
+                ppt_canvas_data[_ppt_page_counter] = []; // [ [x, y,x1,y1, hex_code] ]
+            } else {
+                // alert("page counter " + _ppt_page_counter);
+                // then draw in new one with previous data
+                if (c_ctx !== null) {
+                    // alert("here");
+                    const length = ppt_canvas_data[_ppt_page_counter].length;
+                    // alert("points length " + length);
+                    for (let cx = 0; cx < length; cx++) {
+                        let m = ppt_canvas_data[_ppt_page_counter][cx];
+                        c_ctx.moveTo(m[0], m[1]);
+                        c_ctx.lineTo(m[2], m[3]);
+                        // todo: what about strokeWidth ?
+                        c_ctx.strokeStyle = m[4];
+                        c_ctx.stroke();
+                    }
+                }
+            }
+        } catch (e) {
+            alert("Error: " + e.toString());
+        }
+
+    });
+
+
+// students report form
     socket.on('students_list_update', function (data) {
         let st = $('#student-report-forms');
         st.empty();
@@ -350,41 +382,41 @@ $(document).ready(function () {
     });
 
 
-    // function click(x, y) {
-    //     let ev = new MouseEvent('click', {
-    //         'view': window,
-    //         'bubbles': true,
-    //         'cancelable': true,
-    //         'screenX': x,
-    //         'screenY': y
-    //     });
-    //
-    //     let el = $('#responsive-iframe').elementFromPoint(x, y);
-    //     console.log(el); //print element to console
-    //     el.dispatchEvent(ev);
-    // }
+// function click(x, y) {
+//     let ev = new MouseEvent('click', {
+//         'view': window,
+//         'bubbles': true,
+//         'cancelable': true,
+//         'screenX': x,
+//         'screenY': y
+//     });
+//
+//     let el = $('#responsive-iframe').elementFromPoint(x, y);
+//     console.log(el); //print element to console
+//     el.dispatchEvent(ev);
+// }
 
 
-    // PDF/PPT  navigation signal receive
-    // socket.on('navigation_signal_receive', function (data) {
-    //
-    //     let iframe = $('#responsive-iframe');
-    //
-    //     if (data["action"] === "previous_page") {
-    //         //find button inside iframe
-    //         // let button = iframe.contents().find('#previous');
-    //         // //trigger button click
-    //         // button.trigger("click");
-    //         $('#previous').click();
-    //     } else if (data["action"] === "next_page") {
-    //         $('#next').click();
-    //         // click(600, 200);
-    //     }
-    //
-    // });
+// PDF/PPT  navigation signal receive
+// socket.on('navigation_signal_receive', function (data) {
+//
+//     let iframe = $('#responsive-iframe');
+//
+//     if (data["action"] === "previous_page") {
+//         //find button inside iframe
+//         // let button = iframe.contents().find('#previous');
+//         // //trigger button click
+//         // button.trigger("click");
+//         $('#previous').click();
+//     } else if (data["action"] === "next_page") {
+//         $('#next').click();
+//         // click(600, 200);
+//     }
+//
+// });
 
-    // Toast notifications
-    // show notifications and related triggers
+// Toast notifications
+// show notifications and related triggers
     function show_notifications(is_positive, message) {
         document.getElementById(`${is_positive ? 'play_success_sound' : 'play_error_sound'}`).click();
         // $("#notific").animate({
@@ -418,8 +450,8 @@ $(document).ready(function () {
         show_notifications(true, `Screenshot saved as ${data['filename']}`);
     });
 
-    // view ss report signal receiver
-    // signal received from window-1 to open ss report in window-2
+// view ss report signal receiver
+// signal received from window-1 to open ss report in window-2
     socket.on('view_ss_report_open_signal_receive', function (data) {
         // prepare the data
         $('#student_report_of').text(`Student Report of ${data['name']}`)
@@ -442,9 +474,9 @@ $(document).ready(function () {
 
     });
 
-    // one is 'choose ppt.pdf or flashcard page' and another is 'actual adding'
-    // when in 1st one we go back to main initial box
-    // and in 2nd we go back to 1st one
+// one is 'choose ppt.pdf or flashcard page' and another is 'actual adding'
+// when in 1st one we go back to main initial box
+// and in 2nd we go back to 1st one
     let on_which_config_page_now = null;
 
     socket.on('configure_signal_receive', function (data) {
@@ -497,7 +529,7 @@ $(document).ready(function () {
         on_which_config_page_now = '2'; // we go to 2nd page now
     });
 
-    // report
+// report
     let students_object = null;
 
     socket.on('students_list_update', function (data) {
@@ -566,7 +598,7 @@ $(document).ready(function () {
         $('#initial_box').show(); // todo: shouldn't it be the initial box.. intro ?
     });
 
-    // initial box 'GO buttons' functions
+// initial box 'GO buttons' functions
     $('#add_ppt_pdf_go').click(function () {
         $('#view-student-report-div').hide();
         $('#initial_box').hide();
@@ -589,7 +621,7 @@ $(document).ready(function () {
     });
 
 
-    // slideshow
+// slideshow
     let _index = 0;
     const _slides = [
         "https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-lively-cute-kindergarten-graduation-ceremony-board-poster-background-image_194026.jpg",
@@ -603,8 +635,8 @@ $(document).ready(function () {
     let slide_0 = $('#slide-0');
     let slide_1 = $('#slide-1');
     let slide_2 = $('#slide-2');
-    // $('#slide_image').css('height',`${_height}`);
-    // todo: on slide with cursor
+// $('#slide_image').css('height',`${_height}`);
+// todo: on slide with cursor
 
     function update_indicator_color(_i) {
         if (_i === 0) {
@@ -644,7 +676,7 @@ $(document).ready(function () {
     });
 
 
-    // GAMES <<<<
+// GAMES <<<<
     socket.on('switch_to_games_emit', function (data) {
         // let initial = data['is_initial'];
         $('#intro_screen').hide(1000);
@@ -657,8 +689,8 @@ $(document).ready(function () {
     socket.on('grade_lesson_update_trigger', function (data) {
         current_grade = `${data['grade']}`; // string type
     });
-    // on click games
-    // todo: on click games => we need to check if the lesson and grade for flashcards are selected or not.
+// on click games
+// todo: on click games => we need to check if the lesson and grade for flashcards are selected or not.
     $('#game_1').click(function () {
         if (current_grade === null || current_grade.length === 0)
             show_notifications(false, "Please Select Grade and Lesson for Flashcard");
@@ -687,21 +719,21 @@ $(document).ready(function () {
             $('#find_game').show(1200);
         }
     });
-    // this click function is inlined in window2.html
-    // $('#game_4').click(function () {
-    //     if (current_grade === null || current_grade.length === 0)
-    //         show_notifications("Please Select Grade and Lesson for Flashcard");
-    //     else {
-    //         $('#initial_box').hide(1000);
-    //         $('#listen_game').show(1200);
-    //         socket.emit('game_4_initialize', {'': ''}); // special
-    //     }
-    // });
+// this click function is inlined in window2.html
+// $('#game_4').click(function () {
+//     if (current_grade === null || current_grade.length === 0)
+//         show_notifications("Please Select Grade and Lesson for Flashcard");
+//     else {
+//         $('#initial_box').hide(1000);
+//         $('#listen_game').show(1200);
+//         socket.emit('game_4_initialize', {'': ''}); // special
+//     }
+// });
 
 
-    // back funcs
+// back funcs
 
-    // first game
+// first game
     $('#new_game_from_game_1').click(function () {
         $('#tik_tak_toe').hide(1000);
         $('#intro_screen').hide(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
@@ -719,7 +751,7 @@ $(document).ready(function () {
         reset_game("none");
     });
 
-    // second game
+// second game
     $('#new_game_from_game_2').click(function () {
         $('#match_game').hide(1000);
         $('#intro_screen').hide(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
@@ -734,7 +766,7 @@ $(document).ready(function () {
         socket.emit('refresh_grades_as_per_docs', {});
     });
 
-    // third game
+// third game
     $('#new_game_from_game_3').click(function () {
         $('#find_game').hide(1000);
         $('#intro_screen').hide();
@@ -754,7 +786,7 @@ $(document).ready(function () {
         reset_the_game(false);
     });
 
-    // fourth game
+// fourth game
     $('#new_game_from_game_4').click(function () {
         $('#listen_game').hide(1000);
         $('#intro_screen').hide();
@@ -771,11 +803,11 @@ $(document).ready(function () {
     });
 
 
-    // show the selected student's data (name, star, diamond and etc.)
-    // global variables
+// show the selected student's data (name, star, diamond and etc.)
+// global variables
     let STUDENT_ID = null; // this is needed when sending signal to update star count in server
 
-    // this variable is dependent on the K/A socket emit
+// this variable is dependent on the K/A socket emit
     let k_or_a = "K";
     let current_student_data = null;
 
@@ -832,9 +864,9 @@ $(document).ready(function () {
         STUDENT_ID = data['id'];
     }
 
-    // animation trigger receive from window 3
+// animation trigger receive from window 3
 
-    // dice animation preset
+// dice animation preset
     let dice_color = $("#dice-color");
     let dot_color = $("#dot-color");
     dice_color.val("#323131");
@@ -850,7 +882,7 @@ $(document).ready(function () {
         $(".side").css("background-color", dice);
     });
 
-    // actual trigger functions
+// actual trigger functions
     socket.on('animation_trigger_emit_to_win2', function (data) {
         let animation_type = data['animation_type'];
         //   console.log("animation type from window2.js is " + animation_type);
@@ -931,8 +963,8 @@ $(document).ready(function () {
     });
 
 
-    // K_A
-    // todo: implement dynamic change here..... already selected and then when you choose K/A then update it..
+// K_A
+// todo: implement dynamic change here..... already selected and then when you choose K/A then update it..
     socket.on('k_a_emit_signal', function (data) {
         k_or_a = data['k_or_a'];
         update_student_bar();
@@ -941,7 +973,7 @@ $(document).ready(function () {
 
     let should_stop = false;
 
-    // time trigger receive from window 3
+// time trigger receive from window 3
     socket.on('timer_trigger_emit_to_win2', function (data) {
         let timer_data = data['timer_data'];
         // can be actually none or it can send to change the time (from settings of timer)
@@ -1010,7 +1042,7 @@ $(document).ready(function () {
     });
 
 
-    // save the time settings and others util regarding this
+// save the time settings and others util regarding this
     $('#save_time').click(function () {
         $.ajax({
             url: "/save_time_count",
@@ -1030,7 +1062,7 @@ $(document).ready(function () {
     });
 
 
-    // time trigger of screenshot
+// time trigger of screenshot
     socket.on('open_screenshot_timer_settings', function (data) {
         let timer_data = data['seconds'];
         // update  the value in the show text and input field
@@ -1057,7 +1089,7 @@ $(document).ready(function () {
     });
 
 
-    // star animation code
+// star animation code
     var confetti = {
         maxCount: 150,
         speed: 2,
@@ -1182,7 +1214,8 @@ $(document).ready(function () {
     }();
 
 
-});
+})
+;
 
 
 

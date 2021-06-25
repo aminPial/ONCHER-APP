@@ -1,5 +1,5 @@
 from secrets import token_urlsafe
-
+import time
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
@@ -38,10 +38,12 @@ def favicon_ico():
     return ""
 
 
+
 from routers import *
 
+st = time.time()
 database_cluster.create_all()
-#
+print("took {} sec".format(time.time() - st))
 # if __name__ == '__main__':
 #     database_cluster.create_all()
 #     socket_io.run(oncher_app, port=5000, debug=True)

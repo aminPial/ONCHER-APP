@@ -14,6 +14,11 @@
     <orderEntry type="library" name="animejs" level="application" />
     <orderEntry type="library" name="all" level="application" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="versionSpecifier" value="Strong equality (==x.y.z)" />
+    <option name="removeUnused" value="true" />
+    <option name="modifyBaseFiles" value="true" />
+  </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
     <option name="myDocStringFormat" value="Plain" />

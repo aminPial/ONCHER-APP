@@ -36,7 +36,6 @@ def window_1():
         if split[1] not in grade_lessons_flashcard_version.keys():
             grade_lessons_flashcard_version[split[1]] = []
         grade_lessons_flashcard_version[split[1]].append(split[-1])  # todo: should we append the src to load or plain
-    print("Flashcard Folders {} {}".format(flashcard_folders, grade_lessons_flashcard_version))
 
     students = [s.__dict__ for s in StudentsData.query.all()]
     [a.pop('_sa_instance_state') for a in students]
@@ -123,7 +122,6 @@ def view_ss_report_open_signal(data):
     student_data = data['current_student_object']
     student_report_objects = [s.__dict__ for s in StudentReports.query.filter_by(student_id=student_data['id']).all()]
     [a.pop('_sa_instance_state') for a in student_report_objects]
-    print("student_report_objects are {}".format(student_report_objects))
     emit('view_ss_report_open_signal_receive',
          {'student_report_objects': student_report_objects[::-1],  # in descending order of time
           'name': student_data['name']},
