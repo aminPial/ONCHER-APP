@@ -13,7 +13,11 @@ static/flashcards
 static/cache
 static/screenshots
 output
-release
+release_source
+release_delivery
+app.todo
+config.json
+build_system
 
 
 # Distribution / packaging

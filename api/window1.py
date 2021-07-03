@@ -1,14 +1,15 @@
-from server import oncher_app, database_cluster, socket_io
-from flask import render_template
-from flask import request
-from flask import jsonify
 import os
-import sys
-from flask_socketio import emit
+
 import requests
 from PIL import Image
-from models import *
+from flask import jsonify
+from flask import render_template
+from flask import request
+from flask_socketio import emit
+
 from app import BASE_URL
+from models import *
+from server import oncher_app, database_cluster, socket_io
 
 
 # from app import logger

@@ -37,8 +37,6 @@ sentry_sdk.init(
 BASE_URL = None
 
 
-# todo: add sentry logs
-
 def start_server(port: int):
     # from server import socket_io, oncher_app
     socket_io.run(app=oncher_app, host='127.0.0.1',
@@ -67,7 +65,8 @@ def destroy_window(ww):
 def show_loading_screen():
     s_w, s_h = p.size()  # screen width and height
     # min(p.size()) // 2.5 = for my screen 307px
-    square_size = 300  # todo: should it be hard coded or percentage of a screen
+    square_size = int(min(p.size()) / 2.5)
+    print("Square size ", square_size)
     start(destroy_window, create_window('',
                                         html=open('templates/loading.html').read(),
                                         x=(s_w // 2) - ceil(square_size // 2),
@@ -86,8 +85,8 @@ def on_press(key):
         #     key.char))
         key.char
     except AttributeError:
-        print('special key {0} pressed'.format(
-            key))
+        # print('special key {0} pressed'.format(
+        #     key))
         if (key == keyboard.Key.right or key == keyboard.Key.left) and IS_WINDOW_2_ACTIVE and IS_PPT_ACTIVE:
             with oncher_app.app_context():
                 emit('left-right-key-press', {'key': 'L' if key == keyboard.Key.left else 'R'}, namespace='/',
@@ -126,6 +125,15 @@ def on_closed():
 #         [wx.show() for wx in ws]
 #     else:
 #         [wx.hide() for wx in ws]
+
+def make_folders_in_static():
+    # css, js, sounds, images (will be there)
+    folder_names = ['cache', 'files', 'flashcards', 'pickles', 'screenshots']  # todo: take care of screenshot folder
+
+
+def hide_stuffs():
+    # todo: implement this
+    pass
 
 
 if __name__ == '__main__':
@@ -238,7 +246,6 @@ if __name__ == '__main__':
             # [win.destroy() for win in windows]
             _exit(0)
         except Exception as e:
-            # todo: log to sentry
             print("Failed to destroy window because of {}".format(e))
 
 
@@ -251,7 +258,6 @@ if __name__ == '__main__':
             global IS_WINDOW_2_ACTIVE
             # IS_WINDOW_2_ACTIVE = False  # todo: how can we know that it was again maximized ?
         except Exception as e:
-            # todo: log to sentry
             print("Failed to minimize window because of {}".format(e))
 
 
@@ -273,7 +279,6 @@ if __name__ == '__main__':
             #     windows[0].resize()
             pass
         except Exception as e:
-            # todo: log to sentry
             print("Failed to maximize window because of {}".format(e))
 
 
@@ -285,5 +290,7 @@ if __name__ == '__main__':
 
 
     IS_WINDOW_2_ACTIVE = True
-    # func=hide, args=(w v  windows, False),
+    # func=hide, args=(w v  windows, False)
+
+    # folders have to be created on start (dynamic on first run) and also make files,folder hidden
     start(debug=True, gui="cef")  # edgehtml

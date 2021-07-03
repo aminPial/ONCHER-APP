@@ -2,7 +2,6 @@
 import multiprocessing
 import os
 import pickle
-import sys
 import time
 from typing import List
 
@@ -93,7 +92,6 @@ def add_star_to_student_record(data):
 
 @socket_io.on('game_4_initialize')
 def game_4_initialize(data):
-    # todo: from where the fuck this shit is coming?
     # print("Game 4 initializer {}".format(data))
     emit('game_4_init_emit_signal', {'image_name': 'NULL' if 'image_name' not in data.keys() else data['image_name']},
          namespace='/', broadcast=True)
@@ -146,7 +144,6 @@ def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: 
 # pdf file parser
 def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     """
-    todo: can we make it a background process?
     returns:
       pdf_file_path_after_parsing_to_images
       page counts of PDF
@@ -168,7 +165,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 
     # print("NO OF PAGES: {}".format(no_of_pages))
 
-    _divide_by_parts = 25
+    _divide_by_parts = 10
     pools = []
     pools: List[multiprocessing.Process]
     tail_size, partial = divmod(no_of_pages, _divide_by_parts)
@@ -200,7 +197,6 @@ def upload_ppt(full_file_path, retry_count_left=5):
     if retry_count_left == 0:
         return {'status': 'failed'}
     print("Uploading {} to server...".format(full_file_path))
-    # todo: here we need to upload the ppt.pptx to server then encode the server download url
     files = {'doc': open(full_file_path, 'rb')}  # todo: memory leak
     values = {}  # {'key': value}
     # todo: we will need to change the server for long run
@@ -219,6 +215,7 @@ def upload_ppt(full_file_path, retry_count_left=5):
 
 @oncher_app.route('/upload_document', methods=['POST'])
 def upload_document():
+    # todo: update the grade and lesson list after the upload document
     # send "start showing loading animation" signal to window 2
     # emit("ppt_or_ppt_upload_signal", {"is_loading": True},
     #      namespace='/',
