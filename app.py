@@ -1,152 +1,27 @@
-from threading import Thread
-from socket import socket, AF_INET, SOCK_STREAM
-from time import sleep
+#  Copyright (C) Oncher App - All Rights Reserved
+#  Unauthorized copying of this file, via any medium is strictly prohibited
+#  Proprietary and confidential
+#  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
-import pyautogui as p
-from pynput import keyboard
-from webview import create_window, start
-# from webview.platforms.cef import settings  #
-from math import ceil
-from engineio.async_drivers import gevent  # this is needed for the error we got after freezing
-from server import socket_io, oncher_app  # can be deleted
-from flask_socketio import emit
-from os import _exit
-import sentry_sdk
-
-# import logging
-
-sentry_sdk.init(
-    "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=1.0
-)
-
-# logging stuff
-# logger = logging.getLogger()
-# logger.setLevel(logging.DEBUG)
-#
-# ch = logging.StreamHandler()
-# ch.setLevel(logging.DEBUG)
-# formatter = logging.Formatter('%(asctime)s - %(message)s')
-# ch.setFormatter(formatter)
-#
-# logger.addHandler(ch)
+# public var & methods here (before __name__ == '__main__')
 
 BASE_URL = None
 
-
-def start_server(port: int):
-    # from server import socket_io, oncher_app
-    socket_io.run(app=oncher_app, host='127.0.0.1',
-                  port=port)  # , debug=True) => ValueError: signal only works in main thread
-    return
-
-
-def is_port_available(port: int):
-    sock = socket(AF_INET, SOCK_STREAM)
-    result = False
-    try:
-        sock.bind(("127.0.0.1", port))
-        result = True
-    except Exception:
-        pass
-    sock.close()
-    return result
-
-
-def destroy_window(ww):
-    sleep(10)
-    ww.destroy()
-    return
-
-
-def show_loading_screen():
-    s_w, s_h = p.size()  # screen width and height
-    # min(p.size()) // 2.5 = for my screen 307px
-    square_size = int(min(p.size()) / 2.5)
-    print("Square size ", square_size)
-    start(destroy_window, create_window('',
-                                        html=open('templates/loading.html').read(),
-                                        x=(s_w // 2) - ceil(square_size // 2),
-                                        y=(s_h // 2) - ceil(square_size // 2),
-                                        width=square_size,
-                                        height=square_size,
-                                        frameless=True,
-                                        resizable=False,
-                                        # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
-                                        on_top=True))
-
-
-def on_press(key):
-    try:
-        # print('alphanumeric key {0} pressed'.format(
-        #     key.char))
-        key.char
-    except AttributeError:
-        # print('special key {0} pressed'.format(
-        #     key))
-        if (key == keyboard.Key.right or key == keyboard.Key.left) and IS_WINDOW_2_ACTIVE and IS_PPT_ACTIVE:
-            with oncher_app.app_context():
-                emit('left-right-key-press', {'key': 'L' if key == keyboard.Key.left else 'R'}, namespace='/',
-                     broadcast=True)
-
-
-# def on_release(key):
-#     print('{0} released'.format(
-#         key))
-#     if key == keyboard.Key.esc:
-#         # Stop listener
-#         return False
-
-
-def listen_for_keyboard():
-    # ...or, in a non-blocking fashion:
-    listener = keyboard.Listener(
-        on_press=on_press)
-    # on_release=on_release)
-    listener.start()
-
-
-def start_process(port):
-    t = Thread(target=start_server, args=(port,))
-    t.start()
-
-
-def on_closed():
-    # close the app if a single window is closed
-    _exit(0)
-
-
-# def hide(ws: List[webview.Window], show: bool = False):
-#     print(ws, show)
-#     if show:
-#         [wx.show() for wx in ws]
-#     else:
-#         [wx.hide() for wx in ws]
-
-def make_folders_in_static():
-    # css, js, sounds, images (will be there)
-    folder_names = ['cache', 'files', 'flashcards', 'pickles', 'screenshots']  # todo: take care of screenshot folder
-
-
-def hide_stuffs():
-    # todo: implement this
-    pass
-
-
 if __name__ == '__main__':
+    from socket import socket, AF_INET, SOCK_STREAM
 
-    IS_WINDOW_2_ACTIVE = False
-    IS_PPT_ACTIVE = False
+    def is_port_available(port: int):
+        sock = socket(AF_INET, SOCK_STREAM)
+        result = False
+        try:
+            sock.bind(("127.0.0.1", port))
+            result = True
+        except Exception:
+            pass
+        sock.close()
+        return result
 
-    # special code-blocks for win platform
-    # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
-    # if sys.platform.startswith('win'):
-    #     # On Windows calling this function is necessary.
-    #     multiprocessing.freeze_support()
-    #
+
     available_port = 5000
     # todo: to keep port 5000 , we need to save the PID when we had 5000 port and detach if is occupied
     while True:
@@ -156,7 +31,123 @@ if __name__ == '__main__':
             available_port += 1
 
     BASE_URL = "http://localhost:{}".format(available_port)
-    print(f"BASE URL {BASE_URL}")
+
+    # private var & methods here (after __name__ == '__main__')
+    from api.server_router_api.server import socket_io, oncher_app, logger  # can be deleted
+
+    logger.debug(f"BASE URL {BASE_URL}")
+
+    from threading import Thread
+
+    from time import sleep
+
+    import pyautogui as p
+    from pynput import keyboard
+    from webview import create_window, start
+    # from webview.platforms.cef import settings  #
+    from math import ceil
+
+    from flask_socketio import emit
+    from os import _exit
+    import sentry_sdk
+
+    # import logging
+
+    sentry_sdk.init(
+        "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0
+    )
+
+
+    # special code-blocks for win platform
+    # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
+    # if sys.platform.startswith('win'):
+    #     # On Windows calling this function is necessary.
+    #     multiprocessing.freeze_support()
+
+    def start_server(port: int):
+        # from server import socket_io, oncher_app
+        socket_io.run(app=oncher_app, host='127.0.0.1',
+                      port=port)  # , debug=True) => ValueError: signal only works in main thread
+        return
+
+
+    def destroy_window(ww):
+        sleep(10)
+        ww.destroy()
+        return
+
+
+    def show_loading_screen():
+        s_w, s_h = p.size()  # screen width and height
+        # min(p.size()) // 2.5 = for my screen 307px
+        square_size = int(min(p.size()) / 2.5)
+        logger.info("Square size {}".format(square_size))
+        start(destroy_window, create_window('',
+                                            html=open('templates/loading.html').read(),
+                                            x=(s_w // 2) - ceil(square_size // 2),
+                                            y=(s_h // 2) - ceil(square_size // 2),
+                                            width=square_size,
+                                            height=square_size,
+                                            frameless=True,
+                                            resizable=False,
+                                            # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
+                                            on_top=True))
+
+
+    def on_press(key):
+        try:
+            pass
+        except AttributeError:
+            if (key == keyboard.Key.right or key == keyboard.Key.left) and \
+                    IS_WINDOW_2_ACTIVE and IS_PPT_ACTIVE:
+                with oncher_app.app_context():
+                    emit('left-right-key-press', {'key': 'L' if key == keyboard.Key.left else 'R'},
+                         namespace='/',
+                         broadcast=True)
+
+
+    def listen_for_keyboard():
+        listener = keyboard.Listener(
+            on_press=on_press)
+        listener.start()
+
+
+    def start_process(port):
+        t = Thread(target=start_server, args=(port,))
+        t.start()
+
+
+    def on_closed():
+        # close the app if a single window is closed
+        _exit(0)
+
+
+    # def hide(ws: List[webview.Window], show: bool = False):
+    #     print(ws, show)
+    #     if show:
+    #         [wx.show() for wx in ws]
+    #     else:
+    #         [wx.hide() for wx in ws]
+
+
+    def make_folders_in_static():
+        # css, js, sounds, images (will be there)
+        folder_names = ['cache', 'files', 'flashcards', 'pickles',
+                        'screenshots']  # todo: take care of screenshot folder
+
+
+    def hide_stuffs():
+        # todo: implement this
+        pass
+
+
+    IS_WINDOW_2_ACTIVE = False
+    IS_PPT_ACTIVE = False
+
     # cef settings
     # settings.update({
     #     # 'remote_debugging_port':8080,
@@ -215,21 +206,7 @@ if __name__ == '__main__':
                                  resizable=False,
                                  on_top=_should_on_top)
 
-    # https://stackoverflow.com/questions/65279193/how-to-close-pywebview-window-from-javascript-using-pywebview-api
-    """
-        Useful Links:
-            1. https://www.programmersought.com/article/13205830225/ (nssm, service manager in windows)
-            2. https://htmlpreview.github.io/?https://github.com/pyinstaller/pyinstaller/blob/v2.0/doc/Manual.html#a-note-on-using-upx
-            3. https://pyinstaller.readthedocs.io/en/stable/when-things-go-wrong.html
-            4. https://build-system.fman.io/
-            5. https://heartbeat.fritz.ai/packaging-and-shipping-python-apps-for-the-desktop-a418489b854
-        """
-    """
-    Desktop applications are normally distributed by means of an installer. 
-    On Windows, this would be an executable called TutorialSetup.exe.
-     On Mac, mountable disk images such as Tutorial.dmg are commonly used. 
-    On Linux, .deb files are common on Ubuntu, .rpm on Fedora / CentOS, and .pkg.tar.xz on Arch.
-    """
+    # see https://stackoverflow.com/questions/65279193/how-to-close-pywebview-window-from-javascript-using-pywebview-api
 
     # app window closing, minimizing, maximizing, codes (for now we are getting signals from window 2)
     windows = [second_window, first_window, third_window]
@@ -246,7 +223,7 @@ if __name__ == '__main__':
             # [win.destroy() for win in windows]
             _exit(0)
         except Exception as e:
-            print("Failed to destroy window because of {}".format(e))
+            logger.error("Failed to destroy window because of {}".format(e))
 
 
     @socket_io.on('minimize_window')
@@ -258,7 +235,7 @@ if __name__ == '__main__':
             global IS_WINDOW_2_ACTIVE
             # IS_WINDOW_2_ACTIVE = False  # todo: how can we know that it was again maximized ?
         except Exception as e:
-            print("Failed to minimize window because of {}".format(e))
+            logger.error("Failed to minimize window because of {}".format(e))
 
 
     @socket_io.on('maximize_window')
@@ -279,14 +256,14 @@ if __name__ == '__main__':
             #     windows[0].resize()
             pass
         except Exception as e:
-            print("Failed to maximize window because of {}".format(e))
+            logger.error("Failed to maximize window because of {}".format(e))
 
 
     @socket_io.on('is_ppt_active')
     def is_ppt_active(data):
         global IS_PPT_ACTIVE
         IS_PPT_ACTIVE = True  # not data
-        print("IS PPT ACTIVE ", IS_PPT_ACTIVE)
+        logger.info("IS PPT ACTIVE ", IS_PPT_ACTIVE)
 
 
     IS_WINDOW_2_ACTIVE = True

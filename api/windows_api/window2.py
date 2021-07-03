@@ -1,4 +1,8 @@
-# main screen
+#  Copyright (C) Oncher App - All Rights Reserved
+#  Unauthorized copying of this file, via any medium is strictly prohibited
+#  Proprietary and confidential
+#  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
+
 import multiprocessing
 import os
 import pickle
@@ -16,8 +20,8 @@ from urllib.parse import quote
 from json import loads
 
 from app import BASE_URL
-from models import *
-from server import oncher_app, socket_io, database_cluster
+from database_schema.models import *
+from api.server_router_api.server import oncher_app, database_cluster, socket_io
 
 
 @oncher_app.route('/window_2')

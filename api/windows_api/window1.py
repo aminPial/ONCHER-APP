@@ -1,3 +1,8 @@
+#  Copyright (C) Oncher App - All Rights Reserved
+#  Unauthorized copying of this file, via any medium is strictly prohibited
+#  Proprietary and confidential
+#  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
+
 import os
 
 import requests
@@ -8,8 +13,8 @@ from flask import request
 from flask_socketio import emit
 
 from app import BASE_URL
-from models import *
-from server import oncher_app, database_cluster, socket_io
+from database_schema.models import *
+from api.server_router_api.server import oncher_app, database_cluster, socket_io
 
 
 # from app import logger

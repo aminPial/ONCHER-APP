@@ -16,9 +16,9 @@ output
 release_source
 release_delivery
 app.todo
-config.json
+build_system/config.json
 build_system
-preview-data/preview-v-0-0-1.mp4
+preview_data/preview-v-0-0-1.mp4
 
 
 # Distribution / packaging

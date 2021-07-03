@@ -1,6 +1,10 @@
+#  Copyright (C) Oncher App - All Rights Reserved
+#  Unauthorized copying of this file, via any medium is strictly prohibited
+#  Proprietary and confidential
+#  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
+
 import os
 import pickle
-import sys
 from datetime import datetime
 
 import pyscreenshot as ImageGrab
@@ -8,7 +12,7 @@ from flask import render_template
 from flask_socketio import emit
 
 from app import BASE_URL
-from server import oncher_app, socket_io
+from api.server_router_api.server import oncher_app, socket_io
 
 
 @oncher_app.route('/window_3')
