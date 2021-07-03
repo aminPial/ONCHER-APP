@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
-  <a href="http://www.amitmerchant.com/electron-markdownify">
-<img src="https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/static/images/10.png?token=ALECQYT5CONQNQOYIXQDTEDA5FKKO" alt="Markdownify" width="200"></a>
+  <a href="#">
+<img src="https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/static/images/10.png?token=ALECQYT5CONQNQOYIXQDTEDA5FKKO" alt="Oncher App" width="200"></a>
   <br>
   Oncher App
   <br>
@@ -27,7 +27,7 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif)
+![preview of Oncher App](https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/preview-data/preview-v-0-0-1.gif)
 
 ## Key Features
 
