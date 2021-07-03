@@ -14,8 +14,12 @@
     <img src="https://img.shields.io/badge/Version-0.0.1-brightgreen"
          alt="version">
   </a>
+<a href="https://github.com/aminPial/ONCHER-APP/projects">
+    <img src="https://img.shields.io/badge/Project Management-on github-yellow"
+         alt="project-management">
+  </a>
   <a href="https://github.com/aminPial/ONCHER-APP/discussions/1">
-  <img src="https://img.shields.io/badge/discuss%20features-on%20github-blue"></a>
+  <img src="https://img.shields.io/badge/discuss%20features-on%20github-blue" alt="discuss"></a>
 </p>
 
 <p align="center">
