@@ -18,6 +18,7 @@ release_delivery
 app.todo
 config.json
 build_system
+preview-data/preview-v-0-0-1.mp4
 
 
 # Distribution / packaging

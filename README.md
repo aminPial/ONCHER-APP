@@ -27,7 +27,7 @@
   <a href="#license">License</a>
 </p>
 
-![preview of Oncher App](https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/preview-data/preview-v-0-0-1.gif)
+![preview of Oncher App](https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/preview-data/preview-v-0-0-1.gif?token=ALECQYTZ3G3GQS3MGT65LJDA5FTDI)
 
 ## Key Features
 
