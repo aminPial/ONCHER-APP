@@ -10,6 +10,7 @@ BASE_URL = None
 if __name__ == '__main__':
     from socket import socket, AF_INET, SOCK_STREAM
 
+
     def is_port_available(port: int):
         sock = socket(AF_INET, SOCK_STREAM)
         result = False
@@ -23,7 +24,8 @@ if __name__ == '__main__':
 
 
     available_port = 5000
-    # todo: to keep port 5000 , we need to save the PID when we had 5000 port and detach if is occupied
+    # todo: to keep port 5000 , we need to save the PID when we had 5000 port
+    #  and detach if is occupied
     while True:
         if is_port_available(available_port):
             break
@@ -76,7 +78,7 @@ if __name__ == '__main__':
 
 
     def destroy_window(ww):
-        sleep(10)
+        sleep(5)
         ww.destroy()
         return
 
@@ -85,7 +87,6 @@ if __name__ == '__main__':
         s_w, s_h = p.size()  # screen width and height
         # min(p.size()) // 2.5 = for my screen 307px
         square_size = int(min(p.size()) / 2.5)
-        logger.info("Square size {}".format(square_size))
         start(destroy_window, create_window('',
                                             html=open('templates/loading.html').read(),
                                             x=(s_w // 2) - ceil(square_size // 2),
@@ -132,7 +133,6 @@ if __name__ == '__main__':
     #         [wx.show() for wx in ws]
     #     else:
     #         [wx.hide() for wx in ws]
-
 
     def make_folders_in_static():
         # css, js, sounds, images (will be there)
@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
 
     @socket_io.on('close_window')
-    def window_close(data):
+    def window_close(_):
         """
         don't write close_window() as it is a method of pywebview itself
         """
@@ -227,7 +227,7 @@ if __name__ == '__main__':
 
 
     @socket_io.on('minimize_window')
-    def window_minimize(data):
+    def window_minimize(_):
         try:
             # todo: Q: should all windows to be minimized?
             # todo: can we fix this "after minimizing when click on icon in pan/app bar then restore 3 windows all together"
@@ -239,7 +239,7 @@ if __name__ == '__main__':
 
 
     @socket_io.on('maximize_window')
-    def window_maximize(data):
+    def window_maximize(_):
         """
         # presentation mode
         maximize window has two vital state => 1. Presentation mode type or normal mode
@@ -260,7 +260,7 @@ if __name__ == '__main__':
 
 
     @socket_io.on('is_ppt_active')
-    def is_ppt_active(data):
+    def is_ppt_active(_):
         global IS_PPT_ACTIVE
         IS_PPT_ACTIVE = True  # not data
         logger.info("IS PPT ACTIVE ", IS_PPT_ACTIVE)

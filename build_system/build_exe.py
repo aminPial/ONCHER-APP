@@ -19,3 +19,5 @@ On Linux, .deb files are common on Ubuntu, .rpm on Fedora / CentOS, and .pkg.tar
 """
 
 cmd = r"""pyinstaller --noconfirm --onedir --windowed --name "Oncher" --upx-dir "I:/OpenSourceProjects/py-track/release/upx-3.96-win64" --log-level "DEBUG" --add-data "I:/FivverProjects/ONCHER-APP/templates;templates/" --add-data "I:/FivverProjects/ONCHER-APP/static;static/" --add-data "I:/FivverProjects/ONCHER-APP/database_schema;database_schema/" --paths "I:/FivverProjects/ONCHER-APP/venv/Lib/site-packages"  "I:/FivverProjects/ONCHER-APP/app.py" """.rstrip().lstrip()
+
+# flake8 - skip PEP [E402, ]

@@ -29,7 +29,7 @@
 </p>
 
 <center>
-<img alt="preview_oncher_app" src="https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/preview-data/preview-v-0-0-1.gif?token=ALECQYTZ3G3GQS3MGT65LJDA5FTDI">
+<img alt="preview_oncher_app" src="https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/preview_data/preview-v-0-0-1.gif?token=ALECQYRTP5WPQGTC5XGRYX3A5GA2W">
 </center>
 
 ## Key Features
@@ -42,11 +42,11 @@
 
 ❌ [Download Windows 7/8 Build]()
 
-✔️[Download Windows 10 Build](https://github.com/aminPial/ONCHER-APP/releases/download/0.0.1/Oncher.exe)
+✔️ [Download Windows 10 Build](https://github.com/aminPial/ONCHER-APP/releases/download/0.0.1/Oncher.exe)
 
 ❌ [Download Mac High Sierra Build]()
 
 
 ## License
 
-<b><i>CC0 1.0 Universal</i></b>
+<b><i><a href='https://github.com/aminPial/ONCHER-APP/blob/main/LICENSE'>CC0 1.0 Universal</a></i></b>
