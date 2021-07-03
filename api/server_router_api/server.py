@@ -30,18 +30,18 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import sys
 
-root_path = os.path.join(sys.path[0])
+root_path = os.path.abspath(sys.path[0])
 
 oncher_app = Flask(__name__,
-                   static_url_path='',
-                   static_folder=os.path.join(root_path, 'static'),
-                   template_folder=os.path.join(root_path, 'templates'))
-logger.info("Root Path {}".format(root_path))
+                   static_folder=os.path.abspath(os.path.join(root_path, 'static')),
+                   template_folder=os.path.abspath(os.path.join(root_path, 'templates')))
+
+logger.info("Called From {} -  Root Path {}".format(__name__, root_path))
 
 config = {
     'SECRET_KEY': token_urlsafe(500),
     'SQLALCHEMY_DATABASE_URI': r'sqlite:///{database_path}'.format(
-        database_path=os.path.join(root_path, 'database_schema', 'cluster.sqlite3')
+        database_path=os.path.abspath(os.path.join(root_path, 'database_schema', 'cluster.sqlite3'))
     ),
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     # SQLALCHEMY_COMMIT_ON_TEARDOWN = True

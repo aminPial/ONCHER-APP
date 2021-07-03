@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
 
     def destroy_window(ww):
-        sleep(5)
+        sleep(7)
         ww.destroy()
         return
 

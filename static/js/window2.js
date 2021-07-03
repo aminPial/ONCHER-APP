@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-
     let socket = io.connect('/');
 
     // close_window
@@ -66,15 +65,17 @@ $(document).ready(function () {
     // let eraser_canvas = document.getElementById('eraser-circle');
     let ppt_canvas_data = {}; // todo: ...
 
+    let we_are_in_doc_page = false;  // initially in intial box
     // todo: initially before even clicking the pen the shit is drawing,, fix this
     socket.on('study_doc_update', function (da) {
+        we_are_in_doc_page = true;
         data = da;
         let doc_container = $('#iframe-container');
         let loading_container = $('#loading_box');
         let initial_box = $('#initial_box');
 
         if (data['is_loading']) {
-            show_notifications(true, "Doc is loading");
+            // show_notifications(true, "Doc is loading");
             // todo: show loading anim and all
             initial_box.hide();
             doc_container.hide();
@@ -483,10 +484,12 @@ $(document).ready(function () {
         // on get the show config page signal
 //        $('#intro_screen').hide();
         $('#view-student-report-div').hide();
+        $('#iframe-container').hide();
         $('#initial_box').hide();
         $('#choose_games').hide();
         $('#student-report-input').hide();
         $('#settings_box').show();
+
         on_which_config_page_now = '1'; // as we now go to 1st page of config
     });
 
@@ -496,7 +499,11 @@ $(document).ready(function () {
         $('#student-report-input').hide();
         // when encounter 1st page
         if (on_which_config_page_now === '1') {
-            $('#initial_box').show();
+            if (we_are_in_doc_page)
+                $('#iframe-container').show();
+            else
+                $('#initial_box').show();
+
             $('#settings_box').hide();
             on_which_config_page_now = null;
         } else {
@@ -507,6 +514,16 @@ $(document).ready(function () {
             $('#add_flashcard').hide();
             on_which_config_page_now = '1';
         }
+
+    });
+
+    // configure back from games
+    $('#configure-back-from-games').click(function () {
+        $('#intro_screen').show();
+        $('#choose_games').hide();
+         // after pressing back we need to tell window1 to update grade & lesson according to the docs
+        // as current one is of flashcard
+        socket.emit('refresh_grades_as_per_docs', {});
     });
 
     $('#upload_ppt_pdf').click(function () {
@@ -611,13 +628,17 @@ $(document).ready(function () {
         $('#timer_modal').removeClass("modal").addClass("modal is-active");
     });
     $('#play_games_go').click(function () {
-        $('#intro_screen').hide(1000);
-        $('#choose_games').show(1200);
+        $('#intro_screen').hide();
+        $('#iframe-container').hide();
+        $('#initial_box').hide();
         $('#student-report-input').hide();
         $('#view-student-report-div').hide();
+        $('#choose_games').show();
+
+        alert("hey there");
     });
     $('#view_ss_report_go').click(function () {
-        // todo:
+        // todo: .......
     });
 
 
@@ -630,13 +651,14 @@ $(document).ready(function () {
     ];
 
     const _height = Math.ceil($(document).height() * 0.44); // todo: fine tune if needed
-    $('#slide-image').attr('src', _slides[_index % 3]).css('height', `${_height}`);
+    $('#slide-image').css('height', `${_height}`).attr('src', _slides[_index % 3]);
     _index++;
     let slide_0 = $('#slide-0');
     let slide_1 = $('#slide-1');
     let slide_2 = $('#slide-2');
-// $('#slide_image').css('height',`${_height}`);
-// todo: on slide with cursor
+    // todo: slide is taking time to load, do something there that height is gone , h = 0 before loading
+    // $('#slide_image').css('height',`${_height}`);
+    // todo: on slide with cursor
 
     function update_indicator_color(_i) {
         if (_i === 0) {

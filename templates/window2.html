@@ -26,7 +26,7 @@
     {#                 alt="app-logo" style="margin-left: 12px;margin-top: 8px;"/>#}
     {#        </div>#}
     <div class="block is-grouped-right" style="margin-bottom: 0;margin-top:4px;margin-right:8px;text-align: right">
-{#     <i id="settings_window" style="font-size: 20px;color: #35ea35;cursor: pointer;" class="fa fa-wifi"></i>#}
+        {#     <i id="settings_window" style="font-size: 20px;color: #35ea35;cursor: pointer;" class="fa fa-wifi"></i>#}
         <i id="settings_window" style="font-size: 20px;color: white;cursor: pointer;" class="fal fa-cog"></i>
         <i id="minimize_window" style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer"
            class="fal fa-minus"></i>
@@ -58,7 +58,8 @@
             {% endfor %}
         </div>
 
-        <div style="float: left;width: 4%"></div> {# space #}
+        <div style="float: left;width: 4%"></div>
+        {# space #}
 
         <div id="stars_count_div"
              style="float: left;width: 10%;visibility: hidden">
@@ -248,18 +249,26 @@
 
         </div>
 
-        <div class="columns" id="choose_games" style="display: none;">
-            <div class="column box" id="game_1" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">TikTakToe</h2>
-            </div>
-            <div class="column box" id="game_2" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">MATCH</h2>
-            </div>
-            <div class="column box" id="game_3" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">FIND</h2>
-            </div>
-            <div class="column box" id="game_4" style="margin:8px;height:450px;cursor: pointer;">
-                <h2 class="title is-2" style="color: white">LISTEN</h2>
+        <div id="choose_games" style="display: none;">
+            <h4 class="is-4 title">
+                <span id="configure-back-from-games" style="cursor: pointer;">
+                <i class="fa fa-arrow-circle-left" ></i>&nbsp;&nbsp;&nbsp;Oncher Games </span>
+            </h4>
+
+            <div class="columns" style="margin-top: 12px;">
+                {# todo: fix the height based on the actual window height #}
+                <div class="column box" id="game_1" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">TikTakToe</h2>
+                </div>
+                <div class="column box" id="game_2" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">MATCH</h2>
+                </div>
+                <div class="column box" id="game_3" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">FIND</h2>
+                </div>
+                <div class="column box" id="game_4" style="margin:8px;height:450px;cursor: pointer;">
+                    <h2 class="title is-2" style="color: white">LISTEN</h2>
+                </div>
             </div>
         </div>
     </div>
@@ -445,7 +454,7 @@
         {# add ppt, pdf #}
 
         <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
+            <h5 class="title is-4" >Select Grade & Lesson</h5>
             <div class="container" style="padding: 4px">
 
                 <div class="control has-icons-left" style="display: inline-block">
@@ -468,7 +477,7 @@
 
 
             <br>
-            <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Document (ppt, pptm, pptx,
+            <h5 class="title is-4">Add Document (ppt, pptm, pptx,
                 pdf)</h5>
             <div class="container" style="padding: 4px">
                 <form method="post" name="fileinfo" id="fileinfo" class="field is-inline-block-mobile">

@@ -14,7 +14,7 @@ from flask_socketio import emit
 
 from app import BASE_URL
 from database_schema.models import *
-from api.server_router_api.server import oncher_app, database_cluster, socket_io
+from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
 
 
 # from app import logger
@@ -71,7 +71,6 @@ def upload_ppt_to_server(local_file_location: str) -> bool:
 def add_student():
     form = request.form
     if form:
-        print(form)
         database_cluster.session.add(StudentsData(name=form['student_name'],
                                                   age=int(form['student_age']),
                                                   gender=1 if form['gender'] == "male" else 0,
@@ -142,6 +141,7 @@ current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, 
 
 @socket_io.on('grade_lesson_select_signal_receive')
 def grade_lesson_select_signal_receive(data):
+    logger.debug("received ..... from select grade-lesson {}".format(data))
     # print("grade lesson select signal {}".format(data))
     """
     todo: there will be 3 types: => students, flashcard & ppt/pdf
@@ -217,7 +217,9 @@ def grade_lesson_select_signal_receive(data):
         print("No docs available under this grade and lesson")
 
     # this is for the window 3 screen shot purpose, that we need lesson and window-2 error check for un-selected GL for flashcards
-    emit('grade_lesson_update_trigger', {'lesson': data['lesson'], 'grade': data['grade']}, namespace='/',
+    emit('grade_lesson_update_trigger', {'lesson': data['lesson'],
+                                         'grade': data['grade']},
+         namespace='/',
          broadcast=True)
 
 # @oncher_app.route('/test')

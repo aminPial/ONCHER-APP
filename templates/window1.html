@@ -42,7 +42,9 @@
                     let is_note_section_enabled = false;
                     let current_student_object = null;
 
+                    let socket = io.connect('/');
 
+                    // basic addition
                     socket.on('students-list-dropdown', function (data) {
                         //   alert('yo here students');
                         let student_list_dropdown_elem = $('#students-list-dropdown');
@@ -58,7 +60,6 @@
                             }
                         }
                     });
-                    // .attr('disabled','disabled');
 
                     // 'students_list_update'
                     function send_student_select_signal(student_object) {
@@ -251,7 +252,7 @@
                 }
             }
 
-            let socket = io.connect('/');
+         //   let socket = io.connect('/');
 
             socket.on('refresh_grade_on_docs', function (data) {
                 which_one = 'docs_version';
@@ -262,6 +263,51 @@
                 //   alert("Switching to games"); // data is already there when loaded
                 which_one = 'flashcard_version';
                 refresh_grade();
+            });
+
+            // this one is special
+            // when a ppt,pdf or flashcard gets added then we add it to the current list
+            // no empty(), just append in grade and lesson
+            // n.b: please check if the grade already exists or not, no need for the lesson
+            //      for duplicates it can be e.g: already 5,2 => now received 5, 1 .
+            //      we do check if there is any matched "GradeLesson" pair in db. So this is safe here
+            socket.on('special_grade_or_lesson_add', function (data) {
+             //   alert("D " + JSON.stringify(data));
+                // format of data: {'type_of_document': pdf/ppt/flashcard, 'grade': number, 'lesson': number}
+
+                // first add grade
+                // check first if we already have the same grade
+
+                const grade_exists_for_flashcard = data['type_of_document'] === 'flashcard' &&
+                    grade_lessons_flashcard_version.hasOwnProperty(data['grade']);
+                // !== flashcard means 'ppt or pdf'
+                const grade_exists_for_ppt_or_pdf = data['type_of_document'] !== 'flashcard' &&
+                    grade_lessons_docs_version.hasOwnProperty(data['grade']);
+
+                const does_grade_exists = grade_exists_for_flashcard || grade_exists_for_ppt_or_pdf;
+              //  alert("does grade exists " + does_grade_exists);
+
+                if (does_grade_exists) {
+                    // just append the lesson to the correct HashMap
+                    if (data['type_of_document'] === 'flashcard')
+                        // you are pushing to a list as the grade_lessons_f_version = {grade: [L1, L2, ....]}
+                        grade_lessons_flashcard_version[data['grade']].push(data['lesson']);
+                    else
+                        grade_lessons_docs_version[data['grade']].push(data['lesson']);
+                } else {
+                  //  alert("Added grade new...Nice"); // tmp  delete this line
+                    $('#grade-list-in-dropdown').append(
+                        `<a onClick=\"send_grade_select_signal(${data['grade']})\" class=\"dropdown-item\">\n` +
+                        `    ${data['grade']}\n` +
+                        "</a>");
+                    // we need create a new key for the new grade in the doc
+                    // and also append the lesson initially
+                    if (data['type_of_document'] === 'flashcard')
+                        grade_lessons_flashcard_version[data['grade']] = [data['lesson']];
+                    else
+                        grade_lessons_docs_version[data['grade']] = [data['lesson']];
+                }
+
             });
 
 
@@ -277,9 +323,11 @@
                 for (let i = 0; i < (which_one === 'docs_version' ?
                     grade_lessons_docs_version[current_grade].length :
                     grade_lessons_flashcard_version[current_grade].length); i++) {
+
                     l.append("<a onclick=\"send_lesson_select_signal(" + `${which_one === 'docs_version' ?
                         grade_lessons_docs_version[current_grade][i] :
-                        grade_lessons_flashcard_version[current_grade][i]}` + ")\" class=\"dropdown-item\">\n" +
+                        grade_lessons_flashcard_version[current_grade][i]
+                        }` + ")\" class=\"dropdown-item\">\n" +
                         "                            \n" + `${which_one === 'docs_version' ?
                             grade_lessons_docs_version[current_grade][i] :
                             grade_lessons_flashcard_version[current_grade][i]}` +

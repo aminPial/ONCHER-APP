@@ -6,6 +6,7 @@
 import multiprocessing
 import os
 import pickle
+import shutil
 import time
 from typing import List
 
@@ -21,7 +22,7 @@ from json import loads
 
 from app import BASE_URL
 from database_schema.models import *
-from api.server_router_api.server import oncher_app, database_cluster, socket_io
+from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
 
 
 @oncher_app.route('/window_2')
@@ -38,9 +39,12 @@ def window_2():
             grade_lessons['{}'.format(study_material.grade)] = []
         study_material = study_material.__dict__
         study_material.pop('_sa_instance_state')
+        # type of grade key is <str> (not int)
         grade_lessons['{}'.format(study_material['grade'])].append(study_material)
     # print("grade lessons: {}".format(grade_lessons))
-    return render_template('window2.html', BASE_URL=BASE_URL, grade_lessons=grade_lessons,
+    return render_template('window2.html',
+                           BASE_URL=BASE_URL,
+                           grade_lessons=grade_lessons,
                            grade_lesson_load_count_ppt_pdf=ppt_pdf,
                            grade_lesson_load_count_flashcard=flashcard
                            )
@@ -101,10 +105,6 @@ def game_4_initialize(data):
          namespace='/', broadcast=True)
 
 
-# def write_png(pix, output):
-#
-
-
 def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: bool):
     """
     page_start
@@ -162,6 +162,8 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     #     w, h = Image.open(os.path.join(page_extract_directory, images[0])).size
     #     print("Already Exists. Image Size from Pre is {} {}".format(w, h))
     #     return [pdf_file_name, len(images), w, h]
+    if os.path.exists(extract_directory):
+        shutil.rmtree(extract_directory)
     os.makedirs(extract_directory)
 
     pdf_document_object = fitz.open(pdf_file_path)
@@ -171,6 +173,8 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 
     _divide_by_parts = 10
     pools = []
+    # todo: use ProcessPool() for better efficiency
+    # todo: write some and isolate this child process "parse_pdf and it's caller" routines
     pools: List[multiprocessing.Process]
     tail_size, partial = divmod(no_of_pages, _divide_by_parts)
     if tail_size == 0:
@@ -192,8 +196,8 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
                                                    # save w, h if first page else don't
                                                    True if page_no == 0 else False)))
     [p.start() for p in pools]
-    # [p.join() for p in pools]
-    print("Took {} seconds to parse the PDF".format(time.time() - st))
+    [p.join() for p in pools]
+    logger.debug("Took {} seconds to parse the PDF".format(time.time() - st))
     return [pdf_file_name, no_of_pages]  # [file_name,page_count , W, H]
 
 
@@ -221,91 +225,113 @@ def upload_ppt(full_file_path, retry_count_left=5):
 def upload_document():
     # todo: update the grade and lesson list after the upload document
     # send "start showing loading animation" signal to window 2
-    # emit("ppt_or_ppt_upload_signal", {"is_loading": True},
-    #      namespace='/',
-    #      broadcast=True)
+    emit("ppt_or_ppt_upload_signal", {"is_loading": True},
+         namespace='/',
+         broadcast=True)
     form = request.form
-    if form['is_flashcard'] == "true":
-        folder_name = os.path.abspath(os.path.join("static", "flashcards", "Grade_{}_Lesson_{}".format(form['grade'],
-                                                                                                       form['lesson'])))
-        if not os.path.exists(folder_name):
-            os.makedirs(folder_name)
-        else:
-            # todo: if exists, should we show some crappy alert that it exists
-            print("Folder Already Exists")
-            return jsonify(status=0, does_exist=True, reason="Grade and Lesson folder already exists")
+    should_emit_grade_lesson = True
+    try:
+        if form['is_flashcard'] == "true":
+            folder_name = os.path.abspath(os.path.join("static",
+                                                       "flashcards",
+                                                       "Grade_{}_Lesson_{}".format(
+                                                           form['grade'], form['lesson'])))
+            if not os.path.exists(folder_name):
+                os.makedirs(folder_name)
+            else:
+                # todo: if exists, should we show some crappy alert that it exists
+                logger.warning("Folder Already Exists")
+                return jsonify(status=0, does_exist=True, reason="Grade and Lesson folder already exists")
 
-        for i in range(3):
-            for j in range(3):
-                file = request.files[f'flashcard_{i}_{j}_input']
-                file: request.files
-                filename = secure_filename(file.filename).lstrip().rstrip()
-                print("flashcard filename => {}".format(filename))
+            for i in range(3):
+                for j in range(3):
+                    file = request.files[f'flashcard_{i}_{j}_input']
+                    file: request.files
+                    filename = secure_filename(file.filename).lstrip().rstrip()
+                    logger.debug("flashcard filename => {}".format(filename))
 
-                full_file_path = os.path.join(folder_name, "{}".format(filename))
-                file.save(full_file_path)
+                    full_file_path = os.path.join(folder_name, "{}".format(filename))
+                    file.save(full_file_path)
 
-        # todo: check if same grade lesson exists
-        database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
-                                                    lesson=int(form['lesson']),
-                                                    is_flashcard=1,
-                                                    is_pdf=0
-                                                    ))
-        database_cluster.session.commit()
-        return jsonify(status=1, does_exist=False)
-    else:
-        # todo: check if same grade lesson exists
-        file = request.files['myfile']
-        file: request.files
-        filename = secure_filename(file.filename).lstrip().rstrip()
-        full_file_path = os.path.abspath(os.path.join("static", "files", filename))
-        file.save(full_file_path)
-        if filename.endswith(".pdf"):
-            # if already exists then we return
-            if StudyMaterials.query.filter_by(folder_name=filename).first():
-                return jsonify(status=0, does_exist=True)
-
-            pdf_file_name, page_count = parse_pdf_file(full_file_path, filename)
+            # todo: check if same grade lesson exists
             database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
                                                         lesson=int(form['lesson']),
-                                                        folder_name=filename,
-                                                        is_flashcard=0,
-                                                        page_count=page_count,
-                                                        is_pdf=1
+                                                        is_flashcard=1,
+                                                        is_pdf=0
                                                         ))
             database_cluster.session.commit()
-            # todo: emit to update the docs in the dropdown to grade & lesson
-            # print("After committing. {}".format(StudyMaterials.query.all()))
-            return jsonify(status=1, does_exist=False, folder_name=filename)
+            return jsonify(status=1, does_exist=False)
+        else:
+            # todo: check if same grade lesson exists
+            file = request.files['myfile']
+            file: request.files
+            filename = secure_filename(file.filename).lstrip().rstrip()
+            full_file_path = os.path.abspath(os.path.join("static", "files", filename))
+            file.save(full_file_path)
+            if filename.endswith(".pdf"):
+                # if already exists then we return
+                if StudyMaterials.query.filter_by(folder_name=filename).first():
+                    should_emit_grade_lesson = False
+                    logger.warning("Same grade and lesson exist in database when adding ppt")
+                    return jsonify(status=0, does_exist=True)
 
-        elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
-            st = time.time()
-            response = upload_ppt(full_file_path)
-            print("response from server is {} in {} seconds".format(response, time.time() - st))
-            if response and response['status'] == 'ok' and response['done_uploading']:
-                # https%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx
-                encoded_url = quote('https://libwired.com/static/{}'.format(filename), safe='')
-                print("Encoded Url is {}".format(encoded_url))
-                # https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
-                src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D{encoded_url}&access_token_ttl=0&wdModeSwitchTime=1612594467217""".format(
-                    encoded_url=encoded_url
-                )
-                print("Full Url {}".format(src_to_load))
-
+                pdf_file_name, page_count = parse_pdf_file(full_file_path, filename)
                 database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
                                                             lesson=int(form['lesson']),
                                                             folder_name=filename,
                                                             is_flashcard=0,
-                                                            is_pdf=0,
-                                                            ppt_server_url=src_to_load
+                                                            page_count=page_count,
+                                                            is_pdf=1
                                                             ))
                 database_cluster.session.commit()
+                # todo: emit to update the docs in the dropdown to grade & lesson
+                # print("After committing. {}".format(StudyMaterials.query.all()))
                 return jsonify(status=1, does_exist=False, folder_name=filename)
 
+            elif any([filename.endswith(extension) for extension in ['.ppt', '.pptx', '.pptm']]):
+                st = time.time()
+                response = upload_ppt(full_file_path)
+                logger.info("response from server is {} in {} seconds".format(response, time.time() - st))
+                if response and response['status'] == 'ok' and response['done_uploading']:
+                    # https%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx
+                    encoded_url = quote('https://libwired.com/static/{}'.format(filename), safe='')
+                    logger.info("Encoded Url is {}".format(encoded_url))
+                    # https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
+                    src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D{encoded_url}&access_token_ttl=0&wdModeSwitchTime=1612594467217""".format(
+                        encoded_url=encoded_url
+                    )
+                    logger.info("Full Url {}".format(src_to_load))
+                    database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                                lesson=int(form['lesson']),
+                                                                folder_name=filename,
+                                                                is_flashcard=0,
+                                                                is_pdf=0,
+                                                                ppt_server_url=src_to_load
+                                                                ))
+                    database_cluster.session.commit()
+                    return jsonify(status=1, does_exist=False, folder_name=filename)
+
+                else:
+                    return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
             else:
-                return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
-        else:
-            return jsonify(status=0, does_exist=False, folder_name='invalid file extension')
+                return jsonify(status=0, does_exist=False, folder_name='invalid file extension')
+    except Exception as e:
+        should_emit_grade_lesson = False
+        logger.exception("Failed to upload flashcard/ppt/pdf because of {}".format(e))
+        return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
+    finally:
+        # now the special grade lesson emitter
+        if should_emit_grade_lesson:
+            logger.debug("Emitting special grade-lesson bits from finally block")
+            # {'type_of_document': pdf/ppt/flashcard, 'grade': number, 'lesson': number}
+            emit('special_grade_or_lesson_add',
+                 # flashcard vs 'ppt/pdf' is all it matters,
+                 # ppt & pdf doesn't have separate meaning for this function
+                 {'type_of_document': 'flashcard' if form['is_flashcard'] == "true" else 'ppt_pdf',
+                  'grade': form['grade'],
+                  'lesson': form['lesson']},
+                 namespace='/',
+                 broadcast=True)
 
 
 @socket_io.on('refresh_grades_as_per_docs')
