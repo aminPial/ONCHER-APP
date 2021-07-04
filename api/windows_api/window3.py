@@ -12,7 +12,7 @@ from flask import render_template
 from flask_socketio import emit
 
 from app import BASE_URL
-from api.server_router_api.server import oncher_app, socket_io
+from api.server_router_api.server import oncher_app, socket_io, logger
 
 
 @oncher_app.route('/window_3')
@@ -152,6 +152,6 @@ def take_screenshot(data):
 
 @socket_io.on('pass_message_to_window_2')
 def pass_message_to_window_2(data):
-    print("Passing Message {}".format(data))
+    logger.debug("Passing Message {}".format(data))
     # data => {'is_positive': false/true, 'message': string}
     emit('receive_notification_message', data, namespace='/', broadcast=True)

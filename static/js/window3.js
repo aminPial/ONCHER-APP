@@ -98,7 +98,7 @@ $(document).ready(function () {
             $('#toss_animation_trigger'),
             $('#dice_animation_trigger'),
             $('#start_end_timer_button'),
-            //  $('#games_start_trigger'),
+        //    $('#games_start_trigger'),
 
             // screen shot $('#timer-settings')
         ]
@@ -170,6 +170,12 @@ $(document).ready(function () {
         } else
             $('#game_4_special').hide();
     });
+
+    // to hide the text when back from game
+    socket.on('clear_window_3_game_4_text_trigger', function (data) {
+        $('#game_4_special').hide();
+    });
+
 
     // screenshot related triggers
     let student_object_data = null;

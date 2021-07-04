@@ -25,17 +25,25 @@
     {#            <img src="{{ url_for('static', filename='images/app_logo_small.png') }}"#}
     {#                 alt="app-logo" style="margin-left: 12px;margin-top: 8px;"/>#}
     {#        </div>#}
-    <div class="block is-grouped-right" style="margin-bottom: 0;margin-top:4px;margin-right:8px;text-align: right">
+    <div class="block" style="margin-bottom: 0;margin-top:4px;">
         {#     <i id="settings_window" style="font-size: 20px;color: #35ea35;cursor: pointer;" class="fa fa-wifi"></i>#}
-        <i id="settings_window" style="font-size: 20px;color: white;cursor: pointer;" class="fal fa-cog"></i>
-        <i id="minimize_window" style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer"
-           class="fal fa-minus"></i>
-        <i id="maximize_window"
-           style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer;margin-top: 8px;"
-           class="fal fa-presentation"></i>
-        <i id="close_window"
-           style="font-size: 24px;margin-left: 18px;margin-right: 12px;color: white;cursor: pointer;margin-top: 8px;"
-           class="fal fa-times"></i>
+
+        <div class="is-grouped" style="margin-left:16px;text-align: left;float:left;margin-top: 8px;">
+            <i id="back-to-intro-page" style="font-size: 24px;color: white;cursor: pointer;display: none"
+               class="fa fa-arrow-alt-left"></i>
+        </div>
+
+        <div class="is-grouped-right" style="margin-right:8px;text-align: right">
+            <i id="settings_window" style="font-size: 20px;color: white;cursor: pointer;" class="fal fa-cog"></i>
+            <i id="minimize_window" style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer"
+               class="fal fa-minus"></i>
+            <i id="maximize_window"
+               style="font-size: 20px;margin-left: 18px;color: white;cursor: pointer;margin-top: 8px;"
+               class="fal fa-presentation"></i>
+            <i id="close_window"
+               style="font-size: 24px;margin-left: 18px;margin-right: 12px;color: white;cursor: pointer;margin-top: 8px;"
+               class="fal fa-times"></i>
+        </div>
     </div>
 
     {#    <div style="overflow-y: auto">#}
@@ -252,7 +260,7 @@
         <div id="choose_games" style="display: none;">
             <h4 class="is-4 title">
                 <span id="configure-back-from-games" style="cursor: pointer;">
-                <i class="fa fa-arrow-circle-left" ></i>&nbsp;&nbsp;&nbsp;Oncher Games </span>
+                <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp;Oncher Games </span>
             </h4>
 
             <div class="columns" style="margin-top: 12px;">
@@ -454,7 +462,7 @@
         {# add ppt, pdf #}
 
         <section style="display: none;margin-left: 24px" id="add_ppt_pdf_div">
-            <h5 class="title is-4" >Select Grade & Lesson</h5>
+            <h5 class="title is-4">Select Grade & Lesson</h5>
             <div class="container" style="padding: 4px">
 
                 <div class="control has-icons-left" style="display: inline-block">
@@ -775,8 +783,8 @@
                         return reset_game(D2 === 0 ? "teacher" : "student");
 
                     if (count_clicks === 9) {
-                        //   alert("Draw man");
-                        // todo: return reset_game()
+                        show_notifications(true, "Oops! Draw. Cheers to Student & Teacher.");
+                        return reset_game('none')
                     }
                     // todo: check for draw..... and show and it's draw... and reset
                 }

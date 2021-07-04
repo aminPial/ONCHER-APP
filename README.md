@@ -14,12 +14,25 @@
     <img src="https://img.shields.io/badge/Version-0.0.1-brightgreen"
          alt="version">
   </a>
+ <a href="https://github.com/aminPial/ONCHER-APP/issues">
+  <img src="https://img.shields.io/badge/bug%20report-on%20github-cyan"
+alt="discuss"></a>
+
 <a href="https://github.com/aminPial/ONCHER-APP/projects">
     <img src="https://img.shields.io/badge/Project Management-on github-yellow"
          alt="project-management">
   </a>
+
   <a href="https://github.com/aminPial/ONCHER-APP/discussions/1">
-  <img src="https://img.shields.io/badge/discuss%20features-on%20github-blue" alt="discuss"></a>
+  <img src="https://img.shields.io/badge/discuss%20features-on%20github-blue"
+alt="discuss"></a>
+
+ <a href="https://sentry.io/organizations/amin-pial/issues/?project=5816571">
+  <img src="https://img.shields.io/badge/issue%20tracking-on%20sentry-red"
+alt="discuss"></a>
+
+
+
 </p>
 
 <p align="center">
@@ -38,14 +51,13 @@
 
 ## Download
 
-<h4>Latest Stable Version: <b><code>V 0.0.1</code></b> </h4>  
+<h4>Latest Stable Version: <b><code>V 0.0.1</code></b> </h4>
 
 ❌ [Download Windows 7/8 Build]()
 
 ✔️ [Download Windows 10 Build](https://github.com/aminPial/ONCHER-APP/releases/download/0.0.1/Oncher.exe)
 
 ❌ [Download Mac High Sierra Build]()
-
 
 ## License
 

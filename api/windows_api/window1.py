@@ -2,7 +2,6 @@
 #  Unauthorized copying of this file, via any medium is strictly prohibited
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
-
 import os
 
 import requests
@@ -12,9 +11,9 @@ from flask import render_template
 from flask import request
 from flask_socketio import emit
 
+from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
 from app import BASE_URL
 from database_schema.models import *
-from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
 
 
 # from app import logger
@@ -47,7 +46,8 @@ def window_1():
     [a.pop('_sa_instance_state') for a in students]
     # print(students)
     return render_template('window1.html', students=students,
-                           BASE_URL=BASE_URL, grade_lessons_docs_version=grade_lessons_docs_version,
+                           BASE_URL=BASE_URL,
+                           grade_lessons_docs_version=grade_lessons_docs_version,
                            grade_lessons_flashcard_version=grade_lessons_flashcard_version)
 
 
@@ -89,12 +89,6 @@ def student_note_save():
     database_cluster.session.commit()
     return ''
 
-
-# @socket_io.on('my event')
-# def handle_message(data):
-#     print('received message: ' + str(data))
-#
-#
 
 # student select signal receive
 @socket_io.on('student_select_signal_receive')
@@ -141,8 +135,7 @@ current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, 
 
 @socket_io.on('grade_lesson_select_signal_receive')
 def grade_lesson_select_signal_receive(data):
-    logger.debug("received ..... from select grade-lesson {}".format(data))
-    # print("grade lesson select signal {}".format(data))
+    # logger.debug("received ..... from select grade-lesson {}".format(data))
     """
     todo: there will be 3 types: => students, flashcard & ppt/pdf
     """
@@ -154,8 +147,8 @@ def grade_lesson_select_signal_receive(data):
     # student version
     students = [s.__dict__ for s in StudentsData.query.filter_by(which_grade=int(data['grade'])).all()]
     [a.pop('_sa_instance_state') for a in students]
-    # print("students after selecting grade and lesson is {}".format(students))
-    emit('students_list_update', {'students': students}, namespace='/', broadcast=True)
+    logger.debug("students after selecting grade and lesson is {}".format(students))
+    emit('students_list_update', {'students': students, 'grade': data['grade']}, namespace='/', broadcast=True)
 
     # flashcard version
     folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
@@ -193,7 +186,7 @@ def grade_lesson_select_signal_receive(data):
             width, height = Image.open(os.path.join(path0, os.listdir(path0)[0])).size
             # print("Parsed Width {} and Height {}".format(width, height))
             from app import BASE_URL
-            # print("BASE {}".format(BASE_URL))
+            logger.warning("On Grade & Lesson Select - BASE URL {}".format(BASE_URL))
             if BASE_URL is None:
                 BASE_URL = "http://localhost:5000"  # todo: fix this
             payload = {

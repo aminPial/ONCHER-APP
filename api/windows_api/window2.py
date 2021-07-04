@@ -225,9 +225,9 @@ def upload_ppt(full_file_path, retry_count_left=5):
 def upload_document():
     # todo: update the grade and lesson list after the upload document
     # send "start showing loading animation" signal to window 2
-    emit("ppt_or_ppt_upload_signal", {"is_loading": True},
-         namespace='/',
-         broadcast=True)
+    # emit("ppt_or_ppt_upload_signal", {"is_loading": True},
+    #      namespace='/',
+    #      broadcast=True)
     form = request.form
     should_emit_grade_lesson = True
     try:
@@ -353,3 +353,13 @@ def student_report_submit():
         database_cluster.session.commit()
         return jsonify(status=1)
     return jsonify(status=0)
+
+
+@socket_io.on('clear_grade_and_lesson_on_back_to_intro')
+def clear_grade_and_lesson_on_back_to_intro(_):
+    emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
+
+
+@socket_io.on('clear_window_3_game_4_text')
+def clear_window_3_game_4_text(_):
+    emit('clear_window_3_game_4_text_trigger', {}, namespace='/', broadcast=True)

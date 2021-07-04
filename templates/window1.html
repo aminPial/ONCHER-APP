@@ -27,13 +27,7 @@
             </button>
             <div class="dropdown-menu" id="dropdown-menu" role="menu">
                 <div class="dropdown-content" id="students-list-dropdown">
-
-                    {% for student in students %}
-                        <a onclick='send_student_select_signal({{ student | tojson }})'
-                           class="dropdown-item">
-                            {{ student.name }}
-                        </a>
-                    {% endfor %}
+                    {# here the list of student with a link inside it will be added #}
 
                 </div>
 
@@ -45,17 +39,21 @@
                     let socket = io.connect('/');
 
                     // basic addition
-                    socket.on('students-list-dropdown', function (data) {
-                        //   alert('yo here students');
+                    socket.on('students_list_update', function (data) {
+                      //  alert('yo here students ' + JSON.stringify(data));
                         let student_list_dropdown_elem = $('#students-list-dropdown');
                         student_list_dropdown_elem.empty();
-                        if (data === null || data['students'].length > 0) {
-                            // todo: nothing to select
+                        if (data === null || data['students'].length <= 0) {
+                            // {'is_positive': false/true, 'message': string}
+                          //  alert("Here " + data ===null + " " + data['students'.length <=0] )
+                          socket.emit('pass_message_to_window_2',
+                              {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
                         } else {
-                            for (let q = 0; q < data['students'].length; q++) {
-                                student_list_dropdown_elem.append(`<a onClick='send_student_select_signal(${data['students'][q]})'\n` +
+                            const sd = data['students'];
+                            for (let q = 0; q < sd.length; q++) {
+                                student_list_dropdown_elem.append(`<a onClick='send_student_select_signal(${sd[q]})'\n` +
                                     "   class=\"dropdown-item\">\n" +
-                                    `    ${data['students'][q]['name']}\n` +
+                                    `    ${sd[q]['name']}\n` +
                                     "</a>");
                             }
                         }
@@ -180,7 +178,7 @@
                     style="box-shadow: 0 0 11px rgba(236,220,220,0.45);
                     float: left;width: 100%;display: flex;
   justify-content: space-between;">
-                <span id="base_grade_text" style="font-weight: bolder">Select Grade</span>
+                <span id="base_grade_text" style="font-weight: bolder">Grade</span>
                 <span class="icon is-small">
                     <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 4px"></i>
                  </span>
@@ -209,7 +207,7 @@
                         float: left;;width: 100%;display: flex;padding-right: 8px;
   justify-content: space-between">
 
-                <span id="base_lesson_text" style="font-weight: bolder">Select Lesson</span>
+                <span id="base_lesson_text" style="font-weight: bolder">Lesson</span>
                 <span class="icon is-small">
                     <i class="fas fa-angle-down" aria-hidden="true" style="margin-right: 4px"></i>
                  </span>
@@ -242,6 +240,9 @@
                 g_elem.empty();
                 $('#lessons_div').empty();
 
+                $('#base_grade_text').text("Grade");
+                $('#base_lesson_text').text("Lesson")
+
                 for (const [__grade, __lesson] of Object.entries(
                     which_one === 'docs_version' ? grade_lessons_docs_version : grade_lessons_flashcard_version
                 )) {
@@ -264,6 +265,11 @@
                 which_one = 'flashcard_version';
                 refresh_grade();
             });
+
+            {#// when the 'back icon' is clicked from docs to return back to the intro page#}
+            {#socket.on('grade_lesson_clear_trigger', function (data) {#}
+            {#    $('#grade-list-in-dropdown').empty();#}
+            {#    $('#lessons_div').empty();#}
 
             // this one is special
             // when a ppt,pdf or flashcard gets added then we add it to the current list
