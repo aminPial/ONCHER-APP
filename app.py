@@ -3,11 +3,34 @@
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
-# public var & methods here (before __name__ == '__main__')
 
 BASE_URL = None
 
 if __name__ == '__main__':
+    import os
+
+    # create db folder and static folder if first run
+
+    db_folder_path = os.path.abspath('db_file')
+    if not os.path.exists(db_folder_path):
+        os.makedirs(db_folder_path)
+
+    # clean the "previously debugged" static files
+    static_sub_folders_to_clear = ['cache',  # pdfs parsed images
+                                   'files',  # pdf,ppt itself
+                                   'flashcards',  # flashcard images
+                                   # 'pickles', # exclude pickles for now
+                                   'screenshots'
+                                   ]
+    for sub_folder in static_sub_folders_to_clear:
+        sub_folder_path = os.path.abspath(os.path.join('static', sub_folder))
+        if not os.path.exists(sub_folder_path):
+            os.makedirs(sub_folder_path)
+
+    # don't remove this => from engineio.async_drivers import gevent
+    # for 'invalid async mode error'
+    # see https://stackoverflow.com/questions/54150895/valueerror-invalid-async-mode-specified-when-bundling-a-flask-app-using-cx-fr
+    from engineio.async_drivers import gevent
     from socket import socket, AF_INET, SOCK_STREAM
 
 
@@ -44,31 +67,31 @@ if __name__ == '__main__':
     from time import sleep
 
     import pyautogui as p
+    # see https://stackoverflow.com/questions/63681770/getting-error-when-using-pynput-with-pyinstaller
     from pynput import keyboard
     from webview import create_window, start
     # from webview.platforms.cef import settings  #
     from math import ceil
 
     from flask_socketio import emit
-    from os import _exit
-    import sentry_sdk
 
-    # import logging
 
-    sentry_sdk.init(
-        "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0
-    )
-
+    # import sentry_sdk
+    #
+    # sentry_sdk.init(
+    #     "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
+    #     # Set traces_sample_rate to 1.0 to capture 100%
+    #     # of transactions for performance monitoring.
+    #     # We recommend adjusting this value in production.
+    #     traces_sample_rate=1.0
+    # )
 
     # special code-blocks for win platform
     # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
     # if sys.platform.startswith('win'):
     #     # On Windows calling this function is necessary.
     #     multiprocessing.freeze_support()
+
 
     def start_server(port: int):
         # from server import socket_io, oncher_app
@@ -87,16 +110,22 @@ if __name__ == '__main__':
         s_w, s_h = p.size()  # screen width and height
         # min(p.size()) // 2.5 = for my screen 307px
         square_size = int(min(p.size()) / 2.5)
-        start(destroy_window, create_window('',
-                                            html=open('templates/loading.html').read(),
-                                            x=(s_w // 2) - ceil(square_size // 2),
-                                            y=(s_h // 2) - ceil(square_size // 2),
-                                            width=square_size,
-                                            height=square_size,
-                                            frameless=True,
-                                            resizable=False,
-                                            # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
-                                            on_top=True))
+        loading_template = open(os.path.abspath(os.path.join('templates', 'loading.html')))
+        try:
+            start(destroy_window, create_window('',
+                                                html=loading_template.read(),
+                                                x=(s_w // 2) - ceil(square_size // 2),
+                                                y=(s_h // 2) - ceil(square_size // 2),
+                                                width=square_size,
+                                                height=square_size,
+                                                frameless=True,
+                                                resizable=False,
+                                                # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
+                                                on_top=True))
+        except Exception as e:
+            logger.error("Failed to load loading screen template because of {}".format(e))
+        finally:
+            loading_template.close()
 
 
     def on_press(key):
@@ -124,7 +153,7 @@ if __name__ == '__main__':
 
     def on_closed():
         # close the app if a single window is closed
-        _exit(0)
+        os._exit(0)
 
 
     # def hide(ws: List[webview.Window], show: bool = False):
@@ -133,12 +162,6 @@ if __name__ == '__main__':
     #         [wx.show() for wx in ws]
     #     else:
     #         [wx.hide() for wx in ws]
-
-    def make_folders_in_static():
-        # css, js, sounds, images (will be there)
-        folder_names = ['cache', 'files', 'flashcards', 'pickles',
-                        'screenshots']  # todo: take care of screenshot folder
-
 
     def hide_stuffs():
         # todo: implement this
@@ -221,7 +244,7 @@ if __name__ == '__main__':
         """
         try:
             # [win.destroy() for win in windows]
-            _exit(0)
+            os._exit(0)
         except Exception as e:
             logger.error("Failed to destroy window because of {}".format(e))
 
@@ -269,5 +292,5 @@ if __name__ == '__main__':
     IS_WINDOW_2_ACTIVE = True
     # func=hide, args=(w v  windows, False)
 
-    # folders have to be created on start (dynamic on first run) and also make files,folder hidden
-    start(debug=True, gui="cef")  # edgehtml
+    # see https://pywebview.flowrl.com/guide/renderer.html
+    start(debug=True, gui="mshtml")  # windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml

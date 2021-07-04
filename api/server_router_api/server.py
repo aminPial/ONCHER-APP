@@ -17,7 +17,7 @@ LEVEL_STYLE = {'spam': {'color': 'green', 'faint': True},
                'success': {'color': 'green', 'bold': True},
                'error': {'color': 'red'},
                'critical': {'color': 'red', 'bold': True}}
-coloredlogs.install(level='DEBUG',
+coloredlogs.install(level='ERROR',
                     logger=logger,
                     fmt='%(asctime)s %(module)s.py->%(funcName)s()->Line %(lineno)d %(levelname)s %(message)s',
                     level_styles=LEVEL_STYLE)
@@ -28,21 +28,23 @@ from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 import os
-import sys
 
-root_path = os.path.abspath(sys.path[0])
+root_path = os.path.abspath('.')
 
 oncher_app = Flask(__name__,
-                   static_folder=os.path.abspath(os.path.join(root_path, 'static')),
-                   template_folder=os.path.abspath(os.path.join(root_path, 'templates')))
+                   static_folder=os.path.abspath(os.path.join('.', 'static')),
+                   template_folder=os.path.abspath(os.path.join('.', 'templates')))
 
 logger.info("Called From {} -  Root Path {}".format(__name__, root_path))
 
+# three slashes for relative paths, four for absolute paths.
+_SQL_DB_PATH = r'sqlite:///{database_path}'.format(
+    database_path=os.path.abspath(os.path.join('db_file', 'cluster.sqlite3')))
+logger.warning("SQL DB PATH: {}".format(_SQL_DB_PATH))
+
 config = {
     'SECRET_KEY': token_urlsafe(500),
-    'SQLALCHEMY_DATABASE_URI': r'sqlite:///{database_path}'.format(
-        database_path=os.path.abspath(os.path.join(root_path, 'database_schema', 'cluster.sqlite3'))
-    ),
+    'SQLALCHEMY_DATABASE_URI': _SQL_DB_PATH,
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     # SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     'SEND_FILE_MAX_AGE_DEFAULT': 0

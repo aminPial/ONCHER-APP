@@ -13,7 +13,7 @@ from flask_socketio import emit
 
 from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
 from app import BASE_URL
-from database_schema.models import *
+from api.database_schema.models import *
 
 
 # from app import logger

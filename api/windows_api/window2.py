@@ -21,7 +21,7 @@ from urllib.parse import quote
 from json import loads
 
 from app import BASE_URL
-from database_schema.models import *
+from api.database_schema.models import *
 from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
 
 

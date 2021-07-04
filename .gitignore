@@ -16,10 +16,13 @@ output
 release_source
 release_delivery
 app.todo
-build_system/config.json
-build_system
-preview_data/preview-v-0-0-1.mp4
 
+# include only build_scripts subfolder
+build_system/*
+!build_system/build_scripts/
+
+preview_data/preview-v-0-0-1.mp4
+doc
 
 # Distribution / packaging
 .Python
