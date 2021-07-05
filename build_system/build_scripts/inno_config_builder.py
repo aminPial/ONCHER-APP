@@ -76,9 +76,10 @@ Source: "%s"; DestDir: "{app}"; Flags: ignoreversion""" % (path)
         if os.path.isdir(path):
             # I:\FivverProjects\ONCHER-APP\release\Oncher\certifi
             # certifi
+            # we can put "createallsubdirs" only for static here
             _buffer_2 += r"""
-Source: "%s\*"; DestDir: "{app}\%s"; Flags: ignoreversion recursesubdirs""" % (path, path.split("\\")[-1])
+Source: "%s\*"; DestDir: "{app}\%s"; Flags: ignoreversion recursesubdirs createallsubdirs""" % (path, path.split("\\")[-1])
     print(_buffer_2)
 
-
+get_inno_config()
 

@@ -168,5 +168,5 @@ if __name__ == '__main__':
         get_size(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher")))
     print("[+++] Building System took {} minutes to build".format(round((time() - start) / 60), 2))
 
-    from inno_config_builder import get_inno_config
-    get_inno_config()
+    # from inno_config_builder import get_inno_config
+    # get_inno_config()

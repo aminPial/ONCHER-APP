@@ -182,6 +182,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 
     # print(tail_size, partial)
     st = time.time()
+    multiprocessing.freeze_support()
     for page_no in range(partial if tail_size == 0 else (tail_size + (1 if partial else 0))):
         start = page_no * _divide_by_parts
         end = ((page_no + 1) * _divide_by_parts)

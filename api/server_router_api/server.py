@@ -17,7 +17,7 @@ LEVEL_STYLE = {'spam': {'color': 'green', 'faint': True},
                'success': {'color': 'green', 'bold': True},
                'error': {'color': 'red'},
                'critical': {'color': 'red', 'bold': True}}
-coloredlogs.install(level='ERROR',
+coloredlogs.install(level='ERROR',  # 'DEBUG'
                     logger=logger,
                     fmt='%(asctime)s %(module)s.py->%(funcName)s()->Line %(lineno)d %(levelname)s %(message)s',
                     level_styles=LEVEL_STYLE)

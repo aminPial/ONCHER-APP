@@ -3,14 +3,34 @@
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
+# from multiprocessing import freeze_support, Process
 
 BASE_URL = None
 
 if __name__ == '__main__':
+    # import sys
+    # special code-blocks for win platform (needs to JUST after __name__ == "__main__")
+    # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
+    # needed for stop flashing console in windowed mode
+    # see https://github.com/pyinstaller/pyinstaller/wiki/Recipe-Multiprocessing
+    #     https://stackoverflow.com/questions/24455337/pyinstaller-on-windows-with-noconsole-simply-wont-work
+    # if sys.platform.startswith('win'):
+    # On Windows calling this function is necessary.
+    # freeze_support()
+
+    # import sentry_sdk
+# 
+    # sentry_sdk.init(
+    #     "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
+    #     # Set traces_sample_rate to 1.0 to capture 100%
+    #     # of transactions for performance monitoring.
+    #     # We recommend adjusting this value in production.
+    #     traces_sample_rate=1.0
+    # )
+
     import os
 
     # create db folder and static folder if first run
-
     db_folder_path = os.path.abspath('db_file')
     if not os.path.exists(db_folder_path):
         os.makedirs(db_folder_path)
@@ -76,23 +96,6 @@ if __name__ == '__main__':
     from flask_socketio import emit
 
 
-    # import sentry_sdk
-    #
-    # sentry_sdk.init(
-    #     "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
-    #     # Set traces_sample_rate to 1.0 to capture 100%
-    #     # of transactions for performance monitoring.
-    #     # We recommend adjusting this value in production.
-    #     traces_sample_rate=1.0
-    # )
-
-    # special code-blocks for win platform
-    # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
-    # if sys.platform.startswith('win'):
-    #     # On Windows calling this function is necessary.
-    #     multiprocessing.freeze_support()
-
-
     def start_server(port: int):
         # from server import socket_io, oncher_app
         socket_io.run(app=oncher_app, host='127.0.0.1',
@@ -110,22 +113,18 @@ if __name__ == '__main__':
         s_w, s_h = p.size()  # screen width and height
         # min(p.size()) // 2.5 = for my screen 307px
         square_size = int(min(p.size()) / 2.5)
-        loading_template = open(os.path.abspath(os.path.join('templates', 'loading.html')))
-        try:
-            start(destroy_window, create_window('',
-                                                html=loading_template.read(),
-                                                x=(s_w // 2) - ceil(square_size // 2),
-                                                y=(s_h // 2) - ceil(square_size // 2),
-                                                width=square_size,
-                                                height=square_size,
-                                                frameless=True,
-                                                resizable=False,
-                                                # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
-                                                on_top=True))
-        except Exception as e:
-            logger.error("Failed to load loading screen template because of {}".format(e))
-        finally:
-            loading_template.close()
+
+        start(destroy_window, create_window('',
+                                            html=open(
+                                                os.path.abspath(os.path.join('templates', 'loading.html'))).read(),
+                                            x=(s_w // 2) - ceil(square_size // 2),
+                                            y=(s_h // 2) - ceil(square_size // 2),
+                                            width=square_size,
+                                            height=square_size,
+                                            frameless=True,
+                                            resizable=False,
+                                            # => on_top like zoom : https://github.com/r0x0r/pywebview/issues/476
+                                            on_top=True))
 
 
     def on_press(key):
