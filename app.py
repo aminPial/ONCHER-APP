@@ -18,15 +18,15 @@ if __name__ == '__main__':
     # On Windows calling this function is necessary.
     # freeze_support()
 
-    # import sentry_sdk
-# 
-    # sentry_sdk.init(
-    #     "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
-    #     # Set traces_sample_rate to 1.0 to capture 100%
-    #     # of transactions for performance monitoring.
-    #     # We recommend adjusting this value in production.
-    #     traces_sample_rate=1.0
-    # )
+    import sentry_sdk
+
+    sentry_sdk.init(
+        "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0
+    )
 
     import os
 
