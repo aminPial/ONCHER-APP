@@ -84,7 +84,8 @@ def copy_necessary_files_and_folders():
         # assets
         'static',
         'templates',
-        'db_file'
+        'db_file',
+        'cache'
     ]
     print("[+++] Copying files & folders from {} to {}".format(source_folder, temporary_folder))
 
@@ -105,20 +106,44 @@ def copy_necessary_files_and_folders():
     # clear db folder
     db_folder_path = os.path.abspath(os.path.join(temporary_folder, 'db_file'))
     shutil.rmtree(db_folder_path)
+    os.makedirs(db_folder_path)
 
     # clean the "previously debugged" static files
     static_sub_folders_to_clear = ['cache',  # pdfs parsed images
                                    'files',  # pdf,ppt itself
                                    'flashcards',  # flashcard images
-                                   # 'pickles',
+                                   # 'pickles', # don't remove this (clean it)
                                    'screenshots'
                                    ]
-    for sub_folder in tqdm(static_sub_folders_to_clear):
+    for sub_folder in static_sub_folders_to_clear:
         folder_path = os.path.abspath(os.path.join(temporary_folder, 'static', sub_folder))
         shutil.rmtree(folder_path)
+        os.makedirs(folder_path)
 
-    print("[+++] After clearing unused files - size: {} M.B".format(get_size(temporary_folder)))
+    # we will have filled with data - static/js,css,pickles,sounds,images , templates, db_file
+    # empty folder (createallsubdirs in inno) -> static/cache,files,flashcards,screenshots
+    # now static, templates and db_file folders
+    # create a temp dir to copy 3 folders in one
+    assets_folder = os.path.abspath(os.path.join(temporary_folder, 'assets'))
+    if os.path.exists(assets_folder):
+        shutil.rmtree(assets_folder)
+    os.makedirs(assets_folder)
+    for folder in ['static', 'templates', 'db_file', 'cache']:
+        shutil.copytree(src=os.path.abspath(os.path.join(temporary_folder, folder)),
+                        dst=os.path.join(temporary_folder,
+                                         assets_folder,
+                                         folder))
+        shutil.rmtree(os.path.abspath(os.path.join(temporary_folder, folder)))
+    shutil.make_archive('assets', 'zip', assets_folder)  # will get saved inside build_scripts
+    # now we need to copy that zip from there
+    shutil.copy(src=os.path.abspath('assets.zip'), dst=temporary_folder)
+    # now remove asset folder from temp and assets.zip from build_scripts (clean up)
+    shutil.rmtree(os.path.join(temporary_folder, 'assets'))
+    os.remove(os.path.abspath('assets.zip'))
+
+    print("[+++] After cleaning unused files - size: {} M.B".format(get_size(temporary_folder)))
     get_deep_size_analysis(temporary_folder)
+    sleep(5)
 
 
 # 1. flake8 code-linting phase

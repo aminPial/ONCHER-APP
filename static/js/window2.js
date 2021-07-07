@@ -121,7 +121,7 @@ $(document).ready(function () {
                     doc_container.append("<canvas  " + " id=\"pdf_canvas_" + `${j}` + "\"" + ">\n" +
                         "            Your browser does not support the HTML5 canvas tag.\n" +
                         "        </canvas>\n");
-                    //alert(`"${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png"`);
+                  //  alert(`"${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png"`);
                     $(`#pdf_canvas_${j}`).attr({
                         'width': `${width}px`,
                         'height': `${height}px`
@@ -842,7 +842,7 @@ $(document).ready(function () {
         $('#choose_games').hide();
         $('#initial_box').show(1200);
         socket.emit('refresh_grades_as_per_docs', {});
-         // we need to hide the text in window-3 (e.g: SAY CAT)
+        // we need to hide the text in window-3 (e.g: SAY CAT)
         socket.emit('clear_window_3_game_4_text', {});
     });
 

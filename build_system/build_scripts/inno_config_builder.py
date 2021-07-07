@@ -65,7 +65,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
     # add files
     files_and_folders = os.listdir(_DIST_FOLDER_PATH)
     for f in files_and_folders:
-        path  = os.path.join(_DIST_FOLDER_PATH, f)
+        path = os.path.join(_DIST_FOLDER_PATH, f)
         if os.path.isfile(path):
             # print(f)
             _buffer_2 += r"""
@@ -78,8 +78,9 @@ Source: "%s"; DestDir: "{app}"; Flags: ignoreversion""" % (path)
             # certifi
             # we can put "createallsubdirs" only for static here
             _buffer_2 += r"""
-Source: "%s\*"; DestDir: "{app}\%s"; Flags: ignoreversion recursesubdirs createallsubdirs""" % (path, path.split("\\")[-1])
+Source: "%s\*"; DestDir: "{app}\%s"; Flags: ignoreversion recursesubdirs createallsubdirs""" % (
+            path, path.split("\\")[-1])
     print(_buffer_2)
 
-get_inno_config()
 
+get_inno_config()

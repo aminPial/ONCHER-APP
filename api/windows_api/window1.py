@@ -8,15 +8,26 @@ import requests
 from PIL import Image
 from flask import jsonify
 from flask import render_template
+from flask import send_from_directory
 from flask import request
 from flask_socketio import emit
 
-from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
-from app import BASE_URL
 from api.database_schema.models import *
+from api.server_router_api.server import oncher_app, socket_io, logger, \
+    RELEASE_BUILD, APP_DATA_FOLDER_PATH, database_cluster
+from app import BASE_URL
 
 
 # from app import logger
+@oncher_app.route('/cache/loading_screen')
+def serve_loading_screen():
+    return send_from_directory(directory=os.path.abspath(os.path.join('.', 'cache')),
+                               path='loading_screen.gif', as_attachment=True)
+
+
+@oncher_app.route('/hello')
+def hello():
+    return "hello"
 
 
 @oncher_app.route('/window_1')
@@ -32,7 +43,9 @@ def window_1():
         grade_lessons_docs_version[study_material.grade].append(study_material.lesson)
 
     # flashcard version
-    flashcard_folders = os.listdir(os.path.abspath(os.path.join('static', 'flashcards')))
+    flashcard_folders = os.listdir(os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards')
+                                   if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards'))
+                                   )
     # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     grade_lessons_flashcard_version = {}  # dummy for now => {grade: [lessons in list]}
     for folder_names in flashcard_folders:
@@ -153,7 +166,8 @@ def grade_lesson_select_signal_receive(data):
     # flashcard version
     folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
                                                          lesson=data['lesson'])  # what if one of them is null?
-    full_path = os.path.abspath(os.path.join('static', 'flashcards', folder_name))
+    full_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards') \
+        if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards', folder_name))
     if os.path.exists(full_path):
         files_path = os.listdir(full_path)
         # print("files path {}".format(files_path))
@@ -182,11 +196,12 @@ def grade_lesson_select_signal_receive(data):
             parsed_pdf_dir_path = "/static/cache/{}".format(study_mat_query.folder_name)
             # we need to parse width and height from the doc
             path0 = os.path.abspath(os.path.join(*parsed_pdf_dir_path.split("/")))
-            # print("Pdf path is {}".format(path0))
+            print("Pdf path is {} - {}".format(path0, os.listdir(path0)[0]))
             width, height = Image.open(os.path.join(path0, os.listdir(path0)[0])).size
-            # print("Parsed Width {} and Height {}".format(width, height))
+            print("Parsed Width {} and Height {}".format(width, height))
             from app import BASE_URL
             logger.warning("On Grade & Lesson Select - BASE URL {}".format(BASE_URL))
+            print("parsed pdf dir path", parsed_pdf_dir_path)
             if BASE_URL is None:
                 BASE_URL = "http://localhost:5000"  # todo: fix this
             payload = {

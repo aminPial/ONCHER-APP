@@ -5,7 +5,7 @@ _VERSION_NAME = "0.0.1"  # major: 0 , minor: 0, patch: 1
 _APP_ICON_PATH = '10_BUi_icon.ico'
 _APP_ENTRY_SCRIPT_PATH = 'app.py'
 
-_IS_WINDOWED = True  # false means console
+_IS_WINDOWED = False  # false means console
 _IS_ONE_DIR = True  # false means onefile
 _LOG_LEVEL = 'DEBUG'  # INFO, ERROR, CRITICAL
 

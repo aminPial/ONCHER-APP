@@ -3,11 +3,12 @@
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
-# from multiprocessing import freeze_support, Process
+from multiprocessing import freeze_support
 
 BASE_URL = None
 
 if __name__ == '__main__':
+
     # import sys
     # special code-blocks for win platform (needs to JUST after __name__ == "__main__")
     # https://stackoverflow.com/questions/24944558/pyinstaller-built-windows-exe-fails-with-multiprocessing
@@ -16,36 +17,11 @@ if __name__ == '__main__':
     #     https://stackoverflow.com/questions/24455337/pyinstaller-on-windows-with-noconsole-simply-wont-work
     # if sys.platform.startswith('win'):
     # On Windows calling this function is necessary.
-    # freeze_support()
-
-    import sentry_sdk
-
-    sentry_sdk.init(
-        "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=1.0
-    )
+    freeze_support()
+    #
+    # > sentry sdk is making a flashing console to appear in the screen
 
     import os
-
-    # create db folder and static folder if first run
-    db_folder_path = os.path.abspath('db_file')
-    if not os.path.exists(db_folder_path):
-        os.makedirs(db_folder_path)
-
-    # clean the "previously debugged" static files
-    static_sub_folders_to_clear = ['cache',  # pdfs parsed images
-                                   'files',  # pdf,ppt itself
-                                   'flashcards',  # flashcard images
-                                   # 'pickles', # exclude pickles for now
-                                   'screenshots'
-                                   ]
-    for sub_folder in static_sub_folders_to_clear:
-        sub_folder_path = os.path.abspath(os.path.join('static', sub_folder))
-        if not os.path.exists(sub_folder_path):
-            os.makedirs(sub_folder_path)
 
     # don't remove this => from engineio.async_drivers import gevent
     # for 'invalid async mode error'
@@ -95,6 +71,16 @@ if __name__ == '__main__':
 
     from flask_socketio import emit
 
+    import sentry_sdk
+
+    sentry_sdk.init(
+        "https://268b1e32fc164567b5ab73431b2741b0@o849618.ingest.sentry.io/5816571",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0
+    )
+
 
     def start_server(port: int):
         # from server import socket_io, oncher_app
@@ -108,6 +94,9 @@ if __name__ == '__main__':
         ww.destroy()
         return
 
+
+    # for u in oncher_app.url_map.iter_rules():
+    #     print(u)
 
     def show_loading_screen():
         s_w, s_h = p.size()  # screen width and height
@@ -292,4 +281,4 @@ if __name__ == '__main__':
     # func=hide, args=(w v  windows, False)
 
     # see https://pywebview.flowrl.com/guide/renderer.html
-    start(debug=True, gui="mshtml")  # windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml
+    start(debug=True, gui="cef")  # windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml

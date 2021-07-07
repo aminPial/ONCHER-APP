@@ -22,7 +22,8 @@ from json import loads
 
 from app import BASE_URL
 from api.database_schema.models import *
-from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger
+from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger, \
+    APP_DATA_FOLDER_PATH, RELEASE_BUILD
 
 
 @oncher_app.route('/window_2')
@@ -57,7 +58,9 @@ def save_time_count():
     if f:
         a = {'hour': int(f['hour']), 'minutes': int(f['minutes']), 'seconds': int(f['seconds'])}
         # print(a)
-        with open(os.path.abspath(os.path.join('static', 'pickles', 'start_timer.pickle')), 'wb') as handle:
+        with open(os.path.join(APP_DATA_FOLDER_PATH, 'static', 'pickles',
+                               'start_timer.pickle') if RELEASE_BUILD else os.path.abspath(
+            os.path.join('static', 'pickles', 'start_timer.pickle')), 'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
         return jsonify(status=1)
     else:
@@ -71,7 +74,9 @@ def save_time_interval_of_screenshot():
     if f:
         a = {'seconds': int(f['seconds'])}
         # print(a)
-        with open(os.path.abspath(os.path.join('static', 'pickles', 'screenshot_interval_time.pickle')),
+        with open(os.path.join(APP_DATA_FOLDER_PATH, 'static', 'pickles',
+                               'screenshot_interval_time.pickle') if RELEASE_BUILD else
+                  os.path.abspath(os.path.join('static', 'pickles', 'screenshot_interval_time.pickle')),
                   'wb') as handle:
             pickle.dump(a, handle, protocol=pickle.HIGHEST_PROTOCOL)
         # we need to emit this to window 3
@@ -82,7 +87,7 @@ def save_time_interval_of_screenshot():
 
 
 @socket_io.on('timer_is_finished_trigger_9')
-def timer_is_finished_trigger_9(data):
+def timer_is_finished_trigger_9(_):
     print("timer_is_finished trigger called")
     emit('timer_is_finished_normally', {}, namespace='/', broadcast=True)
 
@@ -101,7 +106,8 @@ def add_star_to_student_record(data):
 @socket_io.on('game_4_initialize')
 def game_4_initialize(data):
     # print("Game 4 initializer {}".format(data))
-    emit('game_4_init_emit_signal', {'image_name': 'NULL' if 'image_name' not in data.keys() else data['image_name']},
+    emit('game_4_init_emit_signal', {
+        'image_name': 'NULL' if 'image_name' not in data.keys() else data['image_name']},
          namespace='/', broadcast=True)
 
 
@@ -112,7 +118,8 @@ def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: 
     data_block = {'pdf_document_object': <OBJECT>, 'extract_directory':'....'}
     save_w_h
     """
-
+    # b = open(data_block['pdf_file_path'], "rb").read()
+    # pdf_document_object = fitz.open("pdf", b)
     pdf_document_object = fitz.open(data_block['pdf_file_path'])
     extract_directory = data_block['extract_directory']
 
@@ -154,7 +161,8 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
     """
     # create folder to save the images of the pdf file
     # print("pdf file name: {}".format(pdf_file_name))
-    extract_directory = os.path.abspath(os.path.join('static', 'cache', pdf_file_name))
+    extract_directory = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'cache', pdf_file_name) \
+        if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'cache', pdf_file_name))
     # print("page extract directory: {}".format(extract_directory))
     # if os.path.exists(page_extract_directory):
     #     # shutil.rmtree(page_extract_directory)
@@ -166,6 +174,8 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
         shutil.rmtree(extract_directory)
     os.makedirs(extract_directory)
 
+    # b = open(pdf_file_path, "rb").read()
+    # pdf_document_object = fitz.open('pdf', b)
     pdf_document_object = fitz.open(pdf_file_path)
     no_of_pages = pdf_document_object.pageCount
 
@@ -182,7 +192,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 
     # print(tail_size, partial)
     st = time.time()
-    multiprocessing.freeze_support()
+    # multiprocessing.freeze_support()
     for page_no in range(partial if tail_size == 0 else (tail_size + (1 if partial else 0))):
         start = page_no * _divide_by_parts
         end = ((page_no + 1) * _divide_by_parts)
@@ -233,10 +243,14 @@ def upload_document():
     should_emit_grade_lesson = True
     try:
         if form['is_flashcard'] == "true":
-            folder_name = os.path.abspath(os.path.join("static",
-                                                       "flashcards",
-                                                       "Grade_{}_Lesson_{}".format(
-                                                           form['grade'], form['lesson'])))
+            folder_name = os.path.join(APP_DATA_FOLDER_PATH, 'static',
+                                       "flashcards",
+                                       "Grade_{}_Lesson_{}".format(
+                                           form['grade'], form['lesson'])) if RELEASE_BUILD else os.path.abspath(
+                os.path.join("static",
+                             "flashcards",
+                             "Grade_{}_Lesson_{}".format(
+                                 form['grade'], form['lesson'])))
             if not os.path.exists(folder_name):
                 os.makedirs(folder_name)
             else:
@@ -267,8 +281,10 @@ def upload_document():
             file = request.files['myfile']
             file: request.files
             filename = secure_filename(file.filename).lstrip().rstrip()
-            full_file_path = os.path.abspath(os.path.join("static", "files", filename))
+            full_file_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'files', filename) if RELEASE_BUILD else \
+                os.path.abspath(os.path.join("static", "files", filename))
             file.save(full_file_path)
+
             if filename.endswith(".pdf"):
                 # if already exists then we return
                 if StudyMaterials.query.filter_by(folder_name=filename).first():

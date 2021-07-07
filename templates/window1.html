@@ -40,14 +40,14 @@
 
                     // basic addition
                     socket.on('students_list_update', function (data) {
-                      //  alert('yo here students ' + JSON.stringify(data));
+                        //  alert('yo here students ' + JSON.stringify(data));
                         let student_list_dropdown_elem = $('#students-list-dropdown');
                         student_list_dropdown_elem.empty();
                         if (data === null || data['students'].length <= 0) {
                             // {'is_positive': false/true, 'message': string}
-                          //  alert("Here " + data ===null + " " + data['students'.length <=0] )
-                          socket.emit('pass_message_to_window_2',
-                              {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
+                            //  alert("Here " + data ===null + " " + data['students'.length <=0] )
+                            socket.emit('pass_message_to_window_2',
+                                {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
                         } else {
                             const sd = data['students'];
                             for (let q = 0; q < sd.length; q++) {
@@ -109,8 +109,6 @@
             <i class="fas fa-plus"></i>
         </button>
     </div>
-
-
     <br>
     <div class="block" style="margin-top: 32px;margin-left: 0;padding-left: 0;" id="student_info_section_1">
         <div class="is-inline-block-mobile"
@@ -153,7 +151,7 @@
         </div>
     </div>
 
-    {# todo: don't know what is this? LOL #}
+
     <div class="field block" style="margin-left: 10px;margin-right: 8px;margin-top: 32px"
          id="lesson_plan_section">
         <h4 class="title is-4" style="margin-bottom:8px;padding-bottom:0;
@@ -162,7 +160,7 @@
             <span style=""><b>NONE</b></span></h4>
         <div class="field" style="padding-top: 2px">
             <div class="control">
-                <textarea class="textarea" rows="7" placeholder="Lesson Plan"
+                <textarea class="textarea" rows="7" placeholder="Lesson Plan" id="lesson_plan"
                           style="resize: none;box-shadow: 0 0 11px rgba(236,220,220,0.45);border: none"></textarea>
             </div>
         </div>
@@ -253,7 +251,7 @@
                 }
             }
 
-         //   let socket = io.connect('/');
+            //   let socket = io.connect('/');
 
             socket.on('refresh_grade_on_docs', function (data) {
                 which_one = 'docs_version';
@@ -278,7 +276,7 @@
             //      for duplicates it can be e.g: already 5,2 => now received 5, 1 .
             //      we do check if there is any matched "GradeLesson" pair in db. So this is safe here
             socket.on('special_grade_or_lesson_add', function (data) {
-             //   alert("D " + JSON.stringify(data));
+                //   alert("D " + JSON.stringify(data));
                 // format of data: {'type_of_document': pdf/ppt/flashcard, 'grade': number, 'lesson': number}
 
                 // first add grade
@@ -291,7 +289,7 @@
                     grade_lessons_docs_version.hasOwnProperty(data['grade']);
 
                 const does_grade_exists = grade_exists_for_flashcard || grade_exists_for_ppt_or_pdf;
-              //  alert("does grade exists " + does_grade_exists);
+                //  alert("does grade exists " + does_grade_exists);
 
                 if (does_grade_exists) {
                     // just append the lesson to the correct HashMap
@@ -301,7 +299,7 @@
                     else
                         grade_lessons_docs_version[data['grade']].push(data['lesson']);
                 } else {
-                  //  alert("Added grade new...Nice"); // tmp  delete this line
+                    //  alert("Added grade new...Nice"); // tmp  delete this line
                     $('#grade-list-in-dropdown').append(
                         `<a onClick=\"send_grade_select_signal(${data['grade']})\" class=\"dropdown-item\">\n` +
                         `    ${data['grade']}\n` +
@@ -372,6 +370,8 @@
         </div>
     </div>
 
+
+
     <div class="field-body is-grouped-centered" style="margin-left: 8px;"
          id="file_upload_section">
 
@@ -436,7 +436,12 @@
 
     </section>
 
-
+    <script>
+        // script to make the UI responsive LOL way to do it
+        const document_height = $(document).height() * 0.28;
+        $('#student_notes').css({'height': `${document_height}px`});
+        $('#lesson_plan').css({'height': `${document_height}px`});
+    </script>
 
 
 {% endblock %}
