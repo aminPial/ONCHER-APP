@@ -155,6 +155,7 @@ if __name__ == '__main__':
     #     else:
     #         [wx.hide() for wx in ws]
 
+
     def hide_stuffs():
         # todo: implement this
         pass
@@ -278,7 +279,7 @@ if __name__ == '__main__':
     def is_ppt_active(_):
         global IS_PPT_ACTIVE
         IS_PPT_ACTIVE = True  # not data
-        logger.info("IS PPT ACTIVE ", IS_PPT_ACTIVE)
+        logger.info("IS PPT ACTIVE ".format(IS_PPT_ACTIVE))
 
 
     IS_WINDOW_2_ACTIVE = True

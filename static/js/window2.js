@@ -68,6 +68,7 @@ $(document).ready(function () {
     // purpose of this variable to let others know, "doc is loaded and it is here"
     let did_a_doc_exists_on_screen = false;  // initially in initial box
     // todo: initially before even clicking the pen the shit is drawing,, fix this
+
     socket.on('study_doc_update', function (da) {
         did_a_doc_exists_on_screen = true;
         data = da;
@@ -121,7 +122,7 @@ $(document).ready(function () {
                     doc_container.append("<canvas  " + " id=\"pdf_canvas_" + `${j}` + "\"" + ">\n" +
                         "            Your browser does not support the HTML5 canvas tag.\n" +
                         "        </canvas>\n");
-                  //  alert(`"${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png"`);
+                    //  alert(`"${data['base_url']}${data['parsed_pdf_dir_path']}/${j}.png"`);
                     $(`#pdf_canvas_${j}`).attr({
                         'width': `${width}px`,
                         'height': `${height}px`
@@ -148,11 +149,13 @@ $(document).ready(function () {
                 canvases = [];
                 ctx_es = [];
                 // alert("Here");
-                // for ppt, pptx
+                // for ppt, ppt
                 doc_container.append("<iframe class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
                     ` allowfullscreen  width=\"${width}px\" height=\"500px\"\n` +
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
+                // todo: make height of iframe proportional to height of height
+
 
                 $('#responsive-iframe').on('load', function () {
                     // code will run after iframe has finished loading
@@ -259,8 +262,10 @@ $(document).ready(function () {
                     current_ctx.arc(lastX, lastY, 8, 0, Math.PI * 2, false);
                     current_ctx.fill();
                 }
-                if (current_doc_type === 'ppt')
-                    ppt_canvas_data[_ppt_page_counter].push([lastX, lastY, mouseX, mouseY, current_ctx.strokeStyle]);
+                // todo: problem is in below statements , if statement
+                // if (current_doc_type === 'ppt')
+                //     ppt_canvas_data[_ppt_page_counter].push([lastX, lastY, mouseX, mouseY, current_ctx.strokeStyle]);
+
                 // update
                 lastX = mouseX;
                 lastY = mouseY;
@@ -535,7 +540,7 @@ $(document).ready(function () {
         $('#choose_games').hide();
         if (did_a_doc_exists_on_screen)
             $('#iframe-container').show();
-        else{
+        else {
             $('#initial_box').show();
             $('#intro_screen').show();
         }
