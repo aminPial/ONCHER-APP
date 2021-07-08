@@ -535,8 +535,10 @@ $(document).ready(function () {
         $('#choose_games').hide();
         if (did_a_doc_exists_on_screen)
             $('#iframe-container').show();
-        else
+        else{
             $('#initial_box').show();
+            $('#intro_screen').show();
+        }
 
         // after pressing back we need to tell window1 to update grade & lesson according to the docs
         // as current one is of flashcard

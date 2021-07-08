@@ -21,13 +21,10 @@ from app import BASE_URL
 # from app import logger
 @oncher_app.route('/cache/loading_screen')
 def serve_loading_screen():
-    return send_from_directory(directory=os.path.abspath(os.path.join('.', 'cache')),
+    return send_from_directory(directory=os.path.join(APP_DATA_FOLDER_PATH,
+                                                      'cache') if RELEASE_BUILD else os.path.abspath(
+        os.path.join('.', 'cache')),
                                path='loading_screen.gif', as_attachment=True)
-
-
-@oncher_app.route('/hello')
-def hello():
-    return "hello"
 
 
 @oncher_app.route('/window_1')
@@ -193,20 +190,24 @@ def grade_lesson_select_signal_receive(data):
         study_mat_query: StudyMaterials
 
         if study_mat_query.is_pdf:
-            parsed_pdf_dir_path = "/static/cache/{}".format(study_mat_query.folder_name)
+            web_path = "/static/cache/{}".format(study_mat_query.folder_name)
             # we need to parse width and height from the doc
-            path0 = os.path.abspath(os.path.join(*parsed_pdf_dir_path.split("/")))
-            print("Pdf path is {} - {}".format(path0, os.listdir(path0)[0]))
-            width, height = Image.open(os.path.join(path0, os.listdir(path0)[0])).size
+            # os.path.abspath(os.path.join(*web_path.split("/")) -> means to get the abspath
+            actual_path = os.path.abspath(os.path.join(APP_DATA_FOLDER_PATH, 'static', 'cache',
+                                                       study_mat_query.folder_name)) \
+                if RELEASE_BUILD else os.path.abspath(os.path.join(*web_path.split("/")))
+
+            width, height = Image.open(os.path.join(actual_path, os.listdir(actual_path)[0])).size
             print("Parsed Width {} and Height {}".format(width, height))
+
             from app import BASE_URL
             logger.warning("On Grade & Lesson Select - BASE URL {}".format(BASE_URL))
-            print("parsed pdf dir path", parsed_pdf_dir_path)
+
             if BASE_URL is None:
                 BASE_URL = "http://localhost:5000"  # todo: fix this
             payload = {
                 'is_pdf': True,  # todo: for now it is true but we need to work for the ppt and others related files
-                'parsed_pdf_dir_path': parsed_pdf_dir_path,
+                'parsed_pdf_dir_path': web_path,
                 # these are specially for pdf file
                 'base_url': BASE_URL,
                 'page_count': study_mat_query.page_count,

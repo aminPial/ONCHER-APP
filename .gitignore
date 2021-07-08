@@ -23,6 +23,7 @@ build_system/*
 
 preview_data/preview-v-0-0-1.mp4
 doc
+assets.zip
 
 # Distribution / packaging
 .Python

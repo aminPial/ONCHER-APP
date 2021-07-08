@@ -54,7 +54,8 @@ if __name__ == '__main__':
     BASE_URL = "http://localhost:{}".format(available_port)
 
     # private var & methods here (after __name__ == '__main__')
-    from api.server_router_api.server import socket_io, oncher_app, logger  # can be deleted
+    from api.server_router_api.server import socket_io, oncher_app, logger, RELEASE_BUILD, \
+        APP_DATA_FOLDER_PATH  # can be deleted
 
     logger.debug(f"BASE URL {BASE_URL}")
 
@@ -105,7 +106,10 @@ if __name__ == '__main__':
 
         start(destroy_window, create_window('',
                                             html=open(
-                                                os.path.abspath(os.path.join('templates', 'loading.html'))).read(),
+                                                os.path.join(APP_DATA_FOLDER_PATH, 'templates', 'loading.html')
+                                                if RELEASE_BUILD else
+                                                os.path.abspath(os.path.join('templates', 'loading.html'))
+                                            ).read(),
                                             x=(s_w // 2) - ceil(square_size // 2),
                                             y=(s_h // 2) - ceil(square_size // 2),
                                             width=square_size,
@@ -281,4 +285,4 @@ if __name__ == '__main__':
     # func=hide, args=(w v  windows, False)
 
     # see https://pywebview.flowrl.com/guide/renderer.html
-    start(debug=True, gui="cef")  # windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml
+    start(debug=True, gui="mshtml")  # mshtml, windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml

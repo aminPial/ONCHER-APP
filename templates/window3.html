@@ -26,173 +26,191 @@
 
     {#
 </div>#}
-    <div class="columns" style="margin-left: 8px;margin-top: 8px" id="toolbar">
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/clock.png') }}"
-                 style="cursor: pointer" width="64px" height="64px" id="timer_settings" alt="timer-settings"/>
-        </div>
-        <div class="column">
-            <button style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);cursor: pointer;
-font-weight: bolder;border-radius: 20px"
-                    class="button is-link" id="start_end_timer_button">Start
-            </button>
-        </div>
+    <div style="margin-top: auto;margin-bottom: auto">
 
-        <div class="column">
-
-            <img src="{{ url_for('static', filename='images/window3/game.png') }}"
-                 style="cursor: pointer" id="games_start_trigger" alt="games_start_trigger"/>
-        </div>
-        <div class="column">
-
-            <img src="{{ url_for('static', filename='images/window3/dice.png') }}"
-                 style="cursor: pointer" id="dice_animation_trigger" alt="dice_animation_trigger"/>
-        </div>
-        <div class="column">
-
-            <img src="{{ url_for('static', filename='images/window3/finance-analysis.png') }}"
-                 style="cursor: pointer" id="toss_animation_trigger" alt="toss_animation_trigger"/>
-        </div>
-
-        <div class="column">
-            <h3 class="title is-3" id="K_A_switch"><span id="kids_trigger" onclick=""
-                                                         style="color: gold;cursor: pointer"><b>K</b></span>/<span
-                    onclick=""
-                    id="adult_trigger"
-            ><b>A</b></span></h3>
-        </div>
-
-{#         <div class="column">#}
-{#                <i class="fa fa-arrow-alt-circle-left" style="font-size: 30px;color: #1d72aa"></i>#}
-{#        </div>#}
-{#        <div class="column">#}
-{#              <span style="font-size: 24px;color: #232222">#}
-{#                    4&nbsp;/&nbsp;21#}
-{#                </span>#}
-{#        </div>#}
-{#         <div class="column">#}
-{#                <i class="fa fa-arrow-alt-circle-right" style="font-size: 30px;color: #1d72aa"></i>#}
-{#        </div>#}
-
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/star.png') }}"
-                 style="cursor: pointer" id="star_animation_trigger" alt="star_animation_trigger"/>
-        </div>
-
-        <div class="column" id="game_4_special" style="display: none;cursor: pointer">
-            <h6 class="title is-6">&nbsp;SAY <span
-                    style="font-weight: bolder;font-size: 18px" id="image_name">CAT</span></h6>
-        </div>
-
-        <!-- Drawing tools -->
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/draw.png') }}"
-                 style="cursor: pointer" id="draw_tool" alt="draw-tool"/>
-        </div>
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/eraser.png') }}"
-                 style="cursor: pointer" id="erase_tool" alt="eraser-tool"/>
-        </div>
-        <div class="column">
-            <i class="fa fa-broom" style="color: mediumvioletred;font-size: 36px;cursor: pointer" id="clear_tool"></i>
-        </div>
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/thickness_tool.png') }}"
-                 style="cursor: pointer" id="thickness_tool" alt="thickness-tool"/>
-        </div>
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/color_pallet.png') }}"
-                 style="cursor: pointer" id="color_pick_tool" alt="color_pick_tool"/>
-        </div>
-        <div class="column">
-              <img src="{{ url_for('static', filename='images/window3/letter.png') }}"
-                 style="cursor: pointer" id="text_tool" alt="text_tool"/>
-        </div>
-
-        <div class="column">
-            <img src="{{ url_for('static', filename='images/window3/camera.png') }}"
-                 style="cursor: pointer" id="take_screenshot" alt="camera"/>
-        </div>
-
-
-        <div class="column">
-            <i class="fal fa-play" style="color: #36d736;font-size: 22px;cursor: pointer" id="switch_on_off"></i>
-            <br>
-            <i class="fal fa-clock" style="color: #c41cf3;font-size: 22px;margin-top: 6px;cursor: pointer"
-               id="timer-settings"></i>
-        </div>
-
-    </div>
-
-    {# colors #}
-    <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="colors">
-        {% for color_name in colors %}
+        <div class="columns" style="margin-left: 8px;margin-top: 8px" id="toolbar">
             <div class="column">
+                <img src="{{ url_for('static', filename='images/window3/clock.png') }}"
+                     style="cursor: pointer" width="64px" height="64px" id="timer_settings" alt="timer-settings"/>
+            </div>
+            <div class="column">
+                <button style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);cursor: pointer;
+font-weight: bolder;border-radius: 20px;margin-top: auto;margin-bottom: auto;"
+                        class="button is-link" id="start_end_timer_button">Start
+                </button>
+            </div>
+
+            <div class="column">
+
+                <img src="{{ url_for('static', filename='images/window3/game.png') }}"
+                     style="cursor: pointer;" id="games_start_trigger" alt="games_start_trigger"/>
+            </div>
+            <div class="column">
+
+                <img width="64px" height="64px" src="{{ url_for('static', filename='images/window3/dice.png') }}"
+                     style="cursor: pointer" id="dice_animation_trigger" alt="dice_animation_trigger"/>
+            </div>
+            <div class="column">
+
+                <img width="64px" height="64px"
+                     src="{{ url_for('static', filename='images/window3/finance-analysis.png') }}"
+                     style="cursor: pointer" id="toss_animation_trigger" alt="toss_animation_trigger"/>
+            </div>
+
+            <div class="column">
+                <h3 class="title is-3" id="K_A_switch"
+                    style="margin-top: auto;margin-bottom: auto;text-align: center;">
+                    <span id="kids_trigger" onclick="" style="color: gold;cursor: pointer"><b>K</b></span>/<span
+                        onclick=""
+                        id="adult_trigger"
+                ><b>A</b></span></h3>
+
+            </div>
+
+            {#         <div class="column">#}
+            {#                <i class="fa fa-arrow-alt-circle-left" style="font-size: 30px;color: #1d72aa"></i>#}
+            {#        </div>#}
+            {#        <div class="column">#}
+            {#              <span style="font-size: 24px;color: #232222">#}
+            {#                    4&nbsp;/&nbsp;21#}
+            {#                </span>#}
+            {#        </div>#}
+            {#         <div class="column">#}
+            {#                <i class="fa fa-arrow-alt-circle-right" style="font-size: 30px;color: #1d72aa"></i>#}
+            {#        </div>#}
+
+            <div class="column">
+                <img width="64px" height="64px" src="{{ url_for('static', filename='images/window3/star.png') }}"
+                     style="cursor: pointer" id="star_animation_trigger" alt="star_animation_trigger"/>
+            </div>
+
+            <div class="column" id="game_4_special" style="display: none;cursor: pointer">
+                <h6 class="title is-6">&nbsp;SAY <span
+                        style="font-weight: bolder;font-size: 18px" id="image_name">CAT</span></h6>
+            </div>
+
+            <!-- Drawing tools -->
+            <div class="column">
+                <img width="64px" height="64px" src="{{ url_for('static', filename='images/window3/draw.png') }}"
+                     style="cursor: pointer" id="draw_tool" alt="draw-tool"/>
+            </div>
+            <div class="column">
+                <img width="64px" height="64px" src="{{ url_for('static', filename='images/window3/eraser.png') }}"
+                     style="cursor: pointer" id="erase_tool" alt="eraser-tool"/>
+            </div>
+            <div class="column">
+                {# todo: FONT? isn't responsive #}
+                <i class="fa fa-broom" style="color: mediumvioletred;font-size: 36px;
+            cursor: pointer" id="clear_tool"></i>
+            </div>
+
+            <div class="column">
+                <img width="64px" height="64px"
+                     src="{{ url_for('static', filename='images/window3/thickness_tool.png') }}"
+                     style="cursor: pointer" id="thickness_tool" alt="thickness-tool"/>
+            </div>
+            <div class="column">
+                <img width="64px" height="64px"
+                     src="{{ url_for('static', filename='images/window3/color_pallet.png') }}"
+                     style="cursor: pointer" id="color_pick_tool" alt="color_pick_tool"/>
+            </div>
+            <div class="column">
+                <img width="64px" height="64px" src="{{ url_for('static', filename='images/window3/letter.png') }}"
+                     style="cursor: pointer" id="text_tool" alt="text_tool"/>
+            </div>
+
+            <div class="column">
+                <img width="64px" height="64px" src="{{ url_for('static', filename='images/window3/camera.png') }}"
+                     style="cursor: pointer" id="take_screenshot" alt="camera"/>
+            </div>
+
+
+            <div class="column">
+                <i class="fal fa-play" style="color: #36d736;font-size: 22px;cursor: pointer" id="switch_on_off"></i>
+                <br>
+                <i class="fal fa-clock" style="color: #c41cf3;font-size: 22px;margin-top: 6px;cursor: pointer"
+                   id="timer-settings"></i>
+            </div>
+
+        </div>
+        <script>
+            const document_height = $(document).height();
+            $("#K_A_switch").css({'font-size': `${document_height * 0.31}px`});
+            $("#clear_tool").css({'font-size': `${document_height * 0.31}px`});
+            $('#switch_on_off').css({'font-size': `${document_height * 0.20}px`});
+            $('#timer-settings').css({'font-size': `${document_height * 0.20}px`});
+        </script>
+
+        {# colors #}
+        <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="colors">
+            {% for color_name in colors %}
+                <div class="column">
                 <span id="{{ color_name }}_color"
                       style="border-radius: 50%;height: 50px;width: 50px;background-color: {{ color_name }};
                               display: inline-block"></span>
-                <script>
-                    $('#{{ color_name }}_color').click(function () {
-                        let socket = io.connect('/');
-                        socket.emit('drawing_tools_signal_receive', {
-                            'type_of_action': 'color_change',
-                            'color': '{{ color_name }}'
+                    <script>
+                        $('#{{ color_name }}_color').click(function () {
+                            let socket = io.connect('/');
+                            socket.emit('drawing_tools_signal_receive', {
+                                'type_of_action': 'color_change',
+                                'color': '{{ color_name }}'
+                            });
+
+                            $('#toolbar').show(500);
+                            $('#colors').hide(200);
                         });
-
-                        $('#toolbar').show(500);
-                        $('#colors').hide(200);
-                    });
-                </script>
-            </div>
-        {% endfor %}
-        <span id="close_color_select" style="background-color: indianred;
+                    </script>
+                </div>
+            {% endfor %}
+            <span id="close_color_select" style="background-color: indianred;
                 display: inline-block"> <i class="fas fa-window-close"></i> </span>
-    </div>
+        </div>
 
 
-    {# thickness #}
-    <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="thickness">
-        <div class="column">
-            <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(3)">
-                <b>Fine Tune Pen</b>
-                <progress style="margin-top: 6px;width: 100px;height: 5px;"
-                          class="progress is-danger" value="100" max="100">
+        {# thickness #}
+        <div class="columns" style="margin-left: 8px;margin-top: 8px;display: none" id="thickness">
+            <div class="column">
+                <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(3)">
+                    <b>Fine Tune Pen</b>
+                    <progress style="margin-top: 6px;width: 100px;height: 5px;"
+                              class="progress is-danger" value="100" max="100">
 
-                </progress>
+                    </progress>
+                </div>
             </div>
-        </div>
-        <div class="column">
-            <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(5)">
-                <b>Medium Tune Pen</b>
-                <progress style="margin-top: 6px;width: 130px;height: 9px;"
-                          class="progress is-danger" value="100" max="100"></progress>
+            <div class="column">
+                <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(5)">
+                    <b>Medium Tune Pen</b>
+                    <progress style="margin-top: 6px;width: 130px;height: 9px;"
+                              class="progress is-danger" value="100" max="100"></progress>
+                </div>
             </div>
-        </div>
-        <div class="column">
-            <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(7)">
-                <b>Thick Tune Pen</b>
-                <progress style="margin-top: 6px;width: 110px;height: 13px;"
-                          class="progress is-danger" value="100" max="100"></progress>
+            <div class="column">
+                <div class="box" style="padding: 8px;margin:0" onclick="thickness_emit(7)">
+                    <b>Thick Tune Pen</b>
+                    <progress style="margin-top: 6px;width: 110px;height: 13px;"
+                              class="progress is-danger" value="100" max="100"></progress>
+                </div>
             </div>
-        </div>
-        <div class="column">
+            <div class="column">
             <span id="close_thickness_select" class="fas fa-window-close"
             ></span>
+            </div>
         </div>
+
+        <script>
+            function thickness_emit(thickness_size) {
+                let socket = io.connect('/'); // todo: does this work?
+                socket.emit('drawing_tools_signal_receive', {
+                    'type_of_action': 'thickness_size',
+                    'thickness_size': thickness_size
+                });
+
+                $('#toolbar').show(500);
+                $('#thickness').hide(200);
+            }
+        </script>
+
     </div>
-
-    <script>
-        function thickness_emit(thickness_size) {
-            let socket = io.connect('/'); // todo: does this work?
-            socket.emit('drawing_tools_signal_receive', {
-                'type_of_action': 'thickness_size',
-                'thickness_size': thickness_size
-            });
-
-            $('#toolbar').show(500);
-            $('#thickness').hide(200);
-        }
-    </script>
-
 
 {% endblock %}

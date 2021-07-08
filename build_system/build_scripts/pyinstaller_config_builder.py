@@ -14,15 +14,15 @@ import shutil
 # re-shape configs (some of them if necessary)
 def get_pyinstaller_buffer():
     from config_variables import _APP_ICON_PATH, _APP_ENTRY_SCRIPT_PATH, \
-        _ASSETS_FOLDER, _BUILD_FOLDER_PATH, _DIST_FOLDER_PATH, _UPX_DIRECTORY, \
+        _ASSETS_FILES, _BUILD_FOLDER_PATH, _DIST_FOLDER_PATH, _UPX_DIRECTORY, \
         _IS_WINDOWED, _IS_ONE_DIR, _APP_NAME, _LOG_LEVEL
 
-    _APP_ICON_PATH = os.path.abspath(os.path.join('..', 'temp', 'static', 'images', _APP_ICON_PATH))
+    _APP_ICON_PATH = "I:\\FivverProjects\\ONCHER-APP\\static\\images\\{}".format(_APP_ICON_PATH)
     _APP_ENTRY_SCRIPT_PATH = os.path.abspath(os.path.join('..', 'temp', _APP_ENTRY_SCRIPT_PATH))
 
-    _ASSETS_FOLDER = [
-        os.path.abspath(os.path.join('..', 'temp', folder_name))
-        for folder_name in _ASSETS_FOLDER
+    _ASSETS_FILES = [
+        os.path.abspath(os.path.join('..', 'temp', file_name))
+        for file_name in _ASSETS_FILES
     ]
 
     _BUILD_FOLDER_PATH = os.path.abspath(os.path.join("..", "build_output", _BUILD_FOLDER_PATH))
@@ -79,14 +79,15 @@ def get_pyinstaller_buffer():
                             ] + [
                                 {
                                     "optionDest": "add-data",
-                                    "value": """ "{source_full_path};{destination_folder_name_only}/" """.format(
+                                    "value": """ "{source_full_path};." """.format(
                                         # source (from where it will be copied)
-                                        source_full_path=folder_full_path,
+                                        source_full_path=file_full_path
                                         # destination folder to put
-                                        destination_folder_name_only=
-                                        folder_full_path.split("\\")[-1])  # this can be buggy in other platform
+                                        # destination_file_name_only=
+                                        # file_full_path.split("\\")[-1])  # this can be buggy in other platform
+                                    )
                                 }
-                                for folder_full_path in _ASSETS_FOLDER
+                                for file_full_path in _ASSETS_FILES
                             ]
 
     key_value_config_buffer = " ".join(map(str,
