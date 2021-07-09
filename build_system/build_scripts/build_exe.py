@@ -171,6 +171,17 @@ def building_with_pyinstaller():
         print("Failed to build .exe due to {}".format(e))
 
 
+def clean_cef_unnecessary_files():
+    #  @note: libGLESv2.dll, cef.pak, devtools_resources.pak, libEGL.dll - worth of 13 MB
+    files_path = [r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher\{}".format(file)
+                  for file in ['libGLESv2.dll', 'cef.pak', 'devtools_resources.pak', 'libEGL.dll']]
+    for f_path in files_path:
+        if os.path.exists(f_path):
+            os.remove(f_path)
+        else:
+            print("failed to remove {} as it doesn't exist".format(f_path))
+
+
 if __name__ == '__main__':
     start = time()
 
@@ -198,7 +209,10 @@ if __name__ == '__main__':
     # for cef support , go to app and un-comment "cef-support" codes and 'cef' as gui at the bottom
     # and go to pyinstaller_config_builder.py to add 'additional runtime hook' switch code
 
-    print("Build Folder Size [with UPX]: {} M.B".format(
+    print("Build Folder Size [with UPX][No clean CEF]: {} M.B".format(
+        get_size(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher")))
+    clean_cef_unnecessary_files()
+    print("Build Folder Size [with UPX][with CEF clean]: {} M.B".format(
         get_size(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher")))
     print("[+++] Building System took {} minutes to build".format(round((time() - start) / 60), 2))
 

@@ -83,13 +83,13 @@ if __name__ == '__main__':
 
 
     # for cef build
-    # import cefpython3
+    import cefpython3
     # from webview.platforms.cef import settings  #
-    # # https://stackoverflow.com/questions/8222571/how-to-have-the-minimum-size-possible-chromium-embedded-framework-dlls
-    # # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=10541
-    # # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=16684
-    # # pip install cefpython3 | we need cefpython3 for this which is 69 m.b+
-    # # cef settings
+    # https://stackoverflow.com/questions/8222571/how-to-have-the-minimum-size-possible-chromium-embedded-framework-dlls
+    # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=10541
+    # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=16684
+    # pip install cefpython3 | we need cefpython3 for this which is 69 m.b+
+    # cef settings
     # if not os.path.exists(APP_DATA_FOLDER_PATH):
     #     os.makedirs(APP_DATA_FOLDER_PATH)
     # cache_path = os.path.join(APP_DATA_FOLDER_PATH, 'cef_cache')
@@ -301,4 +301,4 @@ if __name__ == '__main__':
     # cross-platform - cef
     # < WIN 10 + WIN10 - mshtml
     # WIN10 (latest) - edgehtml
-    start(debug=True, gui="mshtml")  # mshtml, windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml
+    start(debug=True, gui="cef")  # mshtml, windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml

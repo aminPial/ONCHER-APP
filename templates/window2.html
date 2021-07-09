@@ -147,7 +147,7 @@
          padding: 16px;border: transparent;border-radius: 8px;">
 
 
-        <div id="intro_screen">
+        <div id="intro_screen" style="overflow-y: auto">
 
             {# Slide Show #}
             <div class="block" style="margin-bottom: 0;padding-bottom: 0" id="slide-show-container">
@@ -170,9 +170,10 @@
             </div>
 
             {# Quick Access #}
-            <div>
+            <div id="quick-access-div" style="height: 274px"> {# computed as fixed #}
                 <h4 class="title is-4" style="font-weight: bolder;margin-top:16px;margin-left: 8px;
                     margin-bottom: 0;padding-bottom: 0">Quick Access</h4>
+
                 <div class="columns" style="margin-top:0;padding-top:0;margin-bottom:0;padding-bottom:0">
                     <div class="column">
                         <div class="box" style="border-radius: 20px;">
@@ -295,7 +296,6 @@
 
 
         </section>
-
 
 
         <div class="field is-grouped" style="margin: 12px">
@@ -527,6 +527,9 @@
                         type="button" class="button is-link field is-inline-block-mobile"
                         id="add_ppt" onclick="add_documents(0)"><i class="fa fa-plus"></i>&nbsp; ADD
                 </button>
+                <br>
+                <h6 class="title is-6" id="please-wait-text" style="display: none;color: red">
+                    Please wait, we are processing the file.</h6>
             </div>
 
         </section>
@@ -571,7 +574,7 @@
 
                                     <img style="margin-left: auto;margin-right: auto;"
                                          id="flashcard_{{ i }}__{{ j }}_image"
-                                         src="https://icon-library.com/images/upload-icon/upload-icon-18.jpg"
+                                         src="{{ url_for('static', filename='images/upload_image.png') }}"
                                          width="100px"
                                          height="100px"
                                          alt="flashcard_{{ i }}__{{ j }}_image"/>
@@ -654,6 +657,7 @@
 
                     $(`${f ? '#add_flashcard' : '#add_ppt'}`).empty().text('UPLOADING'
                     ).attr({'class': 'button is-link is-loading'});
+                    $('#please-wait-text').show();
                     $.ajax({
                         url: "/upload_document",
                         type: "POST",
@@ -661,10 +665,16 @@
                         processData: false,  // tell jQuery not to process the data
                         contentType: false   // tell jQuery not to set contentType
                     }).done(function (data) {
+                        $("#please-wait-text").hide();
                         //   alert('Done..');
                         if (data['status']) {
+                            $('#filename_text').text(null);
+                            // if true then flash the input values to null
                             // if flashcard
                             if (f) {
+                                $('#grade_field_1').val(null);
+                                $('#lesson_field_1').val(null);
+
                                 $('#add_flashcard').hide();
                                 grade_lesson_load_count_flashcard++;
                                 $('#flashcard-list-body').append("<tr id=\"study_materials_f_" + `${grade_lesson_load_count_flashcard}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
@@ -676,6 +686,8 @@
                                     "</tr>\n");
 
                             } else {
+                                $('#grade_field').val(null);
+                                $('#lesson_field').val(null);
                                 $('#add_ppt_pdf_div').hide();
                                 grade_lesson_load_count_ppt_pdf++;
                                 $('#grade-lesson-doc-list-body').append("<tr id=\"study_materials_" + `${grade_lesson_load_count_ppt_pdf}_${grade}` + "\"" + "style=\"cursor: pointer\">\n" +
@@ -1812,10 +1824,12 @@
 
 
     <script>
+
         // make things responsive in a LOL way
         const document_height = $(document).height();
-        $('#iframe-container').css({'height': `${document_height * 0.80}px`}); // 550px
-        $('#drawing-div').css({'margin-top': `-${(document_height * 0.80) + 20}px`});// margin-top: -570px
+        $('#iframe-container').css({'height': `${document_height * 0.77}px`}); // 550px
+        // should +20px be here?
+        $('#drawing-div').css({'margin-top': `-${(document_height * 0.77) + 20}px`});// margin-top: -570px
         $('#game_1').css({'height': `${document_height * 0.72}px`});
         $('#game_2').css({'height': `${document_height * 0.72}px`});
         $('#game_3').css({'height': `${document_height * 0.72}px`});
@@ -1825,6 +1839,74 @@
         $('#student-report-forms').css({'height': `${document_height * 0.65}px`});
         $('#reports_of_a_student').css({'height': `${document_height * 0.78}px`});
         // todo: drawing-div -> negative margin-top, needs to be automated from here based on document height
+
+
+        // slideshow
+        let _index = 0;
+        const _slides = [
+            "/static/images/slides/slide_0.jpg",
+            "/static/images/slides/slide_1.png",
+            "/static/images/slides/slide_2.png"
+        ];
+
+        $('#intro_screen').css({'height': `${document_height * 0.86}px`});
+        // document.write("total height: " + document_height + " quick-access " + $('#quick-access-div').height()
+        //     + " ratio: " + ($('#quick-access-div').height() / document_height))
+
+        // quick access height fixed: 274px. todo: is 274px ok for all screen, i mean dpi factor? scaling?
+        // now we need to find the height percentage of quick access with respect to document height
+        const height_percentage_of_quick_access = 274 / document_height;
+        // now our intro screen is 0.865 percentage of document
+        // sp _height of slides will be 0.865 - height_percentage_of_quick_access
+        const _height = Math.ceil($(document).height() * (0.865 - height_percentage_of_quick_access)); // todo: fine tune if needed
+        $('#slide-image').css('height', `${_height}`).attr('src', _slides[_index % 3]);
+        _index++;
+        let slide_0 = $('#slide-0');
+        let slide_1 = $('#slide-1');
+        let slide_2 = $('#slide-2');
+        // todo: slide is taking time to load, do something there that height is gone , h = 0 before loading
+        // $('#slide_image').css('height',`${_height}`);
+        // todo: on slide with cursor
+
+        // set up the game cards height ..
+
+        function update_indicator_color(_i) {
+            if (_i === 0) {
+                slide_0.css('color', 'gold');
+                slide_1.css('color', 'grey');
+                slide_2.css('color', 'grey');
+            } else if (_i === 1) {
+                slide_0.css('color', 'grey');
+                slide_1.css('color', 'gold');
+                slide_2.css('color', 'grey');
+            } else {
+                slide_0.css('color', 'grey');
+                slide_1.css('color', 'grey');
+                slide_2.css('color', 'gold');
+            }
+        }
+
+        setInterval(
+            function () {
+                const __i = _index % 3;
+                $('#slide-image').attr('src', _slides[__i]); //.css('height', `${_height}`);
+                _index++;
+                update_indicator_color(__i);
+            }, 2500);
+
+        slide_0.click(function () {
+            $('#slide-image').attr('src', _slides[0]);
+            update_indicator_color(0);
+        });
+        slide_1.click(function () {
+            $('#slide-image').attr('src', _slides[1]);
+            update_indicator_color(1);
+        });
+        slide_2.click(function () {
+            $('#slide-image').attr('src', _slides[2]);
+            update_indicator_color(2);
+        });
+
     </script>
 
 

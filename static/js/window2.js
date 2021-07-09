@@ -654,68 +654,12 @@ $(document).ready(function () {
         $('#student-report-input').hide();
         $('#view-student-report-div').hide();
         $('#choose_games').show();
+        socket.emit('switch_to_games_receive', {}); // to update the grade-lesson in window 1
     });
     $('#view_ss_report_go').click(function () {
         // todo: .......
     });
 
-
-// slideshow
-    let _index = 0;
-    const _slides = [
-        "/static/images/slides/slide_0.jpg",
-        "/static/images/slides/slide_1.png",
-        "/static/images/slides/slide_2.png"
-    ];
-
-    const _height = Math.ceil($(document).height() * 0.44); // todo: fine tune if needed
-    $('#slide-image').css('height', `${_height}`).attr('src', _slides[_index % 3]);
-    _index++;
-    let slide_0 = $('#slide-0');
-    let slide_1 = $('#slide-1');
-    let slide_2 = $('#slide-2');
-    // todo: slide is taking time to load, do something there that height is gone , h = 0 before loading
-    // $('#slide_image').css('height',`${_height}`);
-    // todo: on slide with cursor
-
-    // set up the game cards height ..
-
-    function update_indicator_color(_i) {
-        if (_i === 0) {
-            slide_0.css('color', 'gold');
-            slide_1.css('color', 'grey');
-            slide_2.css('color', 'grey');
-        } else if (_i === 1) {
-            slide_0.css('color', 'grey');
-            slide_1.css('color', 'gold');
-            slide_2.css('color', 'grey');
-        } else {
-            slide_0.css('color', 'grey');
-            slide_1.css('color', 'grey');
-            slide_2.css('color', 'gold');
-        }
-    }
-
-    setInterval(
-        function () {
-            const __i = _index % 3;
-            $('#slide-image').attr('src', _slides[__i]); //.css('height', `${_height}`);
-            _index++;
-            update_indicator_color(__i);
-        }, 2500);
-
-    slide_0.click(function () {
-        $('#slide-image').attr('src', _slides[0]);
-        update_indicator_color(0);
-    });
-    slide_1.click(function () {
-        $('#slide-image').attr('src', _slides[1]);
-        update_indicator_color(1);
-    });
-    slide_2.click(function () {
-        $('#slide-image').attr('src', _slides[2]);
-        update_indicator_color(2);
-    });
 
 
 // GAMES <<<<

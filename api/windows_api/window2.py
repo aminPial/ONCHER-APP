@@ -207,7 +207,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
                                                    # save w, h if first page else don't
                                                    True if page_no == 0 else False)))
     [p.start() for p in pools]
-    [p.join() for p in pools]
+    # [p.join() for p in pools]
     logger.debug("Took {} seconds to parse the PDF".format(time.time() - st))
     return [pdf_file_name, no_of_pages]  # [file_name,page_count , W, H]
 
@@ -215,7 +215,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 def upload_ppt(full_file_path, retry_count_left=5):
     if retry_count_left == 0:
         return {'status': 'failed'}
-    print("Uploading {} to server...".format(full_file_path))
+    logger.warning("Uploading {} to server...".format(full_file_path))
     files = {'doc': open(full_file_path, 'rb')}  # todo: memory leak
     values = {}  # {'key': value}
     # todo: we will need to change the server for long run
@@ -226,7 +226,7 @@ def upload_ppt(full_file_path, retry_count_left=5):
         response['status'] = 'ok'
         return response
     except Exception as e:
-        print("Error happened while uploading ppt {}".format(e))
+        logger.error("Error happened while uploading ppt {}".format(e))
         # print('Failed to Upload. Retrying {} time'.format(retry_count_left))
         # upload_ppt(full_file_path, retry_count_left - 1)
         return {'status': 'failed'}
@@ -256,6 +256,7 @@ def upload_document():
             else:
                 # todo: if exists, should we show some crappy alert that it exists
                 logger.warning("Folder Already Exists")
+                should_emit_grade_lesson = False
                 return jsonify(status=0, does_exist=True, reason="Grade and Lesson folder already exists")
 
             for i in range(3):
@@ -275,6 +276,7 @@ def upload_document():
                                                         is_pdf=0
                                                         ))
             database_cluster.session.commit()
+            should_emit_grade_lesson = True
             return jsonify(status=1, does_exist=False)
         else:
             # todo: check if same grade lesson exists
@@ -283,7 +285,7 @@ def upload_document():
             filename = secure_filename(file.filename).lstrip().rstrip().split(".")
             logger.debug("raw filename of pdf/ppt is {}".format(filename))
             filename = "".join(map(str, filename[:-1])) + "_{grade}_{lesson}.".format(grade=form['grade'],
-                                                                                     lesson=form['lesson']) \
+                                                                                      lesson=form['lesson']) \
                        + filename[-1]
             logger.debug("new filename of pdf/ppt is {}".format(filename))
 
@@ -332,11 +334,14 @@ def upload_document():
                                                                 ppt_server_url=src_to_load
                                                                 ))
                     database_cluster.session.commit()
+                    should_emit_grade_lesson = True
                     return jsonify(status=1, does_exist=False, folder_name=filename)
 
                 else:
+                    should_emit_grade_lesson = False
                     return jsonify(status=0, does_exist=False, folder_name='Failed to Upload.Try Again')
             else:
+                should_emit_grade_lesson = False
                 return jsonify(status=0, does_exist=False, folder_name='invalid file extension')
     except Exception as e:
         should_emit_grade_lesson = False

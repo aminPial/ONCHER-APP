@@ -141,6 +141,7 @@ def view_ss_report_open_signal(data):
 # we need these vars
 current_grade = None
 current_lesson = None
+# todo: use this to solve the games grade-lesson update issue
 current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, flashcard & ppt/pdf # todo: use it
 
 
