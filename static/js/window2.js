@@ -63,13 +63,18 @@ $(document).ready(function () {
     // todo: make is_drawing null when moved to somewhere other than docs, e.g: games
     let is_drawing = null; // is_drawing = false means 'erasing' , null means other than draw and erase
     // let eraser_canvas = document.getElementById('eraser-circle');
-    let ppt_canvas_data = {}; // todo: ...
+    let ppt_canvas_data = {0: []};
 
     // purpose of this variable to let others know, "doc is loaded and it is here"
     let did_a_doc_exists_on_screen = false;  // initially in initial box
     // todo: initially before even clicking the pen the shit is drawing,, fix this
 
     socket.on('study_doc_update', function (da) {
+        try {
+            $('#drawing-div').empty();
+        } catch (e) {
+            console.log("caught error " + e.toString());
+        }
         did_a_doc_exists_on_screen = true;
         data = da;
         let doc_container = $('#iframe-container');
@@ -151,13 +156,18 @@ $(document).ready(function () {
                 // alert("Here");
                 // for ppt, ppt
                 doc_container.append("<iframe class=\"responsive-iframe\"  id=\"responsive-iframe\"" +
-                    ` allowfullscreen  width=\"${width}px\" height=\"500px\"\n` +
+                    ` allowfullscreen  width=\"${width}px\"\n` +
                     "                frameBorder=\"0\"\n" +
                     "                src=\"" + data['ppt_url'] + "\">");
                 // todo: make height of iframe proportional to height of height
 
+                // two height var for ppt, one is responsive-iframe and one is ppt-canvas
 
-                $('#responsive-iframe').on('load', function () {
+                const responsive_iframe_height = $(document).height() * 0.78; // 500 px
+                // alert("responsive iframe height: " + responsive_iframe_height);
+                $('#responsive-iframe').attr({
+                    'height': responsive_iframe_height
+                }).on('load', function () {
                     // code will run after iframe has finished loading
                     // alert("Loaded");
                     // context1.beginPath();
@@ -258,13 +268,20 @@ $(document).ready(function () {
                     // eraser_canvas.style.top = `${lastY}px`;
                     // erase
                     // alert("hi");
-                    // todo: this worked but show a circle ...
-                    current_ctx.arc(lastX, lastY, 8, 0, Math.PI * 2, false);
+                    // todo: this worked but show a circle on screen to show the size of eraser ...
+
+                    current_ctx.arc(lastX, lastY, 1, 0, Math.PI * 2, false);
+                   // current_ctx.strokeStyle = "#FF0000";
                     current_ctx.fill();
                 }
                 // todo: problem is in below statements , if statement
-                // if (current_doc_type === 'ppt')
-                //     ppt_canvas_data[_ppt_page_counter].push([lastX, lastY, mouseX, mouseY, current_ctx.strokeStyle]);
+                // todo: we had worked in left-right key, we need to work on click
+
+                //  if (current_doc_type === 'ppt') {
+                //      // document.write("page_counter: " + _ppt_page_counter);
+                //      ppt_canvas_data[_ppt_page_counter].push(
+                //          [lastX, lastY, mouseX, mouseY, current_ctx.strokeStyle]);
+                //  }
 
                 // update
                 lastX = mouseX;
@@ -284,12 +301,13 @@ $(document).ready(function () {
         if (type_of_action === 'draw' || type_of_action === "full_clear") {
             if (current_doc_type === 'ppt' && document.getElementById(`ppt_canvas`) === null) {
                 //  alert("here");
+                //  is_drawing = true;
                 init_drawing_board_for_ppt();
             }
         }
 
         // let erase_circle = $('#eraser-circle');
-        is_drawing = type_of_action !== "erase" && type_of_action !== "full_clear";
+        is_drawing = type_of_action !== "erase";
 
         let canvas_count = canvases.length;
         for (let c = 0; c < canvas_count; c++) {
@@ -323,70 +341,81 @@ $(document).ready(function () {
         $('#drawing-div').empty().append("<canvas  " + " id=\"ppt_canvas" + "\"" + ">\n" +
             "            Your browser does not support the HTML5 canvas tag.\n" +
             "        </canvas>\n");
+        const height_of_ppt = $(document).height() * 0.78;
         $(`#ppt_canvas`).attr({
             'width': `${$(document).width() - 0}px`,
-            'height': `${550}px` // todo: fix this based on height of window
-        }).hover(function () {
+            'height': `${height_of_ppt}px` // todo: fix this based on height of window (before: 550px)
+        });
+
+        const myCanvas1 = document.getElementById(`ppt_canvas`);
+        // first we will clear all the canvas and context from the array
+        // and push only them at [0] index
+        canvases = [];
+        ctx_es = [];
+        canvases.push(myCanvas1);
+        let ctx_new = myCanvas1.getContext('2d');
+        // ctx_new.lineWidth = "3";
+        // ctx_new.strokeStyle = "red";
+        // ctx_new.globalCompositeOperation = "source-over";
+        // is_drawing = true;
+        ctx_es.push(ctx_new);
+
+        $(`#ppt_canvas`).hover(function () {
             //alert("hover: " + event.clientY + " " + event.clientX);
             revise_canvas_on_click(0);
         }).click(function () {
             // alert("click: " + event.clientY + " " + event.clientX);
             revise_canvas_on_click(0);
         });
-
-        const myCanvas1 = document.getElementById(`ppt_canvas`);
-        // first we will clear all the canvas and context from the array
-        // and push only them at [0] index
-        canvases.push(myCanvas1);
-        ctx_es.push(myCanvas1.getContext('2d'));
     }
 
     /* @doc:  ppt draw, save and re-draw on page-return */
-    let _ppt_page_counter = -1; // todo: remember the reset when leaving ppt
-    // listen for Left and Right arrow press
-    socket.on('left-right-key-press', function (data) {
-        try {
-            const L_OR_R = data['key'];
-            if (L_OR_R === 'L') {
-                if (_ppt_page_counter > 0)
-                    _ppt_page_counter--;
-            } else {
-                _ppt_page_counter++;
-            }
-            let c_ctx = null;
-            if (ctx_es.length === 1 && canvases.length === 1) {
-                // clear first
-                c_ctx = ctx_es[0];
-                c_ctx.clearRect(0, 0, canvases[0].width, canvases[0].height); // in ppt case there is only 1
-            }
-            // alert("counter " + _ppt_page_counter);
-            // alert("d " + JSON.stringify(ppt_canvas_data));
-
-            if (ppt_canvas_data[_ppt_page_counter] === undefined) {
-                //  alert("here 2");
-                ppt_canvas_data[_ppt_page_counter] = []; // [ [x, y,x1,y1, hex_code] ]
-            } else {
-                // alert("page counter " + _ppt_page_counter);
-                // then draw in new one with previous data
-                if (c_ctx !== null) {
-                    // alert("here");
-                    const length = ppt_canvas_data[_ppt_page_counter].length;
-                    // alert("points length " + length);
-                    for (let cx = 0; cx < length; cx++) {
-                        let m = ppt_canvas_data[_ppt_page_counter][cx];
-                        c_ctx.moveTo(m[0], m[1]);
-                        c_ctx.lineTo(m[2], m[3]);
-                        // todo: what about strokeWidth ?
-                        c_ctx.strokeStyle = m[4];
-                        c_ctx.stroke();
-                    }
-                }
-            }
-        } catch (e) {
-            alert("Error: " + e.toString());
-        }
-
-    });
+    // let _ppt_page_counter = 0; // todo: remember the reset when leaving ppt
+    // // listen for Left and Right arrow press
+    // socket.on('left-right-key-press', function (data) {
+    //     try {
+    //         alert("left-right data " + JSON.stringify(data));
+    //         const L_OR_R = data['key'];
+    //         if (L_OR_R === 'L') {
+    //             if (_ppt_page_counter > 0)
+    //                 _ppt_page_counter--;
+    //         } else {
+    //             _ppt_page_counter++;
+    //         }
+    //         let c_ctx = null;
+    //         if (ctx_es.length === 1 && canvases.length === 1) {
+    //             // clear first
+    //             c_ctx = ctx_es[0];
+    //             c_ctx.clearRect(0, 0, canvases[0].width, canvases[0].height); // in ppt case there is only 1
+    //         }
+    //         // alert("counter " + _ppt_page_counter);
+    //         // alert("d " + JSON.stringify(ppt_canvas_data));
+    //
+    //         if (ppt_canvas_data[_ppt_page_counter] === undefined) {
+    //             //  alert("here 2");
+    //             ppt_canvas_data[_ppt_page_counter] = []; // [ [x, y,x1,y1, hex_code] ]
+    //         } else {
+    //             // alert("page counter " + _ppt_page_counter);
+    //             // then draw in new one with previous data
+    //             if (c_ctx !== null) {
+    //                 // alert("here");
+    //                 const length = ppt_canvas_data[_ppt_page_counter].length;
+    //                 // alert("points length " + length);
+    //                 for (let cx = 0; cx < length; cx++) {
+    //                     let m = ppt_canvas_data[_ppt_page_counter][cx];
+    //                     c_ctx.moveTo(m[0], m[1]);
+    //                     c_ctx.lineTo(m[2], m[3]);
+    //                     // todo: what about strokeWidth ?
+    //                     c_ctx.strokeStyle = m[4];
+    //                     c_ctx.stroke();
+    //                 }
+    //             }
+    //         }
+    //     } catch (e) {
+    //         alert("Error: " + e.toString());
+    //     }
+    //
+    // });
 
 
 // students report form
@@ -399,39 +428,6 @@ $(document).ready(function () {
         }
     });
 
-
-// function click(x, y) {
-//     let ev = new MouseEvent('click', {
-//         'view': window,
-//         'bubbles': true,
-//         'cancelable': true,
-//         'screenX': x,
-//         'screenY': y
-//     });
-//
-//     let el = $('#responsive-iframe').elementFromPoint(x, y);
-//     console.log(el); //print element to console
-//     el.dispatchEvent(ev);
-// }
-
-
-// PDF/PPT  navigation signal receive
-// socket.on('navigation_signal_receive', function (data) {
-//
-//     let iframe = $('#responsive-iframe');
-//
-//     if (data["action"] === "previous_page") {
-//         //find button inside iframe
-//         // let button = iframe.contents().find('#previous');
-//         // //trigger button click
-//         // button.trigger("click");
-//         $('#previous').click();
-//     } else if (data["action"] === "next_page") {
-//         $('#next').click();
-//         // click(600, 200);
-//     }
-//
-// });
 
 // Toast notifications
 // show notifications and related triggers
@@ -667,9 +663,9 @@ $(document).ready(function () {
 // slideshow
     let _index = 0;
     const _slides = [
-        "https://png.pngtree.com/thumb_back/fw800/back_our/20190621/ourmid/pngtree-lively-cute-kindergarten-graduation-ceremony-board-poster-background-image_194026.jpg",
-        "https://wallpapercave.com/wp/wp2346070.png",
-        "https://images-na.ssl-images-amazon.com/images/I/81Zn5sySLLL.png"
+        "/static/images/slides/slide_0.jpg",
+        "/static/images/slides/slide_1.png",
+        "/static/images/slides/slide_2.png"
     ];
 
     const _height = Math.ceil($(document).height() * 0.44); // todo: fine tune if needed
@@ -1078,11 +1074,13 @@ $(document).ready(function () {
                         document.getElementById("time_count").innerHTML = "00:00";
                         // todo: show the student report card
                         $('#initial_box').hide();
+                        $('#top-bar').hide();
                         $('#choose_games').hide();
                         $('#settings_box').hide();
                         $('#iframe-container').hide();
                         $('#loading_box').hide();
                         $('#student-report-input').show();
+
                         // here we need to send a trigger to window 3 that it ends...
                         // so that the button in window3 can have a the text "Start
                         socket.emit("timer_is_finished_trigger_9", {});

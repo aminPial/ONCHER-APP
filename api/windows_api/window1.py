@@ -103,6 +103,7 @@ def student_note_save():
 # student select signal receive
 @socket_io.on('student_select_signal_receive')
 def student_select_signal_receive(data):
+    print(data)
     # print('received message: ' + str(data))
     # we need to emit it to window 2 (from window1)
     student_object = StudentsData.query.filter_by(id=data['id']).first()

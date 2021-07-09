@@ -88,7 +88,7 @@ def save_time_interval_of_screenshot():
 
 @socket_io.on('timer_is_finished_trigger_9')
 def timer_is_finished_trigger_9(_):
-    print("timer_is_finished trigger called")
+    # print("timer_is_finished trigger called")
     emit('timer_is_finished_normally', {}, namespace='/', broadcast=True)
 
 
@@ -124,7 +124,7 @@ def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: 
     extract_directory = data_block['extract_directory']
 
     if pdf_document_object and extract_directory:
-        # print("Extracting PAGE {}-{} from PID: {}".format(page_start, page_end, os.getpid()))
+        logger.debug("Extracting PAGE {}-{} from PID: {}".format(page_start, page_end, os.getpid()))
         for page_no in range(page_start, page_end):
             # print("[+++++] PAGE NO: {}".format(page_no))
             page = pdf_document_object.loadPage(page_no)  # number of page
@@ -280,7 +280,13 @@ def upload_document():
             # todo: check if same grade lesson exists
             file = request.files['myfile']
             file: request.files
-            filename = secure_filename(file.filename).lstrip().rstrip()
+            filename = secure_filename(file.filename).lstrip().rstrip().split(".")
+            logger.debug("raw filename of pdf/ppt is {}".format(filename))
+            filename = "".join(map(str, filename[:-1])) + "_{grade}_{lesson}.".format(grade=form['grade'],
+                                                                                     lesson=form['lesson']) \
+                       + filename[-1]
+            logger.debug("new filename of pdf/ppt is {}".format(filename))
+
             full_file_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'files', filename) if RELEASE_BUILD else \
                 os.path.abspath(os.path.join("static", "files", filename))
             file.save(full_file_path)

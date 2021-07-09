@@ -98,7 +98,8 @@ def get_pyinstaller_buffer():
                               """ --upx-dir "{}"  """.format(_UPX_DIRECTORY) + \
                               """ --icon "{}" """.format(_APP_ICON_PATH) + \
                               """ --distpath "{}" """.format(_DIST_FOLDER_PATH) + \
-                              """ --workpath "{}" """.format(_BUILD_FOLDER_PATH)
+                              """ --workpath "{}" """.format(_BUILD_FOLDER_PATH) # + \
+                              # """ --additional-hooks-dir "{}" """.format("I:/FivverProjects/ONCHER-APP/hook")
 
     _pyinstaller_execute_buffer = "pyinstaller " + _switch_buffer + " " + key_value_config_buffer \
                                   + " " + _APP_ENTRY_SCRIPT_PATH

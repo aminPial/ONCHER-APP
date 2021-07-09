@@ -183,11 +183,20 @@ if __name__ == '__main__':
         platform.python_implementation(),
         platform.python_version()
     ))
+    # todo: before building todo list in server.py file
+    # todo: 1. check if RELEASE_BUILD = TRUE
+    # todo: 2. check if the version names needs to be upgraded (always safe to upgrade to something else)
 
     copy_necessary_files_and_folders()
     flake8_linting_phase()
     pytest_testing_phase()
     building_with_pyinstaller()
+
+    # for cef we can remove
+    # todo: @note: libGLESv2.dll, cef.pak, devtools_resources.pak, libEGL.dll - worth of 13 MB
+    # pip install cefpython3
+    # for cef support , go to app and un-comment "cef-support" codes and 'cef' as gui at the bottom
+    # and go to pyinstaller_config_builder.py to add 'additional runtime hook' switch code
 
     print("Build Folder Size [with UPX]: {} M.B".format(
         get_size(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher")))

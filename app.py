@@ -67,7 +67,6 @@ if __name__ == '__main__':
     # see https://stackoverflow.com/questions/63681770/getting-error-when-using-pynput-with-pyinstaller
     from pynput import keyboard
     from webview import create_window, start
-    # from webview.platforms.cef import settings  #
     from math import ceil
 
     from flask_socketio import emit
@@ -82,6 +81,26 @@ if __name__ == '__main__':
         traces_sample_rate=1.0
     )
 
+
+    # for cef build
+    # import cefpython3
+    # from webview.platforms.cef import settings  #
+    # # https://stackoverflow.com/questions/8222571/how-to-have-the-minimum-size-possible-chromium-embedded-framework-dlls
+    # # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=10541
+    # # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=16684
+    # # pip install cefpython3 | we need cefpython3 for this which is 69 m.b+
+    # # cef settings
+    # if not os.path.exists(APP_DATA_FOLDER_PATH):
+    #     os.makedirs(APP_DATA_FOLDER_PATH)
+    # cache_path = os.path.join(APP_DATA_FOLDER_PATH, 'cef_cache')
+    # if not os.path.exists(cache_path):
+    #     os.makedirs(cache_path)
+    # settings.update({
+    #     # 'remote_debugging_port':8080,
+    #     # "debug": True,
+    #     'persist_session_cookies': True,
+    #     'cache_path': cache_path
+    # })
 
     def start_server(port: int):
         # from server import socket_io, oncher_app
@@ -127,6 +146,7 @@ if __name__ == '__main__':
             if (key == keyboard.Key.right or key == keyboard.Key.left) and \
                     IS_WINDOW_2_ACTIVE and IS_PPT_ACTIVE:
                 with oncher_app.app_context():
+                    logger.info("pressed {}".format(key))
                     emit('left-right-key-press', {'key': 'L' if key == keyboard.Key.left else 'R'},
                          namespace='/',
                          broadcast=True)
@@ -139,6 +159,7 @@ if __name__ == '__main__':
 
 
     def start_process(port):
+        # todo: can we make it Process ?
         t = Thread(target=start_server, args=(port,))
         t.start()
 
@@ -155,7 +176,6 @@ if __name__ == '__main__':
     #     else:
     #         [wx.hide() for wx in ws]
 
-
     def hide_stuffs():
         # todo: implement this
         pass
@@ -164,19 +184,11 @@ if __name__ == '__main__':
     IS_WINDOW_2_ACTIVE = False
     IS_PPT_ACTIVE = False
 
-    # cef settings
-    # settings.update({
-    #     # 'remote_debugging_port':8080,
-    #     # "debug": True,
-    #     'persist_session_cookies': True,
-    #     'cache_path': r'cef_cache'
-    # })
-
     start_process(available_port)
     # t.join()
 
     # this is URL loading time before the window creation
-    listen_for_keyboard()
+    ## listen_for_keyboard()
     show_loading_screen()
 
     w, h = p.size()
@@ -286,4 +298,7 @@ if __name__ == '__main__':
     # func=hide, args=(w v  windows, False)
 
     # see https://pywebview.flowrl.com/guide/renderer.html
+    # cross-platform - cef
+    # < WIN 10 + WIN10 - mshtml
+    # WIN10 (latest) - edgehtml
     start(debug=True, gui="mshtml")  # mshtml, windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml

@@ -3,8 +3,9 @@
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
-RELEASE_BUILD = False # THIS IS IMPORTANT
-_VERSION_NAME = "0.0.2"  # change when building for a new release(if changes internal files)
+
+RELEASE_BUILD = False  # THIS IS IMPORTANT
+_VERSION_NAME = "0.0.3"  # change when building for a new release(if changes internal files)
 
 import logging
 import coloredlogs
@@ -31,6 +32,9 @@ from flask import Flask, send_from_directory
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 import os
+import threading
+
+# logger.debug("Process ID: {} - Thread - {}".format(os.getpid(), threading.current_thread()))
 import shutil
 
 # for release build only [9 folders in static, remember that]

@@ -31,75 +31,10 @@
 
                 </div>
 
-                <script>
-
-                    let is_note_section_enabled = false;
-                    let current_student_object = null;
-
-                    let socket = io.connect('/');
-
-                    // basic addition
-                    socket.on('students_list_update', function (data) {
-                        //  alert('yo here students ' + JSON.stringify(data));
-                        let student_list_dropdown_elem = $('#students-list-dropdown');
-                        student_list_dropdown_elem.empty();
-                        if (data === null || data['students'].length <= 0) {
-                            // {'is_positive': false/true, 'message': string}
-                            //  alert("Here " + data ===null + " " + data['students'.length <=0] )
-                            socket.emit('pass_message_to_window_2',
-                                {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
-                        } else {
-                            const sd = data['students'];
-                            for (let q = 0; q < sd.length; q++) {
-                                student_list_dropdown_elem.append(`<a onClick='send_student_select_signal(${sd[q]})'\n` +
-                                    "   class=\"dropdown-item\">\n" +
-                                    `    ${sd[q]['name']}\n` +
-                                    "</a>");
-                            }
-                        }
-                    });
-
-                    // 'students_list_update'
-                    function send_student_select_signal(student_object) {
-                        is_note_section_enabled = true;
-                        current_student_object = student_object;
-                        //  $('#base_student_text').text(student_object["name"]);
-                        $('#age').text(student_object['age']);
-                        $('#gender').text(student_object['gender'] ? "M" : "F");
-                        $('#recent').text(student_object['recent']);
-                        $('#classes').text(student_object['classes']);
-                        $('#left').text(student_object['left']);
-                        $('#student_notes').text(student_object['note_saved']).removeAttr('disabled');
-
-                        let socket = io.connect('/');
-                        socket.emit('student_select_signal_receive', {
-                            'id': student_object['id']
-                        });
-                        $('#view_ss_report').removeAttr('disabled');
-                        // also update the "student notes" section
-                    }
-
-                    function update_student_note() {
-                        $.ajax({
-                            url: "/student_note_save",
-                            type: "POST",
-                            data: {
-                                'id': current_student_object['id'],
-                                'note': $('#student_notes').val()
-                            }
-                            // },
-                            // processData: false,  // tell jQuery not to process the data
-                            // contentType: false   // tell jQuery not to set contentType
-                        });
-                    }
-
-                    function view_ss_report_trigger() {
-                        socket.emit('view_ss_report_open_signal', {'current_student_object': current_student_object});
-                    }
-
-                </script>
             </div>
         </div>
+
+
         <div class="customized_gap">
             &nbsp;
         </div>
@@ -251,7 +186,7 @@
                 }
             }
 
-            //   let socket = io.connect('/');
+            let socket = io.connect('/');
 
             socket.on('refresh_grade_on_docs', function (data) {
                 which_one = 'docs_version';
@@ -442,6 +377,75 @@
         $('#student_notes').css({'height': `${document_height}px`});
         $('#lesson_plan').css({'height': `${document_height}px`});
     </script>
+    <script>
 
+        let is_note_section_enabled = false;
+        let current_student_object = null;
+
+        // let socket = io.connect('/');
+        let students_objects = [];
+
+        // basic addition
+        socket.on('students_list_update', function (data) {
+            //  alert('yo here students ' + JSON.stringify(data));
+            let student_list_dropdown_elem = $('#students-list-dropdown');
+            student_list_dropdown_elem.empty();
+            if (data === null || data['students'].length <= 0) {
+                // {'is_positive': false/true, 'message': string}
+                //  alert("Here " + data ===null + " " + data['students'.length <=0] )
+                socket.emit('pass_message_to_window_2',
+                    {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
+            } else {
+                students_objects = data['students'];
+                for (let q = 0; q < students_objects.length; q++) {
+                    student_list_dropdown_elem.append(`<a onclick='send_student_select_signal(${q})'\n` +
+                        "   class=\"dropdown-item\">\n" +
+                        `    ${students_objects[q]['name']}\n` +
+                        "</a>");
+                }
+            }
+        });
+
+        // 'students_list_update'
+        function send_student_select_signal(q) {
+          //  alert("student object " + JSON.stringify(students_objects[q]));
+            is_note_section_enabled = true;
+            current_student_object = students_objects[q];
+            $('#base_student_text').text(current_student_object["name"]);
+            $("#view_ss_report").text(current_student_object["name"] + "'s Report")
+            $('#age').text(current_student_object['age']);
+            $('#gender').text(current_student_object['gender'] ? "M" : "F");
+            $('#recent').text(current_student_object['recent']);
+            $('#classes').text(current_student_object['classes']);
+            $('#left').text(current_student_object['left']);
+            $('#student_notes').text(current_student_object['note_saved']).removeAttr('disabled');
+
+            let socket = io.connect('/');
+            socket.emit('student_select_signal_receive', {
+                'id': current_student_object['id']
+            });
+            $('#view_ss_report').removeAttr('disabled');
+            // also update the "student notes" section
+        }
+
+        function update_student_note() {
+            $.ajax({
+                url: "/student_note_save",
+                type: "POST",
+                data: {
+                    'id': current_student_object['id'],
+                    'note': $('#student_notes').val()
+                }
+                // },
+                // processData: false,  // tell jQuery not to process the data
+                // contentType: false   // tell jQuery not to set contentType
+            });
+        }
+
+        function view_ss_report_trigger() {
+            socket.emit('view_ss_report_open_signal', {'current_student_object': current_student_object});
+        }
+
+    </script>
 
 {% endblock %}

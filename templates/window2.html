@@ -133,6 +133,7 @@
 
     </div>
 
+    {# todo: fix this thing #}
     <div class="box" id="loading_box"
          style="margin: 8px 8px 0;
          padding: 16px;border: none;border-radius: 0;height: 500px;display: none;">
@@ -290,10 +291,12 @@
 
         <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"><u>Students Report Form</u></h3>
 
-        <section class="section" id="student-report-forms">
+        <section class="section" id="student-report-forms" style="overflow-y: auto">
 
 
         </section>
+
+
 
         <div class="field is-grouped" style="margin: 12px">
             <div class="control">
@@ -313,7 +316,8 @@
         <h3 class="title is-3" style="margin:16px 16px 0;font-weight: bolder;font-family: 'HP Simplified',serif">
             <u id="student_report_of"></u>
         </h3>
-        <section class="section" id="reports_of_a_student">
+        <section class="section" id="reports_of_a_student" style="overflow-y: auto;
+        border: none;border-radius: 8px">
             {#            {% for i in range(10) %}#}
             {#                <div class="box">#}
             {#                    <h5 class="subtitle is-5" style="font-weight: bolder;"></h5>#}
@@ -711,7 +715,7 @@
 
     <div class="box" id="view-ss-report-for-specific-student"
          style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 0;display: none">
+         padding: 16px;border: none;border-radius: 8px;display: none;overflow-y: auto">
 
         <h3 class="title is-3" style="margin: 16px 16px 0;font-weight: bolder"></h3>
 
@@ -1818,6 +1822,8 @@
         $('#game_4').css({'height': `${document_height * 0.72}px`});
         // as there is no top-bar for settings box so yeah make it 90%
         $('#settings_box').css({'height': `${document_height * 0.92}px`});
+        $('#student-report-forms').css({'height': `${document_height * 0.65}px`});
+        $('#reports_of_a_student').css({'height': `${document_height * 0.78}px`});
         // todo: drawing-div -> negative margin-top, needs to be automated from here based on document height
     </script>
 
