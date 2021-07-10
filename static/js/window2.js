@@ -82,13 +82,13 @@ $(document).ready(function () {
         let initial_box = $('#initial_box');
 
         if (data['is_loading']) {
-            //   show_notifications(true, "Doc is loading");
+          //  alert("Doc is loading")
             // todo: show loading anim and all
-            //    initial_box.hide();
-            //    doc_container.hide();
-            //    $('#student-report-input').hide();
-            //    loading_container.show();
-            //    $('#time_count_div').css('visibility', 'hidden');
+            initial_box.hide();
+            doc_container.hide();
+            $('#student-report-input').hide();
+            loading_container.show();
+            $('#time_count_div').css('visibility', 'hidden');
         } else {
             // show the back icon
             $('#back-to-intro-page').show().click(function () {
@@ -271,7 +271,7 @@ $(document).ready(function () {
                     // todo: this worked but show a circle on screen to show the size of eraser ...
 
                     current_ctx.arc(lastX, lastY, 1, 0, Math.PI * 2, false);
-                   // current_ctx.strokeStyle = "#FF0000";
+                    // current_ctx.strokeStyle = "#FF0000";
                     current_ctx.fill();
                 }
                 // todo: problem is in below statements , if statement
@@ -661,7 +661,6 @@ $(document).ready(function () {
     });
 
 
-
 // GAMES <<<<
     socket.on('switch_to_games_emit', function (data) {
         // let initial = data['is_initial'];
@@ -707,6 +706,7 @@ $(document).ready(function () {
             $('#find_game').show(1200);
         }
     });
+
 // this click function is inlined in window2.html
 // $('#game_4').click(function () {
 //     if (current_grade === null || current_grade.length === 0)

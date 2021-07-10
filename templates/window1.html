@@ -393,8 +393,8 @@
             if (data === null || data['students'].length <= 0) {
                 // {'is_positive': false/true, 'message': string}
                 //  alert("Here " + data ===null + " " + data['students'.length <=0] )
-                socket.emit('pass_message_to_window_2',
-                    {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
+               // socket.emit('pass_message_to_window_2',
+               //     {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
             } else {
                 students_objects = data['students'];
                 for (let q = 0; q < students_objects.length; q++) {

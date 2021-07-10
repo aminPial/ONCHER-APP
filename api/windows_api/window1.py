@@ -4,7 +4,6 @@
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 import os
 
-import requests
 from PIL import Image
 from flask import jsonify
 from flask import render_template
@@ -61,22 +60,6 @@ def window_1():
                            grade_lessons_flashcard_version=grade_lessons_flashcard_version)
 
 
-def upload_ppt_to_server(local_file_location: str) -> bool:
-    """
-
-    :param local_file_location: this must be full path like os.path.join(sys.path[0], file_loc)
-    :return:
-    """
-    if os.path.exists(local_file_location):
-        url = 'http://httpbin.org/post'
-        with open(local_file_location, 'rb') as file:
-            files = {'file': file}
-            r = requests.post(url, files=files)
-            print(r.text)
-            return True
-    return False
-
-
 @oncher_app.route('/add_student', methods=['POST'])
 def add_student():
     form = request.form
@@ -103,9 +86,6 @@ def student_note_save():
 # student select signal receive
 @socket_io.on('student_select_signal_receive')
 def student_select_signal_receive(data):
-    print(data)
-    # print('received message: ' + str(data))
-    # we need to emit it to window 2 (from window1)
     student_object = StudentsData.query.filter_by(id=data['id']).first()
     # print(student_object.__dict__)
     assert student_object is not None, "student object is None after selection"
@@ -123,7 +103,7 @@ def student_select_signal_receive(data):
 
 
 @socket_io.on('configure_signal_emitter')
-def configure_signal_emitter(data):
+def configure_signal_emitter(_):
     emit('configure_signal_receive', {}, namespace='/', broadcast=True)
 
 
@@ -138,106 +118,125 @@ def view_ss_report_open_signal(data):
          namespace='/', broadcast=True)
 
 
-# we need these vars
-current_grade = None
-current_lesson = None
+# below 2 routes -> 'switch_to_games_receive' and 'refresh_grades_as_per_docs' are important
+# to update if we should emit signal for doc or flashcard
+
+@socket_io.on('switch_to_games_receive')
+def switch_to_games(_):
+    global current_type_of_grade_lesson
+    # this way we know when to update grade-lesson only for flashcard
+    current_type_of_grade_lesson = 'flashcard'  # !important: this line is important
+    # todo: emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
+    emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
+
+
+@socket_io.on('refresh_grades_as_per_docs')
+def refresh_grades_as_per_docs(_):
+    global current_type_of_grade_lesson
+    # this way we know when to update grade-lesson only for ppt & pdf
+    current_type_of_grade_lesson = 'ppt_pdf'  # !important: this line is important
+
+    emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
+    emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/',
+         broadcast=True)  # back from games (back-to-lesson)
+
+
 # todo: use this to solve the games grade-lesson update issue
 current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, flashcard & ppt/pdf # todo: use it
 
 
 @socket_io.on('grade_lesson_select_signal_receive')
 def grade_lesson_select_signal_receive(data):
-    # logger.debug("received ..... from select grade-lesson {}".format(data))
+    logger.debug("grade lesson selected: {}".format(data))
     """
-    todo: there will be 3 types: => students, flashcard & ppt/pdf
+      todo: Question: there will be 3 types: => students, flashcard & ppt/pdf or 2 types?
     """
     # data => {'grade': X, 'lesson': Y}
-    # print(data)
-    # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
     assert data['grade'] and data['lesson'], "Invalid grade/lesson due to null value"
 
-    # student version
+    # student version (update student list)
     students = [s.__dict__ for s in StudentsData.query.filter_by(which_grade=int(data['grade'])).all()]
     [a.pop('_sa_instance_state') for a in students]
-    logger.debug("students after selecting grade and lesson is {}".format(students))
+    # logger.debug("students after selecting grade and lesson is {}".format(students))
     emit('students_list_update', {'students': students, 'grade': data['grade']}, namespace='/', broadcast=True)
 
-    # flashcard version
-    folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
-                                                         lesson=data['lesson'])  # what if one of them is null?
-    full_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards') \
-        if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards', folder_name))
-    if os.path.exists(full_path):
-        files_path = os.listdir(full_path)
-        # print("files path {}".format(files_path))
-        # a = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/lexa-tabby-cat-painting-dora-hathazi-mendes.jpg"
-        payload = ['/static/flashcards/{}/{}'.format(folder_name, f) for f in files_path]
-        # print("flashcard payload {}".format(payload))
-        # this is for games
-        emit('grade_and_lesson_change', payload, namespace='/', broadcast=True)
-    else:
-        # print("Path {} doesn't exist for Flashcard".format(full_path))
-        pass
+    # docs version
+    if current_type_of_grade_lesson == 'flashcard':
+        logger.debug("emitting grade-lesson signal for flashcard only")
 
-    # this is for ppt and pdf (docs)
+        # folder name format is like => Grade_X_Lesson_Y => underscore (_) as a delimiter
+        # todo: what if one of them is null?
+        folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
+                                                             lesson=data['lesson'])
+        full_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards') \
+            if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards', folder_name))
+        if os.path.exists(full_path):
+            flashcard_urls = ['/static/flashcards/{}/{}'.format(folder_name, f)
+                              for f in os.listdir(full_path)]
+            if len(flashcard_urls) < 9:
+                logger.warning("Flashcards are less than 9 cards. Exists: {}".format(len(flashcard_urls)))
 
-    # # below 2 vars will gen urls like => "/static/cache/test.pdf/0.jpg, /static/cache/test.pdf/1.jpg"
-    # payload['parsed_pdf_dir_path'] = "/static/cache/{}".format(pdf_file_name)
-    # payload['page_count'] = page_count
-    # payload['width'] = w
-    # payload['height'] = h
-    study_mat_query = StudyMaterials.query.filter_by(grade=int(data['grade'])).filter_by(
-        lesson=int(data['lesson'])).first()
-    if study_mat_query:
-        study_mat_query: StudyMaterials
-
-        if study_mat_query.is_pdf:
-            web_path = "/static/cache/{}".format(study_mat_query.folder_name)
-            # we need to parse width and height from the doc
-            # os.path.abspath(os.path.join(*web_path.split("/")) -> means to get the abspath
-            actual_path = os.path.abspath(os.path.join(APP_DATA_FOLDER_PATH, 'static', 'cache',
-                                                       study_mat_query.folder_name)) \
-                if RELEASE_BUILD else os.path.abspath(os.path.join(*web_path.split("/")))
-
-            width, height = Image.open(os.path.join(actual_path, os.listdir(actual_path)[0])).size
-            print("Parsed Width {} and Height {}".format(width, height))
-
-            from app import BASE_URL
-            logger.warning("On Grade & Lesson Select - BASE URL {}".format(BASE_URL))
-
-            if BASE_URL is None:
-                BASE_URL = "http://localhost:5000"  # todo: fix this
-            payload = {
-                'is_pdf': True,  # todo: for now it is true but we need to work for the ppt and others related files
-                'parsed_pdf_dir_path': web_path,
-                # these are specially for pdf file
-                'base_url': BASE_URL,
-                'page_count': study_mat_query.page_count,
-                'width': width,
-                'height': height
-            }
+            emit('grade_and_lesson_change', flashcard_urls,
+                 namespace='/',
+                 broadcast=True)
         else:
-            # this is ppt
-            payload = {
-                'is_pdf': False,  # todo: for now it is true but we need to work for the ppt and others related files
-                'ppt_url': study_mat_query.ppt_server_url
-            }
-        emit('study_doc_update', payload, namespace='/', broadcast=True)
-        emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
-    else:
-        print("No docs available under this grade and lesson")
+            logger.error("Path {} doesn't exist for Flashcard".format(full_path))
+            pass
 
-    # this is for the window 3 screen shot purpose, that we need lesson and window-2 error check for un-selected GL for flashcards
+    else:
+        logger.debug("emitting grade-lesson signal for ppt,pdf only")
+        # show loading screen in window 2
+        emit('study_doc_update', {'is_loading': True}, namespace='/', broadcast=True)
+        # this is for ppt and pdf (docs)
+
+        # # below 2 vars will gen urls like => "/static/cache/test.pdf/0.jpg, /static/cache/test.pdf/1.jpg"
+        # payload['parsed_pdf_dir_path'] = "/static/cache/{}".format(pdf_file_name)
+        # payload['page_count'] = page_count
+        # payload['width'] = w
+        # payload['height'] = h
+        study_mat_query = StudyMaterials.query.filter_by(grade=int(data['grade'])).filter_by(
+            lesson=int(data['lesson'])).first()
+        if study_mat_query:
+            study_mat_query: StudyMaterials
+
+            if study_mat_query.is_pdf:
+                web_path = "/static/cache/{}".format(study_mat_query.folder_name)
+                # we need to parse width and height from the doc
+                # os.path.abspath(os.path.join(*web_path.split("/")) -> means to get the abspath
+                actual_path = os.path.abspath(os.path.join(APP_DATA_FOLDER_PATH, 'static', 'cache',
+                                                           study_mat_query.folder_name)) \
+                    if RELEASE_BUILD else os.path.abspath(os.path.join(*web_path.split("/")))
+
+                width, height = Image.open(os.path.join(actual_path, os.listdir(actual_path)[0])).size
+                logger.debug("Parsed Width {} and Height {}".format(width, height))
+
+                payload = {
+                    'is_pdf': True,  # todo: for now it is true but we need to work for the ppt and others related files
+                    'parsed_pdf_dir_path': web_path,
+                    # these are specially for pdf file
+                    'base_url': "http://localhost:5000",  # todo: what if 5000 is acquired <- important
+                    'page_count': study_mat_query.page_count,
+                    'width': width,
+                    'height': height,
+                    'is_loading': False
+                }
+            else:
+                # this is ppt
+                payload = {
+                    'is_pdf': False,
+                    # todo: for now it is true but we need to work for the ppt and others related files
+                    'ppt_url': study_mat_query.ppt_server_url,
+                    'is_loading': False
+                }
+            emit('study_doc_update', payload, namespace='/', broadcast=True)
+            emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
+        else:
+            logger.error("No docs available under this grade and lesson")
+
+    # this is in general
+    # this is for the window 3 screen shot purpose, that we need lesson and
+    # window-2 error check for un-selected GL for flashcards
     emit('grade_lesson_update_trigger', {'lesson': data['lesson'],
                                          'grade': data['grade']},
          namespace='/',
          broadcast=True)
-
-# @oncher_app.route('/test')
-# def test():
-#     from urllib.request import urlopen
-#     link = "https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217"
-#     response = urlopen(link)
-#     html = response.read()
-#     print(html)
-#     return html

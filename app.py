@@ -3,7 +3,7 @@
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
-from multiprocessing import freeze_support
+from multiprocessing import freeze_support, Process
 
 BASE_URL = None
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     logger.debug(f"BASE URL {BASE_URL}")
 
-    from threading import Thread
+    # from threading import Thread
 
     from time import sleep
 
@@ -81,9 +81,10 @@ if __name__ == '__main__':
         traces_sample_rate=1.0
     )
 
-
     # for cef build
     import cefpython3
+
+
     # from webview.platforms.cef import settings  #
     # https://stackoverflow.com/questions/8222571/how-to-have-the-minimum-size-possible-chromium-embedded-framework-dlls
     # https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=10541
@@ -114,9 +115,6 @@ if __name__ == '__main__':
         ww.destroy()
         return
 
-
-    # for u in oncher_app.url_map.iter_rules():
-    #     print(u)
 
     def show_loading_screen():
         s_w, s_h = p.size()  # screen width and height
@@ -160,8 +158,8 @@ if __name__ == '__main__':
 
     def start_process(port):
         # todo: can we make it Process ?
-        t = Thread(target=start_server, args=(port,))
-        t.start()
+        process = Process(target=start_server, args=(port,))
+        process.start()
 
 
     def on_closed():
@@ -176,6 +174,7 @@ if __name__ == '__main__':
     #     else:
     #         [wx.hide() for wx in ws]
 
+
     def hide_stuffs():
         # todo: implement this
         pass
@@ -188,7 +187,7 @@ if __name__ == '__main__':
     # t.join()
 
     # this is URL loading time before the window creation
-    ## listen_for_keyboard()
+    # todo:  listen_for_keyboard()
     show_loading_screen()
 
     w, h = p.size()

@@ -131,10 +131,12 @@ def k_or_a_receive_signal(data):
     emit('k_a_emit_signal', {'k_or_a': data['k_or_a']}, namespace='/', broadcast=True)
 
 
-@socket_io.on('switch_to_games_receive')
-def switch_to_games(data):
-    # todo: emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
-    emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
+# the below route is shifted to window1.py for easy management of
+# grade-lesson change in games select
+# @socket_io.on('switch_to_games_receive')
+# def switch_to_games(data):
+#     # todo: emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
+#     emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
 
 
 @socket_io.on('take_screenshot')
@@ -163,6 +165,8 @@ def take_screenshot(data):
 
 @socket_io.on('pass_message_to_window_2')
 def pass_message_to_window_2(data):
+    if data['message'].startswith('No Students exist in Grade'):
+        logger.warning("returning shitty no student exist message")
+        return
     logger.debug("Passing Message {}".format(data))
-    # data => {'is_positive': false/true, 'message': string}
     emit('receive_notification_message', data, namespace='/', broadcast=True)

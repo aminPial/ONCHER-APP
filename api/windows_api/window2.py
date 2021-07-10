@@ -361,12 +361,12 @@ def upload_document():
                  namespace='/',
                  broadcast=True)
 
-
-@socket_io.on('refresh_grades_as_per_docs')
-def refresh_grades_as_per_docs(data):
-    emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
-    emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/',
-         broadcast=True)  # back from games (back-to-lesson)
+# below route is shifter to window1.py for grade-lesson management for doc type just like games
+# @socket_io.on('refresh_grades_as_per_docs')
+# def refresh_grades_as_per_docs(data):
+#     emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
+#     emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/',
+#          broadcast=True)  # back from games (back-to-lesson)
 
 
 @oncher_app.route('/student_report_submit', methods=['POST'])
@@ -391,3 +391,5 @@ def clear_grade_and_lesson_on_back_to_intro(_):
 @socket_io.on('clear_window_3_game_4_text')
 def clear_window_3_game_4_text(_):
     emit('clear_window_3_game_4_text_trigger', {}, namespace='/', broadcast=True)
+
+
