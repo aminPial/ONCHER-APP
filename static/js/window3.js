@@ -11,6 +11,12 @@ $(document).ready(function () {
     //     socket.emit('navigation_signal_emit', {"data": "next_page"});
     // });
 
+    // screenshot related triggers (vars have to be on the top)
+    let student_object_data = null;
+    let selected_lesson = null;
+    let selected_grade = null;
+    let does_this_grade_lesson_has_flashcards = true;
+
 
     // animation trigger
 
@@ -26,7 +32,6 @@ $(document).ready(function () {
         //     }, 4500);
     });
 
-    // todo: games
 
     // todo: toss
     $('#toss_animation_trigger').click(function () {
@@ -98,7 +103,7 @@ $(document).ready(function () {
             $('#toss_animation_trigger'),
             $('#dice_animation_trigger'),
             $('#start_end_timer_button'),
-        //    $('#games_start_trigger'),
+            //    $('#games_start_trigger'),
 
             // screen shot $('#timer-settings')
         ]
@@ -121,9 +126,20 @@ $(document).ready(function () {
 
     // games
     $('#games_start_trigger').click(function () {
-        // todo: on games click disable all the docs related
-        doc_icon_enable_disable(false); // false means will be disabled
-        socket.emit('switch_to_games_receive', {});
+        if (does_this_grade_lesson_has_flashcards) {
+            // todo: on games click disable all the docs related
+            doc_icon_enable_disable(false); // false means will be disabled
+            socket.emit('switch_to_games_receive', {});
+        } else {
+            try {
+                send_data_for_notifications(false,
+                    "No Flashcard is available for this Grade: " + selected_grade
+                    + " Lesson: " + selected_lesson);
+            } catch (e) {
+                alert(e.toString());
+            }
+
+        }
     });
 
 
@@ -177,15 +193,14 @@ $(document).ready(function () {
     });
 
 
-    // screenshot related triggers
-    let student_object_data = null;
-    let selected_lesson = null;
     // student object update on student-select trigger
     socket.on('select_student_signal_receive', function (data) {
         student_object_data = data['full_student_object_in_dict_format'];
     });
     socket.on('grade_lesson_update_trigger', function (data) {
         selected_lesson = data['lesson'];
+        selected_grade = data['grade'];
+        does_this_grade_lesson_has_flashcards = data['does_this_grade_lesson_has_flashcards'];
     });
 
     $('#take_screenshot').click(function () {
@@ -196,7 +211,7 @@ $(document).ready(function () {
                 'is_continuous': false
             });
         } else
-             send_data_for_notifications(false,"Please choose a student to take SS");
+            send_data_for_notifications(false, "Please choose a student to take SS");
     });
 
     let is_on_now = false;
@@ -256,7 +271,7 @@ $(document).ready(function () {
         socket.emit('screenshot_timer_settings', {});
     });
 
-    function send_data_for_notifications(is_positive,msg ){
+    function send_data_for_notifications(is_positive, msg) {
         socket.emit('pass_message_to_window_2', {
             'is_positive': is_positive,
             'message': msg

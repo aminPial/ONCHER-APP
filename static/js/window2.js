@@ -82,7 +82,7 @@ $(document).ready(function () {
         let initial_box = $('#initial_box');
 
         if (data['is_loading']) {
-          //  alert("Doc is loading")
+            //  alert("Doc is loading")
             // todo: show loading anim and all
             initial_box.hide();
             doc_container.hide();
@@ -91,6 +91,7 @@ $(document).ready(function () {
             $('#time_count_div').css('visibility', 'hidden');
         } else {
             // show the back icon
+            // todo: fix the bug of <- two branches
             $('#back-to-intro-page').show().click(function () {
                 doc_container.hide();
                 loading_container.hide();
@@ -98,6 +99,8 @@ $(document).ready(function () {
                 $('#back-to-intro-page').hide();
                 $('#initial_box').show();
                 $('#intro_screen').show();
+                $('#choose_games').hide();
+
                 // emit a signal to clear grade and lessons in window 1
                 socket.emit('clear_grade_and_lesson_on_back_to_intro', {});
             });
@@ -506,15 +509,21 @@ $(document).ready(function () {
         on_which_config_page_now = '1'; // as we now go to 1st page of config
     });
 
+    /*
+    * on click configure-back
+    * top level back functionality
+    * at top top-left
+    *
+    * */
     $('#configure-back').click(function () {
         $('#view-student-report-div').hide();
         $('#choose_games').hide();
         $('#student-report-input').hide();
         // when encounter 1st page
         if (on_which_config_page_now === '1') {
-            if (did_a_doc_exists_on_screen)
+            if (did_a_doc_exists_on_screen) {
                 $('#iframe-container').show();
-            else
+            } else
                 $('#initial_box').show();
 
             $('#settings_box').hide();
@@ -534,17 +543,19 @@ $(document).ready(function () {
     $('#configure-back-from-games').click(function () {
         // $('#intro_screen').show();
         $('#choose_games').hide();
-        if (did_a_doc_exists_on_screen)
+
+        if (did_a_doc_exists_on_screen) {
             $('#iframe-container').show();
-        else {
+            $('#back-to-intro-page').show();
+        } else {
             $('#initial_box').show();
             $('#intro_screen').show();
+            // after pressing back we need to tell window1 to update grade & lesson according to the docs
+            // as current one is of flashcard
+            socket.emit('refresh_grades_as_per_docs', {});
         }
 
-        // after pressing back we need to tell window1 to update grade & lesson according to the docs
-        // as current one is of flashcard
-        socket.emit('refresh_grades_as_per_docs', {});
-        // we n
+
     });
 
     $('#upload_ppt_pdf').click(function () {
@@ -567,7 +578,7 @@ $(document).ready(function () {
         on_which_config_page_now = '2'; // we go to 2nd page now
     });
 
-// report
+    // report
     let students_object = null;
 
     socket.on('students_list_update', function (data) {
@@ -654,6 +665,7 @@ $(document).ready(function () {
         $('#student-report-input').hide();
         $('#view-student-report-div').hide();
         $('#choose_games').show();
+        $('#back-to-intro-page').hide();
         socket.emit('switch_to_games_receive', {}); // to update the grade-lesson in window 1
     });
     $('#view_ss_report_go').click(function () {
@@ -661,13 +673,34 @@ $(document).ready(function () {
     });
 
 
-// GAMES <<<<
+// GAMES
     socket.on('switch_to_games_emit', function (data) {
+        // todo: make the game cards responsive accordingly
+        $('#back-to-intro-page').hide();
+
+        const document_height = $(document).height();
+
+        // game intro screens
+        const is_top_bar_none = window.getComputedStyle(document.getElementById("top-bar")).display === "none";
+        const game_card_height = document_height * (is_top_bar_none ? 0.75 : 0.60); // if top bar is there
+        // alert("game card height " + game_card_height)
+        $('#game_1').css({'height': `${game_card_height}px`});
+        $('#game_2').css({'height': `${game_card_height}px`});
+        $('#game_3').css({'height': `${game_card_height}px`});
+        $('#game_4').css({'height': `${game_card_height}px`});
+
+        // game divs
+        const game_div_height = document_height * (is_top_bar_none ? 0.85 : 0.75);
+        $('#tik_tak_toe').css({'height': `${game_div_height}px`});
+        $('#match_game').css({'height': `${game_div_height}px`});
+        $('#listen_game').css({'height': `${game_div_height}px`});
+        $('#find_game').css({'height': `${game_div_height}px`});
+
         // let initial = data['is_initial'];
         $('#iframe-container').hide();
         $('#initial_box').show();
-        $('#intro_screen').hide(500);
-        $('#choose_games').show(700);
+        $('#intro_screen').hide();
+        $('#choose_games').show();
         $('#student-report-input').hide();
         $('#view-student-report-div').hide();
     });
@@ -683,7 +716,7 @@ $(document).ready(function () {
             show_notifications(false, "Please Select Grade and Lesson for Flashcard");
         else {
             $('#initial_box').hide(1000);
-            $('#tik_tak_toe').show(1200);
+            $('#tik_tak_toe').show();
         }
     });
 
@@ -692,8 +725,8 @@ $(document).ready(function () {
         if (current_grade === null || current_grade.length === 0)
             show_notifications(false, "Please Select Grade and Lesson for Flashcard");
         else {
-            $('#initial_box').hide(1000);
-            $('#match_game').show(1200);
+            $('#initial_box').hide();
+            $('#match_game').show();
         }
 
     });
@@ -702,8 +735,8 @@ $(document).ready(function () {
         if (current_grade === null || current_grade.length === 0)
             show_notifications(false, "Please Select Grade and Lesson for Flashcard");
         else {
-            $('#initial_box').hide(1000);
-            $('#find_game').show(1200);
+            $('#initial_box').hide();
+            $('#find_game').show();
         }
     });
 
@@ -713,7 +746,7 @@ $(document).ready(function () {
 //         show_notifications("Please Select Grade and Lesson for Flashcard");
 //     else {
 //         $('#initial_box').hide(1000);
-//         $('#listen_game').show(1200);
+//         $('#listen_game').show();
 //         socket.emit('game_4_initialize', {'': ''}); // special
 //     }
 // });
@@ -723,52 +756,69 @@ $(document).ready(function () {
 
 // first game
     $('#new_game_from_game_1').click(function () {
-        $('#tik_tak_toe').hide(1000);
+        $('#tik_tak_toe').hide();
         $('#intro_screen').hide(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').show();
-        $('#initial_box').show(1200);
+        $('#initial_box').show();
     });
     $('#back_to_lesson_from_game_1').click(function () {
         // todo: enable all drawing related buttons and all in window and in other windows....
-        $('#tik_tak_toe').hide(1000);
+        $('#tik_tak_toe').hide();
         $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').hide();
-        $('#initial_box').show(1200);
-        socket.emit('refresh_grades_as_per_docs', {});
+
+        if (did_a_doc_exists_on_screen) {
+            $('#iframe-container').show();
+            $('#back-to-intro-page').show();
+        } else {
+            $('#initial_box').show();
+            socket.emit('refresh_grades_as_per_docs', {});
+        }
+
         // we need to clear the game instance ...
         reset_game("none");
     });
 
 // second game
     $('#new_game_from_game_2').click(function () {
-        $('#match_game').hide(1000);
+        $('#match_game').hide();
         $('#intro_screen').hide(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').show();
-        $('#initial_box').show(1200);
+        $('#initial_box').show();
     });
     $('#back_to_lesson_from_game_2').click(function () {
-        $('#match_game').hide(1000);
+        $('#match_game').hide();
         $('#intro_screen').show(); // <<<<<<<<< todo: change this to if a pdf/ppt is already selected
         $('#choose_games').hide();
-        $('#initial_box').show(1200);
-        socket.emit('refresh_grades_as_per_docs', {});
+        if (did_a_doc_exists_on_screen) {
+            $('#iframe-container').show();
+            $('#back-to-intro-page').show();
+        } else {
+            $('#initial_box').show();
+            socket.emit('refresh_grades_as_per_docs', {});
+        }
     });
 
 // third game
     $('#new_game_from_game_3').click(function () {
-        $('#find_game').hide(1000);
+        $('#find_game').hide();
         $('#intro_screen').hide();
         $('#choose_games').show();
-        $('#initial_box').show(1200);
+        $('#initial_box').show();
         // we have to clear the timer and put it in initial position
         reset_the_game(false);
     });
     $('#back_to_lesson_from_game_3').click(function () {
-        $('#find_game').hide(1000);
+        $('#find_game').hide();
         $('#intro_screen').show();
         $('#choose_games').hide();
-        $('#initial_box').show(1200);
-        socket.emit('refresh_grades_as_per_docs', {});
+        if (did_a_doc_exists_on_screen) {
+            $('#iframe-container').show();
+            $('#back-to-intro-page').show();
+        } else {
+            $('#initial_box').show();
+            socket.emit('refresh_grades_as_per_docs', {});
+        }
         // we have to clear the timer
         // we have to clear the timer and put it in initial position
         reset_the_game(false);
@@ -776,19 +826,24 @@ $(document).ready(function () {
 
 // fourth game
     $('#new_game_from_game_4').click(function () {
-        $('#listen_game').hide(1000);
+        $('#listen_game').hide();
         $('#intro_screen').hide();
         $('#choose_games').show();
-        $('#initial_box').show(1200);
+        $('#initial_box').show();
         // we need to hide the text in window-3 (e.g: SAY CAT)
         socket.emit('clear_window_3_game_4_text', {});
     });
     $('#back_to_lesson_from_game_4').click(function () {
-        $('#listen_game').hide(1000);
+        $('#listen_game').hide();
         $('#intro_screen').show();
         $('#choose_games').hide();
-        $('#initial_box').show(1200);
-        socket.emit('refresh_grades_as_per_docs', {});
+        if (did_a_doc_exists_on_screen) {
+            $('#iframe-container').show();
+            $('#back-to-intro-page').show();
+        } else {
+            $('#initial_box').show();
+            socket.emit('refresh_grades_as_per_docs', {});
+        }
         // we need to hide the text in window-3 (e.g: SAY CAT)
         socket.emit('clear_window_3_game_4_text', {});
     });

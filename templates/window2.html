@@ -329,7 +329,7 @@
 
     {# settings page #}
     <div class="box" id="settings_box" style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 8px;display: none;overflow: auto">
+         padding: 16px;border: none;border-radius: 8px;display: none;">
         <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
             <span id="configure-back" style="cursor: pointer">
                 <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp; </span>Configure Lesson Docs</h4>
@@ -399,7 +399,7 @@
                 });
             </script>
             {# ppt,pdf list table #}
-            <table class="table is-fullwidth" id="ppt_pdf_table">
+            <table class="table is-fullwidth" id="ppt_pdf_table" style="overflow-y: auto">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -430,7 +430,7 @@
             </table>
 
             {# todo: flashcard table #}
-            <table class="table is-fullwidth" id="flashcard_table" style="display: none">
+            <table class="table is-fullwidth" id="flashcard_table" style="display: none;overflow-y: auto">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -737,7 +737,7 @@
     {# todo: complete ppt(full) & pdf canvas(debug pdf part).. #}
 
     {# start => tik-tak-toe game screen #}
-    <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px">
+    <div class="box" id="tik_tak_toe" style="background: black;display: none;margin: 8px;overflow-y: auto">
         <div class="columns is-one-quarter">
             <div class="column" id="score_area">
                 <h4 class="title is-4" style="color: #5efa0a" id="whose-turn">Teacher's Turn</h4>
@@ -1454,13 +1454,7 @@
                 //   alert("data " + JSON.stringify(data));
                 the_listen_game_array = data;
                 the_listen_shuffled_arr = shuffle(data.slice());
-                // if (JSON.stringify(the_listen_game_array) === JSON.stringify(the_listen_shuffled_arr)) {
-                //     alert("Fuck! they matched");
-                //     // the_listen_shuffled_arr = [...the_listen_game_array].sort();
-                // }
-                // else
-                //     alert("ok now")
-                // alert("\nshuff " + the_listen_shuffled_arr);
+
                 // now assign the src to img and create the map
                 for (let x = 0; x < the_listen_game_array.length; x++) {
                     the_listen_elem_map[the_listen_game_array[x]] = x;
@@ -1829,16 +1823,14 @@
         $('#iframe-container').css({'height': `${document_height * 0.77}px`}); // 550px
         // should +20px be here?
         $('#drawing-div').css({'margin-top': `-${(document_height * 0.77) + 20}px`});// margin-top: -570px
-        $('#game_1').css({'height': `${document_height * 0.72}px`});
-        $('#game_2').css({'height': `${document_height * 0.72}px`});
-        $('#game_3').css({'height': `${document_height * 0.72}px`});
-        $('#game_4').css({'height': `${document_height * 0.72}px`});
         // as there is no top-bar for settings box so yeah make it 90%
         $('#settings_box').css({'height': `${document_height * 0.92}px`});
         $('#student-report-forms').css({'height': `${document_height * 0.65}px`});
         $('#reports_of_a_student').css({'height': `${document_height * 0.78}px`});
         // todo: drawing-div -> negative margin-top, needs to be automated from here based on document height
 
+        // games height computed value will be calculated on the fly
+        // based on the is top-bar none/shown?
 
         // slideshow
         let _index = 0;

@@ -123,4 +123,9 @@ $('#add_student').click(function () {
             alert("failed");
         }
     });
+
+
+
+
+
 });

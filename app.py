@@ -3,7 +3,7 @@
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
-from multiprocessing import freeze_support, Process
+from multiprocessing import freeze_support
 
 BASE_URL = None
 
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     logger.debug(f"BASE URL {BASE_URL}")
 
-    # from threading import Thread
+    from threading import Thread
 
     from time import sleep
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
     def start_process(port):
         # todo: can we make it Process ?
-        process = Process(target=start_server, args=(port,))
+        process = Thread(target=start_server, args=(port,))
         process.start()
 
 

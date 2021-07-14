@@ -196,7 +196,10 @@
             socket.on('switch_to_games_emit', function (data) {
                 //   alert("Switching to games"); // data is already there when loaded
                 which_one = 'flashcard_version';
-                refresh_grade();
+                if (!data['does_this_grade_lesson_has_flashcards'])
+                    refresh_grade();
+                {#else#}
+                {#    alert("not refreshing grade-lesson in switch games emit")#}
             });
 
             {#// when the 'back icon' is clicked from docs to return back to the intro page#}
@@ -393,8 +396,8 @@
             if (data === null || data['students'].length <= 0) {
                 // {'is_positive': false/true, 'message': string}
                 //  alert("Here " + data ===null + " " + data['students'.length <=0] )
-               // socket.emit('pass_message_to_window_2',
-               //     {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
+                // socket.emit('pass_message_to_window_2',
+                //     {'is_positive': false, 'message': `No Students exist in Grade ${data['grade']}`});
             } else {
                 students_objects = data['students'];
                 for (let q = 0; q < students_objects.length; q++) {
@@ -408,7 +411,7 @@
 
         // 'students_list_update'
         function send_student_select_signal(q) {
-          //  alert("student object " + JSON.stringify(students_objects[q]));
+            //  alert("student object " + JSON.stringify(students_objects[q]));
             is_note_section_enabled = true;
             current_student_object = students_objects[q];
             $('#base_student_text').text(current_student_object["name"]);

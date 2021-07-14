@@ -118,6 +118,22 @@ def view_ss_report_open_signal(data):
          namespace='/', broadcast=True)
 
 
+current_type_of_grade_lesson = ''  # there will be 3 types: => students, flashcard & ppt/pdf
+current_grade = None
+current_lesson = None
+
+
+def check_if_flashcard_exists():
+    if current_grade and current_lesson:
+        flashcard_folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=current_grade,
+                                                                       lesson=current_lesson)
+        full_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards') \
+            if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards', flashcard_folder_name))
+        return os.path.exists(full_path)
+    logger.warning("no grade lesson is selected to check for flashcard existence")
+    return True  # when nothing is selected then
+
+
 # below 2 routes -> 'switch_to_games_receive' and 'refresh_grades_as_per_docs' are important
 # to update if we should emit signal for doc or flashcard
 
@@ -127,7 +143,24 @@ def switch_to_games(_):
     # this way we know when to update grade-lesson only for flashcard
     current_type_of_grade_lesson = 'flashcard'  # !important: this line is important
     # todo: emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/', broadcast=True)
-    emit('switch_to_games_emit', {'': ''}, namespace='/', broadcast=True)
+    does_exist = check_if_flashcard_exists()
+    emit('switch_to_games_emit', {'does_this_grade_lesson_has_flashcards': does_exist,
+                                  }, namespace='/',
+         broadcast=True)
+    if does_exist:
+        logger.debug("flashcard does exist")
+        folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=current_grade,
+                                                             lesson=current_lesson)
+        full_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards') \
+            if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards', folder_name))
+        flashcard_urls = ['/static/flashcards/{}/{}'.format(folder_name, f)
+                          for f in os.listdir(full_path)]
+        if len(flashcard_urls) < 9:
+            logger.warning("Flashcards are less than 9 cards. Exists: {}".format(len(flashcard_urls)))
+        # what type of bogus fucking name is this?
+        emit('grade_and_lesson_change', flashcard_urls,
+             namespace='/',
+             broadcast=True)
 
 
 @socket_io.on('refresh_grades_as_per_docs')
@@ -136,17 +169,18 @@ def refresh_grades_as_per_docs(_):
     # this way we know when to update grade-lesson only for ppt & pdf
     current_type_of_grade_lesson = 'ppt_pdf'  # !important: this line is important
 
-    emit('refresh_grade_on_docs', {}, namespace='/', broadcast=True)
+    emit('refresh_grade_on_docs', {'does_this_grade_lesson_has_flashcards': check_if_flashcard_exists()}, namespace='/',
+         broadcast=True)
     emit('enable_doc_related_icon', {'should_enable': True, 'skip': []}, namespace='/',
          broadcast=True)  # back from games (back-to-lesson)
 
 
-# todo: use this to solve the games grade-lesson update issue
-current_type_of_grade_lesson = 'ppt_pdf'  # there will be 3 types: => students, flashcard & ppt/pdf # todo: use it
-
-
 @socket_io.on('grade_lesson_select_signal_receive')
 def grade_lesson_select_signal_receive(data):
+    global current_grade, current_lesson
+    current_grade = data['grade']
+    current_lesson = data['lesson']
+
     logger.debug("grade lesson selected: {}".format(data))
     """
       todo: Question: there will be 3 types: => students, flashcard & ppt/pdf or 2 types?
@@ -236,7 +270,16 @@ def grade_lesson_select_signal_receive(data):
     # this is in general
     # this is for the window 3 screen shot purpose, that we need lesson and
     # window-2 error check for un-selected GL for flashcards
+    flashcard_folder_name = 'Grade_{grade}_Lesson_{lesson}'.format(grade=data['grade'],
+                                                                   lesson=data['lesson'])
+    full_path = os.path.join(APP_DATA_FOLDER_PATH, 'static', 'flashcards') \
+        if RELEASE_BUILD else os.path.abspath(os.path.join('static', 'flashcards', flashcard_folder_name))
+
     emit('grade_lesson_update_trigger', {'lesson': data['lesson'],
-                                         'grade': data['grade']},
+                                         'grade': data['grade'],
+                                         # this 'does_this_grade_lesson_has_flashcards' var is important
+                                         # because when a class is going on and teacher clicks on the games
+                                         # we need to check if the current grade lesson has flashcard shit or not
+                                         'does_this_grade_lesson_has_flashcards': os.path.exists(full_path)},
          namespace='/',
          broadcast=True)
