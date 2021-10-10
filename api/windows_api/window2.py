@@ -2,13 +2,15 @@
 #  Unauthorized copying of this file, via any medium is strictly prohibited
 #  Proprietary and confidential
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
-
 import multiprocessing
 import os
 import pickle
 import shutil
 import time
+from gc import collect
+from json import loads
 from typing import List
+from urllib.parse import quote
 
 import fitz
 import requests
@@ -17,13 +19,11 @@ from flask import render_template
 from flask import request
 from flask_socketio import emit
 from werkzeug.utils import secure_filename
-from urllib.parse import quote
-from json import loads
 
-from app import BASE_URL
 from api.database_schema.models import *
 from api.server_router_api.server import oncher_app, database_cluster, socket_io, logger, \
     APP_DATA_FOLDER_PATH, RELEASE_BUILD
+from app import BASE_URL
 
 
 @oncher_app.route('/window_2')
@@ -150,6 +150,11 @@ def parse_pdf_block(data_block: dict, page_start: int, page_end: int, save_w_h: 
             #     # calculate w,h only for first page to reduce overhead
             #     im = Image.open(os.path.join(extract_directory, "{}.png".format(page_no))).size
             #     print("Image Size: {} {}".format(im[0], im[1]))
+            del pix
+            del page
+            collect()
+    del pdf_document_object
+    collect()
 
 
 # pdf file parser
@@ -181,7 +186,7 @@ def parse_pdf_file(pdf_file_path: str, pdf_file_name: str):
 
     # print("NO OF PAGES: {}".format(no_of_pages))
 
-    _divide_by_parts = 10
+    _divide_by_parts = multiprocessing.cpu_count()  # yields best reult
     pools = []
     # todo: use ProcessPool() for better efficiency
     # todo: write some and isolate this child process "parse_pdf and it's caller" routines
@@ -217,9 +222,9 @@ def upload_ppt(full_file_path, retry_count_left=5):
         return {'status': 'failed'}
     logger.warning("Uploading {} to server...".format(full_file_path))
     files = {'doc': open(full_file_path, 'rb')}  # todo: memory leak
-    values = {}  # {'key': value}
+    values = {'filename': full_file_path.split("\\")[-1]}  # {'key': value}
     # todo: we will need to change the server for long run
-    url = "https://libwired.com/upload_ppt"
+    url = "http://157.245.51.210:82/upload_ppt"
     try:
         response = requests.post(url, files=files, data=values)
         response = response.json()
@@ -251,13 +256,25 @@ def upload_document():
                              "flashcards",
                              "Grade_{}_Lesson_{}".format(
                                  form['grade'], form['lesson'])))
-            if not os.path.exists(folder_name):
-                os.makedirs(folder_name)
+            if os.path.exists(folder_name):
+                # delete the folder if exists
+                shutil.rmtree(folder_name)
             else:
-                # todo: if exists, should we show some crappy alert that it exists
-                logger.warning("Folder Already Exists")
-                should_emit_grade_lesson = False
-                return jsonify(status=0, does_exist=True, reason="Grade and Lesson folder already exists")
+                # doesn't exist so insert the row in db
+                # todo: check if same grade lesson exists
+                database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
+                                                            lesson=int(form['lesson']),
+                                                            is_flashcard=1,
+                                                            is_pdf=0
+                                                            ))
+                database_cluster.session.commit()
+
+            os.makedirs(folder_name)
+            # else:
+            # todo: if exists, should we show some crappy alert that it exists
+            # logger.warning("Folder Already Exists")
+            # should_emit_grade_lesson = False
+            # return jsonify(status=0, does_exist=True, reason="Grade and Lesson folder already exists")
 
             for i in range(3):
                 for j in range(3):
@@ -266,16 +283,12 @@ def upload_document():
                     filename = secure_filename(file.filename).lstrip().rstrip()
                     logger.debug("flashcard filename => {}".format(filename))
 
-                    full_file_path = os.path.join(folder_name, "{}".format(filename))
-                    file.save(full_file_path)
+                    if filename:
+                        full_file_path = os.path.join(folder_name, "{}".format(filename))
+                        file.save(full_file_path)
+                    else:
+                        logger.error("Filename of flashcard is None ?")
 
-            # todo: check if same grade lesson exists
-            database_cluster.session.add(StudyMaterials(grade=int(form['grade']),
-                                                        lesson=int(form['lesson']),
-                                                        is_flashcard=1,
-                                                        is_pdf=0
-                                                        ))
-            database_cluster.session.commit()
             should_emit_grade_lesson = True
             return jsonify(status=1, does_exist=False)
         else:
@@ -319,7 +332,7 @@ def upload_document():
                 logger.info("response from server is {} in {} seconds".format(response, time.time() - st))
                 if response and response['status'] == 'ok' and response['done_uploading']:
                     # https%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx
-                    encoded_url = quote('https://libwired.com/static/{}'.format(filename), safe='')
+                    encoded_url = quote('http://157.245.51.210:82/static/{}'.format(filename), safe='')
                     logger.info("Encoded Url is {}".format(encoded_url))
                     # https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3Dhttps%253A%252F%252Fwww%252Elibwired%252Ecom%253A443%252Fstatic%252FGrade1Lesson1%252Epptx&access_token_ttl=0&wdModeSwitchTime=1612594467217
                     src_to_load = r"""https://psg3-powerpoint.officeapps.live.com/p/PowerPointFrame.aspx?PowerPointView=SlideShowView&ui=en%2DGB&rs=en%2DGB&WOPISrc=http%3A%2F%2Fpsg3%2Dview%2Dwopi%2Ewopi%2Elive%2Enet%3A808%2Foh%2Fwopi%2Ffiles%2F%40%2FwFileId%3FwFileId%3D{encoded_url}&access_token_ttl=0&wdModeSwitchTime=1612594467217""".format(
@@ -361,6 +374,7 @@ def upload_document():
                  namespace='/',
                  broadcast=True)
 
+
 # below route is shifter to window1.py for grade-lesson management for doc type just like games
 # @socket_io.on('refresh_grades_as_per_docs')
 # def refresh_grades_as_per_docs(data):
@@ -373,7 +387,7 @@ def upload_document():
 def student_report_submit():
     f = request.form
     f = loads(f['report'])  # json.loads()
-    print(f, type(f))
+    # print(f, type(f))
     if f:
         for report in f:
             database_cluster.session.add(StudentReports(student_id=report['student-id'],
@@ -391,5 +405,3 @@ def clear_grade_and_lesson_on_back_to_intro(_):
 @socket_io.on('clear_window_3_game_4_text')
 def clear_window_3_game_4_text(_):
     emit('clear_window_3_game_4_text_trigger', {}, namespace='/', broadcast=True)
-
-

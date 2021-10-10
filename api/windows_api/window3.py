@@ -9,12 +9,11 @@ from datetime import datetime
 
 import pyscreenshot as ImageGrab
 from flask import render_template
-from flask import request
 from flask_socketio import emit
 
-from app import BASE_URL
 from api.server_router_api.server import oncher_app, socket_io, logger, \
     APP_DATA_FOLDER_PATH, RELEASE_BUILD
+from app import BASE_URL
 
 
 @oncher_app.route('/window_3')

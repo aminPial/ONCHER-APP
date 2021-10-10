@@ -329,7 +329,7 @@
 
     {# settings page #}
     <div class="box" id="settings_box" style="margin: 8px 8px 0;
-         padding: 16px;border: none;border-radius: 8px;display: none;">
+         padding: 16px;border: none;border-radius: 8px;display: none;overflow-y: auto">
         <h4 class="title is-3" style="margin-top: 16px;margin-left: 8px">
             <span id="configure-back" style="cursor: pointer">
                 <i class="fa fa-arrow-circle-left"></i>&nbsp;&nbsp;&nbsp; </span>Configure Lesson Docs</h4>
@@ -364,7 +364,7 @@
 
         {# grade lesson table #}
 
-        <section class="section" id="grade_lesson_list_section">
+        <section class="section" id="grade_lesson_list_section" style="overflow-y: auto;">
             {# tabs is-centered is-toggle is-fullwidth is-medium #}
             <div class="tabs is-centered is-boxed is-medium">
                 <ul>
@@ -474,8 +474,8 @@
                            placeholder="INPUT GRADE"
                            name="grade_field">
                     <span class="icon is-small is-left">
-      <i class="fas fa-graduation-cap"></i>
-    </span>
+                                            <i class="fas fa-graduation-cap"></i>
+                                                        </span>
                 </div>
                 <div class="control has-icons-left" style="display: inline-block">
                     <input class="input is-success is-medium" type="number" id="lesson_field"
@@ -486,7 +486,6 @@
         </span>
                 </div>
             </div>
-
 
             <br>
             <h5 class="title is-4">Add Document (ppt, pptm, pptx,
@@ -534,7 +533,7 @@
         </section>
 
         {# add flashcard #}
-        <section style="display: none;margin-left: 24px" id="add_flashcard">
+        <div style="display: none;margin-left: 24px;" id="add_flashcard">
             <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Select Grade & Lesson</h5>
             <div class="container" style="padding: 4px">
 
@@ -556,10 +555,9 @@
                 </div>
             </div>
 
-
             <br>
             <h5 class="title is-4" style="font-family: 'HP Simplified',serif">Add Flashcard</h5>
-            <div class="container" style="padding: 4px">
+            <div class="container" style="padding: 4px;">
                 <form id="flashcard_add_form" method="post" name="flashcard_add_form">
                     {% for i in range(3) %}
                         <div class="columns">
@@ -584,7 +582,7 @@
                     {% endfor %}
                 </form>
             </div>
-            <hr>
+<hr>
             <div style="margin-left: 4px">
 
                 <button style="font-weight: bolder;background: #2996f8;margin-bottom: 20px"
@@ -595,7 +593,7 @@
                 </button>
             </div>
 
-        </section>
+        </div>
 
         {# upload ppt,pdf or Flashcard to server code in below <script> tag #}
         <script>

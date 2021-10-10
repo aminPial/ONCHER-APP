@@ -4,8 +4,8 @@
 #  Written by Oncher App Engineering Team <engineering.team@oncher.com>, 2021
 
 
-RELEASE_BUILD = False  # THIS IS IMPORTANT
-_VERSION_NAME = "0.0.3"  # change when building for a new release(if changes internal files)
+RELEASE_BUILD = True  # THIS IS IMPORTANT
+_VERSION_NAME = "0.0.5"  # change when building for a new release(if changes internal files)
 
 import logging
 import coloredlogs

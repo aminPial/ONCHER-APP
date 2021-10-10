@@ -32,19 +32,31 @@
 
 
         {#//Chrome, Safari, Opera#}
-        body ::-webkit-scrollbar {
-            width: 0 !important
-        }
+        {#body ::-webkit-scrollbar {#}
+        {#    width: 0 !important#}
 
+        {##}
         {#//Firefox#}
-        body {
-            overflow: -moz-scrollbars-none;
+        {#body {#}
+        {#    overflow: -moz-scrollbars-none;#}
+        {##}
+        {#//Internet Explorer, Edge... we need this#}
+        {#body {#}
+        {#    -ms-overflow-style: none;#}
+        html {
+            overflow: scroll;
+            overflow-x: hidden;
         }
 
-        {#//Internet Explorer, Edge... we need this#}
-        body {
-            -ms-overflow-style: none;
+        ::-webkit-scrollbar {
+            width: 0; /* Remove scrollbar space */
+            background: transparent; /* Optional: just make scrollbar invisible */
         }
+
+        /* Optional: show position indicator in red */
+        {#::-webkit-scrollbar-thumb {#}
+        {#    background: #FF0000;#}
+
 
         {#i:hover{#}
         {#    box-shadow: 0 0 11px rgba(33,33,33,.2);#}

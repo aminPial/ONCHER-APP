@@ -174,7 +174,6 @@ if __name__ == '__main__':
     #     else:
     #         [wx.hide() for wx in ws]
 
-
     def hide_stuffs():
         # todo: implement this
         pass
@@ -300,4 +299,4 @@ if __name__ == '__main__':
     # cross-platform - cef
     # < WIN 10 + WIN10 - mshtml
     # WIN10 (latest) - edgehtml
-    start(debug=True, gui="cef")  # mshtml, windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml
+    start(debug=False, gui="cef")  # mshtml, windows 10 build: edgehtml windows 7,8 and MacOS: edgehtml
