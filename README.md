@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="#">
-<img src="https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/static/images/10.png?token=ALECQYT5CONQNQOYIXQDTEDA5FKKO" alt="Oncher App" width="200"></a>
+<img src="http://157.245.51.210/seedbox/10.png" alt="Oncher App" width="200"></a>
   <br>
   Oncher App
   <br>
@@ -42,7 +42,7 @@ alt="discuss"></a>
 </p>
 
 <center>
-<img alt="preview_oncher_app" src="https://raw.githubusercontent.com/aminPial/ONCHER-APP/main/preview_data/preview-v-0-0-1.gif?token=ALECQYRTP5WPQGTC5XGRYX3A5GA2W">
+<img alt="preview_oncher_app" src="http://157.245.51.210/seedbox/preview-v-0-0-1.gif">
 </center>
 
 ## Key Features

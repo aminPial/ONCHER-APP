@@ -164,9 +164,9 @@ def building_with_pyinstaller():
 
     try:
         os.system(get_pyinstaller_buffer())
-        sleep(5)
-        os.chdir(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher")
-        os.startfile(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher\Oncher.exe")
+        # sleep(5)
+        # os.chdir(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher")
+        # os.startfile(r"I:\FivverProjects\ONCHER-APP\build_system\build_output\dist\Oncher\Oncher.exe")
     except Exception as e:
         print("Failed to build .exe due to {}".format(e))
 

@@ -54,7 +54,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
     """ % (
-        _APP_NAME, _VERSION_NAME, os.path.abspath(os.path.join(_DIST_FOLDER_PATH, 'static', 'images', _APP_ICON_PATH)))
+        _APP_NAME, _VERSION_NAME, os.path.abspath(os.path.join('static', 'images', _APP_ICON_PATH)))
     print(_buffer_1)
     # %s e.g: # I:\FivverProjects\ONCHER-APP\release\Oncher
     # first file is the exe then other bloody .pyd files

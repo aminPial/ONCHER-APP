@@ -5,7 +5,7 @@
 
 
 RELEASE_BUILD = True  # THIS IS IMPORTANT
-_VERSION_NAME = "0.0.5"  # change when building for a new release(if changes internal files)
+_VERSION_NAME = "0.0.8"  # change when building for a new release(if changes internal files)
 
 import logging
 import coloredlogs
