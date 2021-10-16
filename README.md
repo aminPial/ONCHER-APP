@@ -11,7 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/aminPial/ONCHER-APP/releases/download/0.0.1/Oncher.exe">
-    <img src="https://img.shields.io/badge/Version-0.0.1-brightgreen"
+    <img src="https://img.shields.io/badge/Version-0.0.2-brightgreen"
          alt="version">
   </a>
  <a href="https://github.com/aminPial/ONCHER-APP/issues">
@@ -51,7 +51,7 @@ alt="discuss"></a>
 
 ## Download
 
-<h4>Latest Stable Version: <b><code>V 0.0.1</code></b> </h4>
+<h4>Latest Stable Version: <b><code>V 0.0.2</code></b> </h4>
 
 ❌ [Download Windows 7/8 Build]()
 
